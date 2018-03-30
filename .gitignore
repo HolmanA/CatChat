@@ -32,5 +32,8 @@ build/
 # Intellij Files
 .idea/
 
+auth.properties
 local.properties
 *.iml
+*.ipr
+*.iws
