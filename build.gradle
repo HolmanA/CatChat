@@ -3,14 +3,27 @@ version '0.1.0'
 apply plugin: 'idea'
 apply plugin: 'application'
 
-mainClassName = "catchat.Test"
+mainClassName = 'catchat.Main'
 
-sourceCompatibility = 1.9
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'com.google.http-client:google-http-client:1.23.0'
+    compile 'com.google.http-client:google-http-client-gson:1.23.0'
+    compile 'com.google.oauth-client:google-oauth-client:1.23.0'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.+'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'catchat.Main'
+        )
+    }
 }
