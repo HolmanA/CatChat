@@ -1,10 +1,7 @@
 package catchat.data.auth;
 
 import javax.net.ServerSocketFactory;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
@@ -18,7 +15,8 @@ import java.util.Properties;
 public class GroupMeOAuthService implements OAuthService {
     private static GroupMeOAuthService INSTANCE;
 
-    private static final String AUTH_PROP_PATH = "/auth.properties";
+    private static final String AUTH_CONFIRMED_PATH = "/authentication/html/authconfirmed.html";
+    private static final String AUTH_PROP_PATH = "/authentication/config/auth.properties";
     private static final String AUTH_URL_PROP_KEY = "base_auth_url";
     private static final String CLIENT_ID_PROP_KEY = "client_id";
     private static final String CALLBACK_PORT_PROP_KEY = "callback_port";
@@ -80,6 +78,7 @@ public class GroupMeOAuthService implements OAuthService {
             props.loadFromXML(in);
             authURL = props.getProperty(AUTH_URL_PROP_KEY) + props.getProperty(CLIENT_ID_PROP_KEY);
             callbackPort = Integer.parseInt(props.getProperty(CALLBACK_PORT_PROP_KEY));
+            in.close();
         } catch (Exception e) {
             System.err.println("FATAL ERROR: Unable to load authentication properties");
             e.printStackTrace();
@@ -132,11 +131,13 @@ public class GroupMeOAuthService implements OAuthService {
             int length;
             byte[] buffer = new byte[1024];
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            InputStream in = remoteAuthSocket.getInputStream();
 
-            if ((length = remoteAuthSocket.getInputStream().read(buffer)) != -1) {
+            if ((length = in.read(buffer)) != -1) {
                 baos.write(buffer, 0, length);
             }
             header = baos.toString("UTF-8");
+            baos.close();
         } catch (IOException e) {
             System.err.println(e.getMessage());
             e.printStackTrace();
@@ -169,22 +170,27 @@ public class GroupMeOAuthService implements OAuthService {
      * Sends back an html page containing some embedded javascript commanding the browser to close the page.
      * If the browser does not support automatically closing web pages through javascript, a message
      * instructing the user to close the page will be shown.
-     * TODO: Refactor the html page into a separate file to increase maintainability
      */
     private void sendResponseMessage() {
         try {
+            InputStream inStream = getClass().getResourceAsStream(AUTH_CONFIRMED_PATH);
+            InputStreamReader in = new InputStreamReader(inStream);
             PrintWriter out = new PrintWriter(remoteAuthSocket.getOutputStream());
+
+            // Send http response header
             out.print("HTTP/1.1 200 OK\r\n");
             out.print("Content-Type: text/html\r\n");
             out.print("\r\n");
-            out.print("<html>\r\n");
-            out.print("</head>\r\n");
-            out.print("<body>\r\n");
-            out.print("<p>Authentication Successful. You may now close this page</p>\r\n");
-            out.print("<script type=\"text/javascript\">window.close();</script>\r\n");
-            out.print("</body>\r\n");
-            out.print("</html>\r\n");
+
+            // Send html file
+            char[] buffer = new char[1024];
+            while (in.read(buffer) != -1) {
+                out.write(buffer);
+            }
             out.flush();
+            out.close();
+            inStream.close();
+            in.close();
             remoteAuthSocket.close();
             localCallbackSocket.close();
         } catch (IOException e) {

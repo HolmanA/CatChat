@@ -40,8 +40,7 @@ public class AuthenticationManager implements OAuthService.AuthListener {
     @Override
     public void onSuccess() {
         Platform.runLater(() -> {
-                System.out.println("Authenticated with token:");
-                System.out.println(service.getAPIToken());
+                System.out.println("Authenticated");
                 authenticationPresenter.stop();
                 launchMainApplication();
         });
