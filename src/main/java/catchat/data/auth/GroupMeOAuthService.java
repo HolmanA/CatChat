@@ -15,11 +15,17 @@ import java.util.Properties;
 public class GroupMeOAuthService implements OAuthService {
     private static GroupMeOAuthService INSTANCE;
 
-    private static final String AUTH_CONFIRMED_PATH = "/authentication/html/authconfirmed.html";
-    private static final String AUTH_PROP_PATH = "/authentication/config/auth.properties.xml";
-    private static final String AUTH_URL_PROP_KEY = "base_auth_url";
-    private static final String CLIENT_ID_PROP_KEY = "client_id";
-    private static final String CALLBACK_PORT_PROP_KEY = "callback_port";
+    // Resource paths
+    private static final String HTML_ROOT = "/authentication/web/html/";
+    private static final String SUCCESS_HTML = HTML_ROOT + "authentication_successful.html";
+    private static final String ERROR_HTML = HTML_ROOT + "something_went_wrong.html";
+    private static final String PROPERTIES_XML = "/authentication/config/auth_properties.xml";
+
+
+    // Property Keys
+    private static final String PROP_AUTH_URL = "base_auth_url";
+    private static final String PROP_CLIENT_ID = "client_id";
+    private static final String PROP_CALLBACK_PORT = "callback_port";
 
     private String authURL;
     private int callbackPort;
@@ -74,13 +80,13 @@ public class GroupMeOAuthService implements OAuthService {
     private void loadProperties() {
         try {
             Properties props = new Properties();
-            InputStream in = getClass().getResourceAsStream(AUTH_PROP_PATH);
+            InputStream in = getClass().getResourceAsStream(PROPERTIES_XML);
             props.loadFromXML(in);
-            authURL = props.getProperty(AUTH_URL_PROP_KEY) + props.getProperty(CLIENT_ID_PROP_KEY);
-            callbackPort = Integer.parseInt(props.getProperty(CALLBACK_PORT_PROP_KEY));
+            authURL = props.getProperty(PROP_AUTH_URL) + props.getProperty(PROP_CLIENT_ID);
+            callbackPort = Integer.parseInt(props.getProperty(PROP_CALLBACK_PORT));
             in.close();
         } catch (Exception e) {
-            System.err.println("FATAL ERROR: Unable to load authentication properties");
+            System.err.println("Error: Unable to load authentication properties");
             e.printStackTrace();
             System.exit(-1);
         }
@@ -167,19 +173,19 @@ public class GroupMeOAuthService implements OAuthService {
     }
 
     /**
-     * Sends back an html page containing some embedded javascript commanding the browser to close the page.
+     * Sends back an web page containing some embedded javascript commanding the browser to close the page.
      * If the browser does not support automatically closing web pages through javascript, a message
      * instructing the user to close the page will be shown.
      */
     private void sendResponseMessage() {
         try {
-            InputStream inStream = getClass().getResourceAsStream(AUTH_CONFIRMED_PATH);
+            InputStream inStream = getClass().getResourceAsStream(SUCCESS_HTML);
             InputStreamReader in = new InputStreamReader(inStream);
             PrintWriter out = new PrintWriter(remoteAuthSocket.getOutputStream());
 
             // Send http response header
             out.print("HTTP/1.1 200 OK\r\n");
-            out.print("Content-Type: text/html\r\n");
+            out.print("Content-Type: text/web\r\n");
             out.print("\r\n");
 
             // Send html file
