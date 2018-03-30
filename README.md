@@ -11,9 +11,9 @@ First, register as a developer using your GroupMe credentials at GroupMe's
 <a href="https://dev.groupme.com/">developer site</a>. Once registered, <a href="">create a new application</a> with 
 the following parameters:
 
-<table border="1">
+<table>
     <tr>
-        <td style="font-weight:bold">Application Name</td>
+        <td><b>Application Name</b></td>
         <td>Cat Chat</td>
     </tr>
     <tr>
