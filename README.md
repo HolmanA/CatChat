@@ -13,7 +13,7 @@ First, register as a developer using your GroupMe credentials at GroupMe's
 
 <b>Note:</b> <i>You should keep track of your callback port number and client ID during this process</i>
 
-<table>
+<table align="center">
     <tr>
         <th><b>Field</b></th>
         <th><b>Value</b></th>
@@ -29,7 +29,7 @@ First, register as a developer using your GroupMe credentials at GroupMe's
     </tr>
     <tr>
         <td><b>Callback URL</b></td>
-        <td>http://127.0.0.1:<span style="text-color:red">#####</span></td>
+        <td>http://127.0.0.1:<span style="color:red">#####</span></td>
         <td>
             <i>The callback address should be the loopback address. You are free to specify any port number you'd like, 
             however be aware that the port number you use may be used by the system or another application. Choose 
@@ -38,27 +38,27 @@ First, register as a developer using your GroupMe credentials at GroupMe's
     </tr>
     <tr>
         <td><b>Developer Name</b></td>
-        <td style="text-color:red">Your Name</td>
+        <td style="color:red">Your Name</td>
         <td><i></i></td>
     </tr>
     <tr>
         <td><b>Developer Email</b></td>
-        <td style="text-color:red">Your Email</td>
+        <td style="color:red">Your Email</td>
         <td><i></i></td>
     </tr>
     <tr>
         <td><b>Developer Phone Number</b></td>
-        <td style="text-color:red">Your Phone Number</td>
+        <td style="color:red">Your Phone Number</td>
         <td><i></i></td>
     </tr>
     <tr>
         <td><b>Developer Company</b></td>
-        <td style="text-color:red">Your Company</td>
+        <td style="color:red">Your Company</td>
         <td><i></i></td>
     </tr>
     <tr>
         <td><b>Developer Address</b></td>
-        <td style="text-color:red">Your Address</td>
+        <td style="color:red">Your Address</td>
         <td><i></i></td>
     </tr>
 </table>
