@@ -16,7 +16,7 @@ public class GroupMeOAuthService implements OAuthService {
     private static GroupMeOAuthService INSTANCE;
 
     private static final String AUTH_CONFIRMED_PATH = "/authentication/html/authconfirmed.html";
-    private static final String AUTH_PROP_PATH = "/authentication/config/auth.properties";
+    private static final String AUTH_PROP_PATH = "/authentication/config/auth.properties.xml";
     private static final String AUTH_URL_PROP_KEY = "base_auth_url";
     private static final String CLIENT_ID_PROP_KEY = "client_id";
     private static final String CALLBACK_PORT_PROP_KEY = "callback_port";
