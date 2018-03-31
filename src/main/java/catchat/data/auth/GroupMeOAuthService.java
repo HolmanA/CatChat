@@ -185,15 +185,16 @@ public class GroupMeOAuthService implements OAuthService {
 
             // Send http response header
             out.print("HTTP/1.1 200 OK\r\n");
-            out.print("Content-Type: text/web\r\n");
+            out.print("Content-Type: text/html\r\n");
             out.print("\r\n");
 
             // Send html file
+            int length;
             char[] buffer = new char[1024];
-            while (in.read(buffer) != -1) {
-                out.write(buffer);
+            while ((length = in.read(buffer)) != -1) {
+                out.write(buffer, 0, length);
             }
-            out.flush();
+            //out.flush();
             out.close();
             inStream.close();
             in.close();
