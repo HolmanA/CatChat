@@ -194,7 +194,7 @@ public class GroupMeOAuthService implements OAuthService {
             while ((length = in.read(buffer)) != -1) {
                 out.write(buffer, 0, length);
             }
-            //out.flush();
+            out.flush();
             out.close();
             inStream.close();
             in.close();
