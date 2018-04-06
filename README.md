@@ -1,6 +1,10 @@
 # CatChat
 Open source GroupMe chat client.
 
+### Table of Contents
+**[Configuration](#configuration)**<br>
+**[Build](#build)**<br>
+
 ## Configuration
 In order to use this application, you must be a registered GroupMe user. Additionally, a client ID associated with 
 your use of this software is required to obtain authentication through GroupMe's implementation of the OAuth 2.0 
@@ -29,7 +33,7 @@ First, register as a developer using your GroupMe credentials at GroupMe's
     </tr>
     <tr>
         <td><b>Callback URL</b></td>
-        <td>http://127.0.0.1:<span style="color:red">#####</span></td>
+        <td>htt<i></i>p://127.0.0.1:<i>#####</i></td>
         <td>
             <i>The callback address should be the loopback address. You are free to specify any port number you'd like, 
             however be aware that the port number you use may be used by the system or another application. Choose 
@@ -38,31 +42,31 @@ First, register as a developer using your GroupMe credentials at GroupMe's
     </tr>
     <tr>
         <td><b>Developer Name</b></td>
-        <td style="color:red">Your Name</td>
+        <td><i>Your Name</i></td>
         <td><i></i></td>
     </tr>
     <tr>
         <td><b>Developer Email</b></td>
-        <td style="color:red">Your Email</td>
+        <td><i>Your Email</i></td>
         <td><i></i></td>
     </tr>
     <tr>
         <td><b>Developer Phone Number</b></td>
-        <td style="color:red">Your Phone Number</td>
+        <td><i>Your Phone Number</i></td>
         <td><i></i></td>
     </tr>
     <tr>
         <td><b>Developer Company</b></td>
-        <td style="color:red">Your Company</td>
+        <td><i>Your Company</i></td>
         <td><i></i></td>
     </tr>
     <tr>
         <td><b>Developer Address</b></td>
-        <td style="color:red">Your Address</td>
+        <td><i>Your Address</i></td>
         <td><i></i></td>
     </tr>
 </table>
-<i>* Red values in the table above can be replaced by values of your choice</i>
+<i>* Italic values in the table above can be replaced by values of your choice</i>
 
 #### Creating a Properties File
 Under <code>/src/main/resources/authentication/config</code> you will find a template properties file called 
