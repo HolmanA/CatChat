@@ -2,7 +2,7 @@ package catchat.data.source.threads;
 
 import catchat.data.entities.message.Message;
 import catchat.data.source.BaseDataSource;
-import catchat.data.source.BaseListener;
+import catchat.data.source.BaseCallback;
 
 import java.util.List;
 
@@ -10,35 +10,29 @@ import java.util.List;
  * Created by andrew on 4/13/18.
  */
 public abstract class ThreadDataSource extends BaseDataSource {
-    interface ThreadListener extends BaseListener {
-        void threadsLoaded(List<Thread> threads);
-        void messagesLoaded(List<Message> messages);
-        void messageSent();
-        void messageLiked();
-        void messageUnliked();
+    interface GetThreadsCallback extends BaseCallback {
+        void onThreadsLoaded(List<Thread> threads);
     }
 
-    private List<ThreadListener> listeners;
-
-    ThreadDataSource(List<ThreadListener> listeners) {
-        this.listeners = listeners;
+    interface GetMessagesCallback extends BaseCallback {
+        void onMessagesLoaded(List<Message> messages);
     }
 
-    public void subscribe(ThreadListener listener) {
-        listeners.add(listener);
+    interface SendMessageCallback extends BaseCallback {
+        void onMessageSent();
     }
 
-    public void unSubscribe(ThreadListener listener) {
-        listeners.remove(listener);
+    interface LikeMessageCallback extends BaseCallback {
+        void onMessageLiked();
     }
 
-    public void unSubscribeAll() {
-        listeners.clear();
+    interface UnlikeMessageCallback extends BaseCallback {
+        void onMessageUnliked();
     }
 
-    abstract void getThreads(int page, int pageSize, String omit);
-    abstract void getMessages(String threadId, String beforeMessageId, String sinceMessageId);
-    abstract void sendMessage(String threadId, String sourceGUID, String messageText);
-    abstract void likeMessage(String threadId, String messageId);
-    abstract void unlikeMessage(String threadId, String messageId);
+    abstract public void getThreads(int page, int pageSize, String omit, GetThreadsCallback callback);
+    abstract public void getMessages(String threadId, String beforeMessageId, String sinceMessageId, GetMessagesCallback callback);
+    abstract public void sendMessage(String threadId, String sourceGUID, String messageText, SendMessageCallback callback);
+    abstract public void likeMessage(String threadId, String messageId, LikeMessageCallback callback);
+    abstract public void unlikeMessage(String threadId, String messageId, UnlikeMessageCallback callback);
 }
