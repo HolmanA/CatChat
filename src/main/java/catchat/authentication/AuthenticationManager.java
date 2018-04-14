@@ -1,5 +1,6 @@
 package catchat.authentication;
 
+import catchat.ApplicationManager;
 import catchat.data.auth.GroupMeOAuthService;
 import catchat.data.auth.OAuthService;
 import javafx.application.Platform;
@@ -52,7 +53,8 @@ public class AuthenticationManager implements OAuthService.AuthListener {
     }
 
     private void launchMainApplication() {
-        // TODO: Create a new Manager for the application
         System.out.println("Launching main application...");
+        ApplicationManager applicationManager = new ApplicationManager(service);
+        applicationManager.start();
     }
 }

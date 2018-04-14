@@ -10,23 +10,23 @@ import java.util.List;
  * Created by andrew on 4/13/18.
  */
 public abstract class ThreadDataSource extends BaseDataSource {
-    interface GetThreadsCallback extends BaseCallback {
+    public interface GetThreadsCallback extends BaseCallback {
         void onThreadsLoaded(List<Thread> threads);
     }
 
-    interface GetMessagesCallback extends BaseCallback {
+    public interface GetMessagesCallback extends BaseCallback {
         void onMessagesLoaded(List<Message> messages);
     }
 
-    interface SendMessageCallback extends BaseCallback {
+    public interface SendMessageCallback extends BaseCallback {
         void onMessageSent();
     }
 
-    interface LikeMessageCallback extends BaseCallback {
+    public interface LikeMessageCallback extends BaseCallback {
         void onMessageLiked();
     }
 
-    interface UnlikeMessageCallback extends BaseCallback {
+    public interface UnlikeMessageCallback extends BaseCallback {
         void onMessageUnliked();
     }
 
