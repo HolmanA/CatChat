@@ -1,6 +1,6 @@
 package catchat.data.entities.profile;
 
-import catchat.data.entities.thread.Thread;
+import catchat.data.entities.chat.Chat;
 
 import java.util.HashMap;
 
@@ -10,5 +10,5 @@ public abstract class Profile {
 
     //Groups mapped to the user's memberID for that group
     // Can map to empty String for direct chats
-    protected HashMap<Thread, String> groups;
+    protected HashMap<Chat, String> groups;
 }
