@@ -5,6 +5,8 @@ import catchat.chats.ChatsView;
 import catchat.data.auth.OAuthService;
 import catchat.data.source.chats.ChatDataSource;
 import catchat.data.source.chats.GroupMeGroupChatDS;
+import catchat.messages.MessagesPresenter;
+import catchat.messages.MessagesView;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -15,9 +17,12 @@ import javafx.stage.Stage;
  */
 public class ApplicationStage extends Stage {
     private OAuthService service;
+    private ChatDataSource chatDS;
 
     public ApplicationStage(OAuthService service) {
         this.service = service;
+        this.chatDS = GroupMeGroupChatDS.getInstance();
+        chatDS.setAuthenticationToken(service.getAPIToken());
     }
 
     public void start() {
@@ -29,18 +34,27 @@ public class ApplicationStage extends Stage {
 
     private void initialize() {
         BorderPane borderPane = new BorderPane();
+
         Node groupList = initializeGroupChatsList();
+        Node messageList = initializeMessageList();
         borderPane.setLeft(groupList);
+        borderPane.setCenter(messageList);
+
         setScene(new Scene(borderPane));
         setTitle("Cat Chat");
     }
 
     private Node initializeGroupChatsList() {
-        ChatDataSource groupChatsDS = new GroupMeGroupChatDS();
-        groupChatsDS.setAuthenticationToken(service.getAPIToken());
-
         ChatsView view = new ChatsView();
-        ChatsPresenter presenter = new ChatsPresenter(groupChatsDS, view);
+        ChatsPresenter presenter = new ChatsPresenter(chatDS, view);
+        view.setPresenter(presenter);
+        presenter.start();
+        return view;
+    }
+
+    private Node initializeMessageList() {
+        MessagesView view = new MessagesView();
+        MessagesPresenter presenter = new MessagesPresenter(chatDS, view);
         view.setPresenter(presenter);
         presenter.start();
         return view;

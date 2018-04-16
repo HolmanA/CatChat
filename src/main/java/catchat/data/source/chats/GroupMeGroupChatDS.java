@@ -20,11 +20,19 @@ import java.util.List;
  * Created by andrew on 4/13/18.
  */
 public class GroupMeGroupChatDS extends ChatDataSource {
+    private static GroupMeGroupChatDS INSTANCE;
     private static final String BASE_API_URL = "https://api.groupme.com/v3/";
     private ObjectMapper mapper;
 
-    public GroupMeGroupChatDS() {
+    private GroupMeGroupChatDS() {
         mapper = new ObjectMapper();
+    }
+
+    public static GroupMeGroupChatDS getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new GroupMeGroupChatDS();
+        }
+        return INSTANCE;
     }
 
     @Override
