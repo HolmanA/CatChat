@@ -1,6 +1,11 @@
 package catchat;
 
+import catchat.chats.ChatsContract;
+import catchat.chats.ChatsPresenter;
+import catchat.chats.ChatsView;
 import catchat.data.auth.OAuthService;
+import catchat.data.source.chat.ChatDataSource;
+import catchat.data.source.chat.GroupMeGroupChatDS;
 
 /**
  * Created by andrew on 4/14/18.
@@ -14,5 +19,15 @@ public class ApplicationManager {
 
     public void start() {
         System.out.println("Main Application Started");
+        loadGroupChatList();
+    }
+
+    private void loadGroupChatList() {
+        ChatDataSource groupChatsDS = new GroupMeGroupChatDS();
+        groupChatsDS.setAuthenticationToken(service.getAPIToken());
+        ChatsContract.View view = new ChatsView();
+        ChatsContract.Presenter presenter = new ChatsPresenter(groupChatsDS, view);
+        view.setPresenter(presenter);
+        presenter.start();
     }
 }

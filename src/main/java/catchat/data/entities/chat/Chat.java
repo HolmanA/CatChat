@@ -1,17 +1,22 @@
 package catchat.data.entities.chat;
 
+import catchat.data.entities.profile.Profile;
+
+import java.util.List;
+
 public abstract class Chat {
     protected String id;
     protected String name;
     protected String preview;
+    protected List<Profile> members;
 
-    protected Chat(String id, String name, String preview) {
+    protected Chat(String id, String name, String preview, List<Profile> members) {
         this.id = id;
         this.name = name;
         this.preview = preview;
+        this.members = members;
     }
 
-    //protected List<Profile> members;
     public String getId() {
         return id;
     }
@@ -22,5 +27,9 @@ public abstract class Chat {
 
     public String getPreview() {
         return preview;
+    }
+
+    public List<Profile> getMembers() {
+        return members;
     }
 }
