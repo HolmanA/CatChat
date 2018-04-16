@@ -12,10 +12,13 @@ import java.util.List;
 public interface ChatsContract {
     interface View extends BaseView<Presenter> {
         void showGroups(List<Chat> groups);
+        void setPageNumber(int number);
     }
 
     interface Presenter extends BasePresenter {
-        void loadGroups();
-        void loadGroup(Chat group);
+        void prevPage();
+        void nextPage();
+        void refreshChats();
+        void loadChat(Chat chat);
     }
 }
