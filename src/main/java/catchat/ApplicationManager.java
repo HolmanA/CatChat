@@ -4,8 +4,8 @@ import catchat.chats.ChatsContract;
 import catchat.chats.ChatsPresenter;
 import catchat.chats.ChatsView;
 import catchat.data.auth.OAuthService;
-import catchat.data.source.chat.ChatDataSource;
-import catchat.data.source.chat.GroupMeGroupChatDS;
+import catchat.data.source.chats.ChatDataSource;
+import catchat.data.source.chats.GroupMeGroupChatDS;
 
 /**
  * Created by andrew on 4/14/18.

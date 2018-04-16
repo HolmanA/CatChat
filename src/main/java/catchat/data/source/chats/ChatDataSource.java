@@ -1,4 +1,4 @@
-package catchat.data.source.chat;
+package catchat.data.source.chats;
 
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;

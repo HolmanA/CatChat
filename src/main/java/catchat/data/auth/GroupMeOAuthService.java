@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.Properties;
 
 /**
- * OAuthService capable of obtaining an API token to GroupMe's chat servers through OAuth2.0 Implicit Grant
+ * OAuthService capable of obtaining an API token to GroupMe's chats servers through OAuth2.0 Implicit Grant
  * authorization.
  * TODO: Call authListener.onFailure() when auth token is not found for some reason
  * TODO: Gracefully handle errors in authentication with a call to the authListener to restart authentication

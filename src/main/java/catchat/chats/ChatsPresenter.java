@@ -1,7 +1,7 @@
 package catchat.chats;
 
 import catchat.data.entities.chat.Chat;
-import catchat.data.source.chat.ChatDataSource;
+import catchat.data.source.chats.ChatDataSource;
 
 import java.util.List;
 
