@@ -19,7 +19,7 @@ public class ChatsPresenter implements ChatsContract.Presenter, ChatDataSource.G
 
     @Override
     public void start() {
-        refreshGroups();
+        loadGroups();
     }
 
     @Override
@@ -27,7 +27,7 @@ public class ChatsPresenter implements ChatsContract.Presenter, ChatDataSource.G
     }
 
     @Override
-    public void refreshGroups() {
+    public void loadGroups() {
         dataSource.getChats(1, 10, "", this);
     }
 

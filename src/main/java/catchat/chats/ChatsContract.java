@@ -15,7 +15,7 @@ public interface ChatsContract {
     }
 
     interface Presenter extends BasePresenter {
-        void refreshGroups();
+        void loadGroups();
         void loadGroup(Chat group);
     }
 }
