@@ -60,12 +60,12 @@ public class ChatsPresenter implements ChatsContract.Presenter, ChatDataSource.G
     @Override
     public void refreshChats() {
         System.out.println("Page: " + chatsPage);
-        dataSource.getChats(chatsPage, 10, "", this);
+        dataSource.getChats(chatsPage, 5, "", this);
 
     }
 
     @Override
     public void loadChat(Chat chat) {
-
+        System.out.println("Load Messages For: " + chat.getId());
     }
 }

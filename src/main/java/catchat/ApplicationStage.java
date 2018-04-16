@@ -17,12 +17,12 @@ import javafx.stage.Stage;
  */
 public class ApplicationStage extends Stage {
     private OAuthService service;
-    private ChatDataSource chatDS;
+    private ChatDataSource groupChatDS;
 
     public ApplicationStage(OAuthService service) {
         this.service = service;
-        this.chatDS = GroupMeGroupChatDS.getInstance();
-        chatDS.setAuthenticationToken(service.getAPIToken());
+        this.groupChatDS = GroupMeGroupChatDS.getInstance();
+        groupChatDS.setAuthenticationToken(service.getAPIToken());
     }
 
     public void start() {
@@ -46,7 +46,7 @@ public class ApplicationStage extends Stage {
 
     private Node initializeGroupChatsList() {
         ChatsView view = new ChatsView();
-        ChatsPresenter presenter = new ChatsPresenter(chatDS, view);
+        ChatsPresenter presenter = new ChatsPresenter(groupChatDS, view);
         view.setPresenter(presenter);
         presenter.start();
         return view;
@@ -54,7 +54,7 @@ public class ApplicationStage extends Stage {
 
     private Node initializeMessageList() {
         MessagesView view = new MessagesView();
-        MessagesPresenter presenter = new MessagesPresenter(chatDS, view);
+        MessagesPresenter presenter = new MessagesPresenter(groupChatDS, view);
         view.setPresenter(presenter);
         presenter.start();
         return view;

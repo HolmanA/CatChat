@@ -26,6 +26,13 @@ public class ChatsView extends VBox implements ChatsContract.View {
 
     public ChatsView() {
         chatList = new ListView<>();
+        chatList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                presenter.loadChat(chatList.getSelectionModel().getSelectedItem());
+            }
+        });
+
         pageNumber = new Text();
         Button prevPage = new PrevButton();
         Button nextPage = new NextButton();
