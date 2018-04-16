@@ -1,6 +1,6 @@
 package catchat.authentication;
 
-import catchat.ApplicationManager;
+import catchat.ApplicationStage;
 import catchat.data.auth.GroupMeOAuthService;
 import catchat.data.auth.OAuthService;
 import javafx.application.Platform;
@@ -41,7 +41,7 @@ public class AuthenticationManager implements OAuthService.AuthListener {
     @Override
     public void onSuccess() {
         Platform.runLater(() -> {
-                System.out.println("Authenticated");
+                System.out.println("\tAuthenticated");
                 authenticationPresenter.stop();
                 launchMainApplication();
         });
@@ -53,8 +53,9 @@ public class AuthenticationManager implements OAuthService.AuthListener {
     }
 
     private void launchMainApplication() {
-        System.out.println("Launching main application...");
-        ApplicationManager applicationManager = new ApplicationManager(service);
-        applicationManager.start();
+        System.out.println("\tLaunching main application...");
+        System.out.println("-------------------------------");
+        ApplicationStage applicationStage = new ApplicationStage(service);
+        applicationStage.start();
     }
 }

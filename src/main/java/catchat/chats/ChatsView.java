@@ -2,13 +2,14 @@ package catchat.chats;
 
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.profile.Profile;
+import javafx.scene.text.Text;
 
 import java.util.List;
 
 /**
  * Created by andrew on 4/15/18.
  */
-public class ChatsView implements ChatsContract.View {
+public class ChatsView extends Text implements ChatsContract.View {
     ChatsContract.Presenter presenter;
 
     @Override
@@ -18,14 +19,16 @@ public class ChatsView implements ChatsContract.View {
 
     @Override
     public void showGroups(List<Chat> groups) {
+        String output = "";
         for (Chat c : groups) {
-            System.out.println("ID: " + c.getId());
-            System.out.println("Name: " + c.getName());
-            System.out.println("Preview: " + c.getPreview());
-            System.out.println("Members: ");
+            output += "ID: " + c.getId() + "\n";
+            output += "Name: " + c.getName() + "\n";
+            output += "Preview: " + c.getPreview() + "\n";
+            output += "Members:\n";
             for (Profile p : c.getMembers()) {
-                System.out.println("\t" + p.getName());
+                output += "\t" + p.getName() + "\n";
             }
         }
+        setText(output);
     }
 }

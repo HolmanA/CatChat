@@ -19,18 +19,16 @@ public class ChatsPresenter implements ChatsContract.Presenter, ChatDataSource.G
 
     @Override
     public void start() {
-        dataSource.getChats(1, 10, "", this);
-
+        refreshGroups();
     }
 
     @Override
     public void stop() {
-
     }
 
     @Override
     public void refreshGroups() {
-
+        dataSource.getChats(1, 10, "", this);
     }
 
     @Override
