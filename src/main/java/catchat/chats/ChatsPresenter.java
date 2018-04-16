@@ -66,6 +66,8 @@ public class ChatsPresenter implements ChatsContract.Presenter, ChatDataSource.G
 
     @Override
     public void loadChat(Chat chat) {
-        System.out.println("Load Messages For: " + chat.getId());
+        if (chat != null) {
+            System.out.println("Load Messages For: " + chat.getId());
+        }
     }
 }

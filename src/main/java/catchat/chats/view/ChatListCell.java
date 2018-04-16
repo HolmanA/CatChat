@@ -25,6 +25,8 @@ public class ChatListCell extends ListCell<Chat> {
 
             box.getChildren().addAll(id, name, preview);
             setGraphic(box);
+        } else {
+            setGraphic(null);
         }
     }
 }
