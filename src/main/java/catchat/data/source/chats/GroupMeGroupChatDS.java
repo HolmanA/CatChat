@@ -56,22 +56,21 @@ public class GroupMeGroupChatDS extends ChatDataSource {
     }
 
     @Override
-    public void getMessages(String chatId, String beforeMessageId, String sinceMessageId, GetMessagesCallback callback) {
-    }
+    public void getChat(String id, GetChatCallback callback) {
+        HttpRequestFactory httpRequestFactory = new NetHttpTransport().createRequestFactory();
+        GenericUrl url = new GenericUrl(BASE_API_URL + "groups/" + id);
+        url.set("token", getAuthToken());
 
-    @Override
-    public void sendMessage(String chatId, String sourceGUID, String messageText, SendMessageCallback callback) {
-
-    }
-
-    @Override
-    public void likeMessage(String chatId, String messageId, LikeMessageCallback callback) {
-
-    }
-
-    @Override
-    public void unlikeMessage(String chatId, String messageId, UnlikeMessageCallback callback) {
-
+        try {
+            HttpRequest httpRequest = httpRequestFactory.buildGetRequest(url);
+            HttpResponse httpResponse = httpRequest.execute();
+            String response = httpResponse.parseAsString();
+            callback.onChatLoaded(parseGroup(response));
+        } catch (IOException e) {
+            // TODO: Should parse out the return code from the http response and alert the callback accordingly
+            e.printStackTrace();
+            callback.dataNotAvailable();
+        }
     }
 
     private List<Chat> parseGroups(String json) {
@@ -81,26 +80,41 @@ public class GroupMeGroupChatDS extends ChatDataSource {
             JsonNode groups = mapper.readTree(json).get("response");
             if (groups.isArray()) {
                 for (JsonNode node : groups) {
-                    String groupId = node.get("group_id").asText();
-                    String name = node.get("name").asText();
-                    String preview = node.get("messages").get("preview").get("text").asText();
-
-                    JsonNode members = node.get("members");
-                    List<Profile> memberList = new ArrayList<>();
-                    if (members.isArray()) {
-                        for (JsonNode member : members) {
-                            String nickname = member.get("nickname").asText();
-                            String userId = member.get("user_id").asText();
-                            String memberId = member.get("id").asText();
-                            memberList.add(new GroupMemberProfile(userId, nickname, memberId));
-                        }
-                    }
-                    groupList.add(new GroupChat(groupId, name, preview, memberList));
+                    groupList.add(parseGroupFromJson(node));
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return groupList;
+    }
+
+    private Chat parseGroup(String json) {
+        Chat group = null;
+        try {
+            JsonNode groups = mapper.readTree(json).get("response");
+            group = parseGroupFromJson(groups);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return group;
+    }
+
+    private Chat parseGroupFromJson(JsonNode node) {
+        String groupId = node.get("group_id").asText();
+        String name = node.get("name").asText();
+        String preview = node.get("messages").get("preview").get("text").asText();
+
+        JsonNode members = node.get("members");
+        List<Profile> memberList = new ArrayList<>();
+        if (members.isArray()) {
+            for (JsonNode member : members) {
+                String nickname = member.get("nickname").asText();
+                String userId = member.get("user_id").asText();
+                String memberId = member.get("id").asText();
+                memberList.add(new GroupMemberProfile(userId, nickname, memberId));
+            }
+        }
+        return new GroupChat(groupId, name, preview, memberList);
     }
 }

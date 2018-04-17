@@ -15,25 +15,10 @@ public abstract class ChatDataSource extends BaseDataSource {
         void onChatsLoaded(List<Chat> chats);
     }
 
-    public interface GetMessagesCallback extends BaseCallback {
-        void onMessagesLoaded(List<Message> messages);
-    }
-
-    public interface SendMessageCallback extends BaseCallback {
-        void onMessageSent();
-    }
-
-    public interface LikeMessageCallback extends BaseCallback {
-        void onMessageLiked();
-    }
-
-    public interface UnlikeMessageCallback extends BaseCallback {
-        void onMessageUnliked();
+    public interface GetChatCallback extends BaseCallback {
+        void onChatLoaded(Chat chat);
     }
 
     abstract public void getChats(int page, int pageSize, String omit, GetChatsCallback callback);
-    abstract public void getMessages(String chatId, String beforeMessageId, String sinceMessageId, GetMessagesCallback callback);
-    abstract public void sendMessage(String chatId, String sourceGUID, String messageText, SendMessageCallback callback);
-    abstract public void likeMessage(String chatId, String messageId, LikeMessageCallback callback);
-    abstract public void unlikeMessage(String chatId, String messageId, UnlikeMessageCallback callback);
+    abstract public void getChat(String id, GetChatCallback callback);
 }
