@@ -19,6 +19,6 @@ public class MessagesView extends Text implements MessagesContract.View {
 
     @Override
     public void showMessages(List<Message> messages) {
-
+        setText("Test Call Received");
     }
 }

@@ -11,11 +11,15 @@ import java.util.List;
 public class ChatsPresenter implements ChatsContract.Presenter, ChatDataSource.GetChatsCallback {
     private ChatDataSource dataSource;
     private ChatsContract.View view;
+    private ChatDataSource.GetMessagesCallback messagesCallback;
     private int chatsPage;
 
-    public ChatsPresenter(ChatDataSource dataSource, ChatsContract.View view) {
+    public ChatsPresenter(ChatDataSource dataSource,
+                          ChatsContract.View view,
+                          ChatDataSource.GetMessagesCallback messagesCallback) {
         this.dataSource = dataSource;
         this.view = view;
+        this.messagesCallback = messagesCallback;
         chatsPage = 1;
     }
 
@@ -67,7 +71,7 @@ public class ChatsPresenter implements ChatsContract.Presenter, ChatDataSource.G
     @Override
     public void loadChat(Chat chat) {
         if (chat != null) {
-            System.out.println("Load Messages For: " + chat.getId());
+            dataSource.getMessages(chat.getId(), "", "", messagesCallback);
         }
     }
 }

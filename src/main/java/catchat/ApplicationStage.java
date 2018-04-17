@@ -33,30 +33,28 @@ public class ApplicationStage extends Stage {
     }
 
     private void initialize() {
-        BorderPane borderPane = new BorderPane();
 
-        Node groupList = initializeGroupChatsList();
-        Node messageList = initializeMessageList();
-        borderPane.setLeft(groupList);
-        borderPane.setCenter(messageList);
-
-        setScene(new Scene(borderPane));
+        BorderPane pane = initializePane();
+        setScene(new Scene(pane));
         setTitle("Cat Chat");
     }
 
-    private Node initializeGroupChatsList() {
-        ChatsView view = new ChatsView();
-        ChatsPresenter presenter = new ChatsPresenter(groupChatDS, view);
-        view.setPresenter(presenter);
-        presenter.start();
-        return view;
-    }
+    private BorderPane initializePane() {
+        BorderPane borderPane = new BorderPane();
 
-    private Node initializeMessageList() {
-        MessagesView view = new MessagesView();
-        MessagesPresenter presenter = new MessagesPresenter(groupChatDS, view);
-        view.setPresenter(presenter);
-        presenter.start();
-        return view;
+        MessagesView messagesView = new MessagesView();
+        MessagesPresenter messagesPresenter = new MessagesPresenter(groupChatDS, messagesView);
+        messagesView.setPresenter(messagesPresenter);
+        messagesPresenter.start();
+
+        ChatsView groupsView = new ChatsView();
+        ChatsPresenter groupsPresenter = new ChatsPresenter(groupChatDS, groupsView, messagesPresenter);
+        groupsView.setPresenter(groupsPresenter);
+        groupsPresenter.start();
+
+        borderPane.setLeft(groupsView);
+        borderPane.setCenter(messagesView);
+
+        return borderPane;
     }
 }

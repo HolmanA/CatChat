@@ -57,7 +57,6 @@ public class GroupMeGroupChatDS extends ChatDataSource {
 
     @Override
     public void getMessages(String chatId, String beforeMessageId, String sinceMessageId, GetMessagesCallback callback) {
-
     }
 
     @Override

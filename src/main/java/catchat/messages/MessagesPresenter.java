@@ -29,7 +29,6 @@ public class MessagesPresenter implements MessagesContract.Presenter, ChatDataSo
 
     @Override
     public void dataNotAvailable() {
-
     }
 
     @Override
