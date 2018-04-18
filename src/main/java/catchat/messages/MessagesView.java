@@ -8,6 +8,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -21,13 +23,19 @@ public class MessagesView extends VBox implements MessagesContract.View {
     private Text chatInfo;
     private ListView<Message> messageList;
     private Button refresh;
+    private TextField input;
+    private Button sendMessage;
 
     public MessagesView() {
         chatInfo = new Text();
         messageList = new ListView<>();
         refresh = new Button("Refresh");
         refresh.setOnMouseClicked(event -> presenter.refreshMessages());
-        getChildren().addAll(chatInfo, messageList, refresh);
+        input = new TextField();
+        sendMessage = new Button("Send");
+        HBox sendBox = new HBox();
+        sendBox.getChildren().addAll(input, sendMessage);
+        getChildren().addAll(chatInfo, messageList, refresh, sendBox);
     }
 
     @Override
