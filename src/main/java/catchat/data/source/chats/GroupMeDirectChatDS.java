@@ -2,6 +2,8 @@ package catchat.data.source.chats;
 
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.chat.DirectChat;
+import catchat.data.entities.message.DirectMessage;
+import catchat.data.entities.message.Message;
 import catchat.data.entities.profile.MemberProfile;
 import catchat.data.entities.profile.Profile;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -56,7 +58,21 @@ public class GroupMeDirectChatDS extends ChatDataSource {
 
     @Override
     public void getMessages(String chatId, String beforeMessageId, String sinceMessageId, GetMessagesCallback callback) {
+        HttpRequestFactory httpRequestFactory = new NetHttpTransport().createRequestFactory();
+        GenericUrl url = new GenericUrl(BASE_API_URL + "direct_messages");
+        url.set("token", getAuthToken());
+        url.set("other_user_id", chatId);
 
+        try {
+            HttpRequest httpRequest = httpRequestFactory.buildGetRequest(url);
+            HttpResponse httpResponse = httpRequest.execute();
+            String response = httpResponse.parseAsString();
+            callback.onMessagesLoaded(parseMessages(response));
+        } catch (IOException e) {
+            // TODO: Should parse out the return code from the http response and alert the callback accordingly
+            e.printStackTrace();
+            callback.dataNotAvailable();
+        }
     }
 
     @Override
@@ -100,5 +116,24 @@ public class GroupMeDirectChatDS extends ChatDataSource {
 
         memberList.add(new MemberProfile(otherId, otherName, ""));
         return new DirectChat(otherId, otherName, preview, memberList);
+    }
+
+    private List<Message> parseMessages(String json) {
+        List<Message> messageList = new ArrayList<>();
+        try {
+            JsonNode messages = mapper.readTree(json).get("response").get("direct_messages");
+            if (messages.isArray()) {
+                for (JsonNode message : messages) {
+                    String messageId = message.get("id").asText();
+                    String messageGUID = message.get("source_guid").asText();
+                    String senderId = message.get("sender_id").asText();
+                    String text = message.get("text").asText();
+                    messageList.add(new DirectMessage(messageId, messageGUID, text, senderId));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return messageList;
     }
 }

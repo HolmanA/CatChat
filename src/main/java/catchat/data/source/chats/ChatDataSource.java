@@ -39,8 +39,8 @@ public abstract class ChatDataSource extends BaseDataSource {
     }
 
     public void getChat(Chat chat, GetChatCallback callback) {
-        callback.onChatLoaded(chat);
         callback.setDataSource(this);
+        callback.onChatLoaded(chat);
     }
 
     abstract public void getChats(int page, int pageSize, GetChatsCallback callback);

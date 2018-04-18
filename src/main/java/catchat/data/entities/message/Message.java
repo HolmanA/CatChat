@@ -1,14 +1,31 @@
 package catchat.data.entities.message;
 
-import catchat.data.entities.profile.Profile;
-
-import java.util.List;
-
 public abstract class Message {
-    protected String id;
-    protected String sourceGUID;
-    protected String text;
-    protected Profile sender;
+    private String id;
+    private String sourceGUID;
+    private String text;
+    private String senderId;
 
-    protected List<Profile> likedBy;
+    protected Message(String id, String sourceGUID, String text, String senderId) {
+        this.id = id;
+        this.sourceGUID = sourceGUID;
+        this.text = text;
+        this.senderId = senderId;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getSourceGUID() {
+        return sourceGUID;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public String getSenderId() {
+        return senderId;
+    }
 }

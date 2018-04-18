@@ -16,5 +16,7 @@ public interface MessagesContract {
         void showChatDetails(Chat chat);
     }
 
-    interface Presenter extends BasePresenter {}
+    interface Presenter extends BasePresenter {
+        void refreshMessages();
+    }
 }

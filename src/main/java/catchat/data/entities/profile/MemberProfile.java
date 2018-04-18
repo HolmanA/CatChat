@@ -7,8 +7,7 @@ public class MemberProfile extends Profile {
     private String memberId;
 
     public MemberProfile(String id, String name, String memberId) {
-        this.id = id;
-        this.name = name;
+        super(id, name);
         this.memberId = memberId;
     }
 }
