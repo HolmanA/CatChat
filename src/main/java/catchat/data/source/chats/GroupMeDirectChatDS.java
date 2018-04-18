@@ -2,7 +2,6 @@ package catchat.data.source.chats;
 
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.chat.DirectChat;
-import catchat.data.entities.chat.GroupChat;
 import catchat.data.entities.profile.MemberProfile;
 import catchat.data.entities.profile.Profile;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -56,8 +55,23 @@ public class GroupMeDirectChatDS extends ChatDataSource {
     }
 
     @Override
-    public void getChat(Chat chat, GetChatCallback callback) {
-        callback.onChatLoaded(chat);
+    public void getMessages(String chatId, String beforeMessageId, String sinceMessageId, GetMessagesCallback callback) {
+
+    }
+
+    @Override
+    public void sendMessage(String chatId, String sourceGUID, String messageText, SendMessageCallback callback) {
+
+    }
+
+    @Override
+    public void likeMessage(String chatId, String messageId, LikeMessageCallback callback) {
+
+    }
+
+    @Override
+    public void unlikeMessage(String chatId, String messageId, UnlikeMessageCallback callback) {
+
     }
 
     private List<Chat> parseChats(String json) {

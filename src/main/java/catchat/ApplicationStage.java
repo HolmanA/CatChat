@@ -45,7 +45,7 @@ public class ApplicationStage extends Stage {
         BorderPane borderPane = new BorderPane();
 
         MessagesView messagesView = new MessagesView();
-        MessagesPresenter messagesPresenter = new MessagesPresenter(groupChatDS, messagesView);
+        MessagesPresenter messagesPresenter = new MessagesPresenter(messagesView);
         messagesView.setPresenter(messagesPresenter);
         messagesPresenter.start();
 

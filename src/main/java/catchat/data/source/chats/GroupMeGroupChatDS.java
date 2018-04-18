@@ -55,21 +55,23 @@ public class GroupMeGroupChatDS extends ChatDataSource {
     }
 
     @Override
-    public void getChat(Chat chat, GetChatCallback callback) {
-        HttpRequestFactory httpRequestFactory = new NetHttpTransport().createRequestFactory();
-        GenericUrl url = new GenericUrl(BASE_API_URL + "groups/" + chat.getId());
-        url.set("token", getAuthToken());
+    public void getMessages(String chatId, String beforeMessageId, String sinceMessageId, GetMessagesCallback callback) {
 
-        try {
-            HttpRequest httpRequest = httpRequestFactory.buildGetRequest(url);
-            HttpResponse httpResponse = httpRequest.execute();
-            String response = httpResponse.parseAsString();
-            callback.onChatLoaded(parseGroup(response));
-        } catch (IOException e) {
-            // TODO: Should parse out the return code from the http response and alert the callback accordingly
-            e.printStackTrace();
-            callback.dataNotAvailable();
-        }
+    }
+
+    @Override
+    public void sendMessage(String chatId, String sourceGUID, String messageText, SendMessageCallback callback) {
+
+    }
+
+    @Override
+    public void likeMessage(String chatId, String messageId, LikeMessageCallback callback) {
+
+    }
+
+    @Override
+    public void unlikeMessage(String chatId, String messageId, UnlikeMessageCallback callback) {
+
     }
 
     private List<Chat> parseGroups(String json) {
@@ -86,17 +88,6 @@ public class GroupMeGroupChatDS extends ChatDataSource {
             e.printStackTrace();
         }
         return groupList;
-    }
-
-    private Chat parseGroup(String json) {
-        Chat group = null;
-        try {
-            JsonNode groups = mapper.readTree(json).get("response");
-            group = parseGroupFromJson(groups);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return group;
     }
 
     private Chat parseGroupFromJson(JsonNode node) {
