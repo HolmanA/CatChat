@@ -2,7 +2,7 @@ package catchat.data.source.chats;
 
 import catchat.data.entities.chat.GroupChat;
 import catchat.data.entities.chat.Chat;
-import catchat.data.entities.profile.GroupMemberProfile;
+import catchat.data.entities.profile.MemberProfile;
 import catchat.data.entities.profile.Profile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +21,6 @@ import java.util.List;
  */
 public class GroupMeGroupChatDS extends ChatDataSource {
     private static GroupMeGroupChatDS INSTANCE;
-    private static final String BASE_API_URL = "https://api.groupme.com/v3/";
     private ObjectMapper mapper;
 
     private GroupMeGroupChatDS() {
@@ -36,7 +35,7 @@ public class GroupMeGroupChatDS extends ChatDataSource {
     }
 
     @Override
-    public void getChats(int page, int pageSize, String omit, GetChatsCallback callback) {
+    public void getChats(int page, int pageSize, GetChatsCallback callback) {
         HttpRequestFactory httpRequestFactory = new NetHttpTransport().createRequestFactory();
         GenericUrl url = new GenericUrl(BASE_API_URL + "groups");
         url.set("token", getAuthToken());
@@ -56,9 +55,9 @@ public class GroupMeGroupChatDS extends ChatDataSource {
     }
 
     @Override
-    public void getChat(String id, GetChatCallback callback) {
+    public void getChat(Chat chat, GetChatCallback callback) {
         HttpRequestFactory httpRequestFactory = new NetHttpTransport().createRequestFactory();
-        GenericUrl url = new GenericUrl(BASE_API_URL + "groups/" + id);
+        GenericUrl url = new GenericUrl(BASE_API_URL + "groups/" + chat.getId());
         url.set("token", getAuthToken());
 
         try {
@@ -112,7 +111,7 @@ public class GroupMeGroupChatDS extends ChatDataSource {
                 String nickname = member.get("nickname").asText();
                 String userId = member.get("user_id").asText();
                 String memberId = member.get("id").asText();
-                memberList.add(new GroupMemberProfile(userId, nickname, memberId));
+                memberList.add(new MemberProfile(userId, nickname, memberId));
             }
         }
         return new GroupChat(groupId, name, preview, memberList);

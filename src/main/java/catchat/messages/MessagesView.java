@@ -16,7 +16,6 @@ public class MessagesView extends Text implements MessagesContract.View {
     @Override
     public void setPresenter(MessagesContract.Presenter presenter) {
         this.presenter = presenter;
-        setText("No Chats Selected");
     }
 
     @Override

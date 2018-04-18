@@ -57,21 +57,19 @@ public class ChatsPresenter implements ChatsContract.Presenter, ChatDataSource.G
     @Override
     public void nextPage() {
         chatsPage++;
-        System.out.println("Page: " + chatsPage);
         refreshChats();
     }
 
     @Override
     public void refreshChats() {
-        System.out.println("Page: " + chatsPage);
-        dataSource.getChats(chatsPage, 5, "", this);
+        dataSource.getChats(chatsPage, 5, this);
 
     }
 
     @Override
     public void loadChat(Chat chat) {
         if (chat != null) {
-            dataSource.getChat(chat.getId(), chatCallback);
+            dataSource.getChat(chat, chatCallback);
         }
     }
 }
