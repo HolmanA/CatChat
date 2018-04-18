@@ -2,8 +2,8 @@ package catchat.data.source.chats;
 
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
-import catchat.data.source.BaseDataSource;
 import catchat.data.source.BaseCallback;
+import catchat.data.source.BaseDataSource;
 
 import java.util.List;
 

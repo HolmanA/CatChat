@@ -1,9 +1,9 @@
 package catchat.data.source.chats;
 
-import catchat.data.entities.chat.GroupChat;
 import catchat.data.entities.chat.Chat;
-import catchat.data.entities.message.Message;
+import catchat.data.entities.chat.GroupChat;
 import catchat.data.entities.message.GroupMessage;
+import catchat.data.entities.message.Message;
 import catchat.data.entities.profile.MemberProfile;
 import catchat.data.entities.profile.Profile;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -133,7 +133,8 @@ public class GroupMeGroupChatDS extends ChatDataSource {
                     String messageGUID = message.get("source_guid").asText();
                     String senderId = message.get("sender_id").asText();
                     String text = message.get("text").asText();
-                    messageList.add(new GroupMessage(messageId, messageGUID, text, senderId));
+                    long createdAt = message.get("created_at").asLong();
+                    messageList.add(new GroupMessage(messageId, messageGUID, text, senderId, createdAt));
                 }
             }
         } catch (IOException e) {

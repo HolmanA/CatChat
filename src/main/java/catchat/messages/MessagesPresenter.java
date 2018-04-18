@@ -4,6 +4,7 @@ import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
 import catchat.data.source.chats.ChatDataSource;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ public class MessagesPresenter implements MessagesContract.Presenter,
 
     @Override
     public void start() {
-
+        view.showNoChatSelected();
     }
 
     @Override
@@ -59,6 +60,11 @@ public class MessagesPresenter implements MessagesContract.Presenter,
 
     @Override
     public void onMessagesLoaded(List<Message> messages) {
-        view.showMessages(messages);
+        if (messages == null || messages.size() == 0) {
+            view.showNoMessages();
+        } else {
+            Collections.reverse(messages);
+            view.showMessages(messages);
+        }
     }
 }

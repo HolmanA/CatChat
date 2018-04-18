@@ -127,8 +127,9 @@ public class GroupMeDirectChatDS extends ChatDataSource {
                     String messageId = message.get("id").asText();
                     String messageGUID = message.get("source_guid").asText();
                     String senderId = message.get("sender_id").asText();
+                    long createdAt = message.get("created_at").asLong();
                     String text = message.get("text").asText();
-                    messageList.add(new DirectMessage(messageId, messageGUID, text, senderId));
+                    messageList.add(new DirectMessage(messageId, messageGUID, text, senderId, createdAt));
                 }
             }
         } catch (IOException e) {

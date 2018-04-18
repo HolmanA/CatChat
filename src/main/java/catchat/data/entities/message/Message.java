@@ -5,12 +5,14 @@ public abstract class Message {
     private String sourceGUID;
     private String text;
     private String senderId;
+    private long createdAt;
 
-    protected Message(String id, String sourceGUID, String text, String senderId) {
+    protected Message(String id, String sourceGUID, String text, String senderId, long createdAt) {
         this.id = id;
         this.sourceGUID = sourceGUID;
         this.text = text;
         this.senderId = senderId;
+        this.createdAt = createdAt;
     }
 
     public String getId() {
@@ -27,5 +29,9 @@ public abstract class Message {
 
     public String getSenderId() {
         return senderId;
+    }
+
+    public long getCreatedAt() {
+        return createdAt;
     }
 }

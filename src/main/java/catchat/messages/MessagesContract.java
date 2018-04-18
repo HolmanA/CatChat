@@ -13,7 +13,9 @@ import java.util.List;
 public interface MessagesContract {
     interface View extends BaseView<Presenter> {
         void showMessages(List<Message> messages);
+        void showNoMessages();
         void showChatDetails(Chat chat);
+        void showNoChatSelected();
     }
 
     interface Presenter extends BasePresenter {

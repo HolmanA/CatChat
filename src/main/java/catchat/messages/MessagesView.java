@@ -40,16 +40,26 @@ public class MessagesView extends VBox implements MessagesContract.View {
         ObservableList<Message> obsMessageList = FXCollections.observableArrayList(messages);
         messageList.setItems(obsMessageList);
         messageList.setCellFactory(param -> new MessageListCell());
+        messageList.scrollTo(messages.size() - 1);
+    }
+
+    @Override
+    public void showNoMessages() {
+        chatInfo.setText("No Messages");
     }
 
     @Override
     public void showChatDetails(Chat chat) {
         String preview = "Name: " + chat.getName();
-        preview += "\nPreview: " + chat.getPreview();
         preview += "\nMembers:";
         for (Profile p : chat.getMembers()) {
             preview += "\n\t" + p.getName();
         }
         chatInfo.setText(preview);
+    }
+
+    @Override
+    public void showNoChatSelected() {
+        chatInfo.setText("No Chat Selected");
     }
 }
