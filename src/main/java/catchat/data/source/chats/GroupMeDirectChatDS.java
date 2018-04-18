@@ -37,7 +37,7 @@ public class GroupMeDirectChatDS extends ChatDataSource {
     }
 
     @Override
-    public void getChats(int page, int pageSize, GetChatsCallback callback) {
+    public void getChats(int page, int pageSize, ChatsCallback callback) {
         HttpRequestFactory httpRequestFactory = new NetHttpTransport().createRequestFactory();
         GenericUrl url = new GenericUrl(BASE_API_URL + "chats");
         url.set("token", getAuthToken());
@@ -57,7 +57,7 @@ public class GroupMeDirectChatDS extends ChatDataSource {
     }
 
     @Override
-    public void getMessages(String chatId, String beforeMessageId, String sinceMessageId, GetMessagesCallback callback) {
+    public void getMessages(String chatId, String beforeMessageId, String sinceMessageId, MessagesCallback callback) {
         HttpRequestFactory httpRequestFactory = new NetHttpTransport().createRequestFactory();
         GenericUrl url = new GenericUrl(BASE_API_URL + "direct_messages");
         url.set("token", getAuthToken());
@@ -76,17 +76,17 @@ public class GroupMeDirectChatDS extends ChatDataSource {
     }
 
     @Override
-    public void sendMessage(String chatId, String sourceGUID, String messageText, SendMessageCallback callback) {
+    public void sendMessage(String chatId, String sourceGUID, String messageText, MessagesCallback callback) {
 
     }
 
     @Override
-    public void likeMessage(String chatId, String messageId, LikeMessageCallback callback) {
+    public void likeMessage(String chatId, String messageId, MessagesCallback callback) {
 
     }
 
     @Override
-    public void unlikeMessage(String chatId, String messageId, UnlikeMessageCallback callback) {
+    public void unlikeMessage(String chatId, String messageId, MessagesCallback callback) {
 
     }
 

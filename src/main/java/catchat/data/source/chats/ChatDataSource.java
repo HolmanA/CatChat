@@ -13,39 +13,24 @@ import java.util.List;
 public abstract class ChatDataSource extends BaseDataSource {
     protected static final String BASE_API_URL = "https://api.groupme.com/v3/";
 
-    public interface GetChatCallback extends BaseCallback {
-        void onChatLoaded(Chat chat);
-        void setDataSource(ChatDataSource dataSource);
-    }
-
-    public interface GetChatsCallback extends BaseCallback {
+    public interface ChatsCallback extends BaseCallback {
         void onChatsLoaded(List<Chat> chats);
     }
 
-    public interface GetMessagesCallback extends BaseCallback {
+    public interface MessagesCallback extends BaseCallback {
+        void setDataSource(ChatDataSource dataSource);
+        void onChatLoaded(Chat chat);
         void onMessagesLoaded(List<Message> messages);
     }
 
-    public interface SendMessageCallback extends BaseCallback {
-        void onMessageSent();
-    }
-
-    public interface LikeMessageCallback extends BaseCallback {
-        void onMessageLiked();
-    }
-
-    public interface UnlikeMessageCallback extends BaseCallback {
-        void onMessageUnliked();
-    }
-
-    public void getChat(Chat chat, GetChatCallback callback) {
+    public void getChat(Chat chat, MessagesCallback callback) {
         callback.setDataSource(this);
         callback.onChatLoaded(chat);
     }
 
-    abstract public void getChats(int page, int pageSize, GetChatsCallback callback);
-    abstract public void getMessages(String chatId, String beforeMessageId, String sinceMessageId, GetMessagesCallback callback);
-    abstract public void sendMessage(String chatId, String sourceGUID, String messageText, SendMessageCallback callback);
-    abstract public void likeMessage(String chatId, String messageId, LikeMessageCallback callback);
-    abstract public void unlikeMessage(String chatId, String messageId, UnlikeMessageCallback callback);
+    abstract public void getChats(int page, int pageSize, ChatsCallback callback);
+    abstract public void getMessages(String chatId, String beforeMessageId, String sinceMessageId, MessagesCallback callback);
+    abstract public void sendMessage(String chatId, String sourceGUID, String messageText, MessagesCallback callback);
+    abstract public void likeMessage(String chatId, String messageId, MessagesCallback callback);
+    abstract public void unlikeMessage(String chatId, String messageId, MessagesCallback callback);
 }

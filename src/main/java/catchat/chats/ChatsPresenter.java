@@ -8,15 +8,15 @@ import java.util.List;
 /**
  * Created by andrew on 4/15/18.
  */
-public class ChatsPresenter implements ChatsContract.Presenter, ChatDataSource.GetChatsCallback {
+public class ChatsPresenter implements ChatsContract.Presenter, ChatDataSource.ChatsCallback {
     private ChatDataSource dataSource;
     private ChatsContract.View view;
-    private ChatDataSource.GetChatCallback chatCallback;
+    private ChatDataSource.MessagesCallback chatCallback;
     private int chatsPage;
 
     public ChatsPresenter(ChatDataSource dataSource,
                           ChatsContract.View view,
-                          ChatDataSource.GetChatCallback chatCallback) {
+                          ChatDataSource.MessagesCallback chatCallback) {
         this.dataSource = dataSource;
         this.view = view;
         this.chatCallback = chatCallback;

@@ -10,9 +10,7 @@ import java.util.List;
 /**
  * Created by andrew on 4/16/18.
  */
-public class MessagesPresenter implements MessagesContract.Presenter,
-        ChatDataSource.GetChatCallback,
-        ChatDataSource.GetMessagesCallback {
+public class MessagesPresenter implements MessagesContract.Presenter, ChatDataSource.MessagesCallback {
 
     private ChatDataSource dataSource;
     private MessagesContract.View view;
