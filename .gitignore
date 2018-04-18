@@ -32,7 +32,7 @@ build/
 # Intellij Files
 .idea/
 
-auth.properties.xml
+auth_properties.xml
 local.properties
 *.iml
 *.ipr
