@@ -8,10 +8,7 @@ import catchat.data.entities.profile.MemberProfile;
 import catchat.data.entities.profile.Profile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 
 import java.io.IOException;
@@ -77,7 +74,24 @@ public class GroupMeDirectChatDS extends ChatDataSource {
 
     @Override
     public void sendMessage(String chatId, String sourceGUID, String messageText, MessagesCallback callback) {
+        HttpRequestFactory httpRequestFactory = new NetHttpTransport().createRequestFactory();
+        GenericUrl url = new GenericUrl(BASE_API_URL + "direct_messages");
+        url.set("token", getAuthToken());
 
+        sourceGUID = BASE_SOURCE_GUID + sourceGUID;
+        byte[] content = createMessage(chatId, sourceGUID, messageText);
+        HttpContent httpContent = new ByteArrayContent("application/json", content);
+
+        try {
+            HttpRequest httpRequest = httpRequestFactory.buildPostRequest(url, httpContent);
+            HttpResponse httpResponse = httpRequest.execute();
+            String response = httpResponse.parseAsString();
+            callback.onMessageSent();
+        } catch (IOException e) {
+            // TODO: Should parse out the return code from the http response and alert the callback accordingly
+            e.printStackTrace();
+            callback.dataNotAvailable();
+        }
     }
 
     @Override
@@ -136,5 +150,18 @@ public class GroupMeDirectChatDS extends ChatDataSource {
             e.printStackTrace();
         }
         return messageList;
+    }
+
+    private byte[] createMessage(String chatId, String sourceGUID, String messageText) {
+        String message = "{\"direct_message\": {";
+        message += "\"source_guid\": \"" + sourceGUID + "\", ";
+        message += "\"recipient_id\": \"" + chatId + "\", ";
+        message += "\"text\": \"" + messageText + "\"}}";
+        try {
+            return message.getBytes("UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new byte[0];
+        }
     }
 }
