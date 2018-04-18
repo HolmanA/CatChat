@@ -16,9 +16,12 @@ public interface MessagesContract {
         void showNoMessages();
         void showChatDetails(Chat chat);
         void showNoChatSelected();
+        String getMessageText();
+        void clearMessageText();
     }
 
     interface Presenter extends BasePresenter {
         void refreshMessages();
+        void sendMessage();
     }
 }

@@ -12,6 +12,7 @@ import java.util.List;
  */
 public abstract class ChatDataSource extends BaseDataSource {
     protected static final String BASE_API_URL = "https://api.groupme.com/v3/";
+    protected static final String BASE_SOURCE_GUID = "com.catchat.guid-";
 
     public interface ChatsCallback extends BaseCallback {
         void onChatsLoaded(List<Chat> chats);
@@ -21,6 +22,7 @@ public abstract class ChatDataSource extends BaseDataSource {
         void setDataSource(ChatDataSource dataSource);
         void onChatLoaded(Chat chat);
         void onMessagesLoaded(List<Message> messages);
+        void onMessageSent();
     }
 
     public void getChat(Chat chat, MessagesCallback callback) {

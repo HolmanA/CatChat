@@ -15,9 +15,11 @@ public class MessagesPresenter implements MessagesContract.Presenter, ChatDataSo
     private ChatDataSource dataSource;
     private MessagesContract.View view;
     private Chat chat;
+    private int sentId;
 
     public MessagesPresenter(MessagesContract.View view) {
         this.view = view;
+        sentId = 1;
     }
 
     @Override
@@ -53,7 +55,17 @@ public class MessagesPresenter implements MessagesContract.Presenter, ChatDataSo
 
     @Override
     public void refreshMessages() {
-        dataSource.getMessages(chat.getId(), "", "", this);
+        if (dataSource != null) {
+            dataSource.getMessages(chat.getId(), "", "", this);
+        }
+    }
+
+    @Override
+    public void sendMessage() {
+        String text;
+        if (dataSource != null && !(text = view.getMessageText()).equals("")) {
+            dataSource.sendMessage(chat.getId(), Integer.toString(sentId++), text, this);
+        }
     }
 
     @Override
@@ -64,5 +76,11 @@ public class MessagesPresenter implements MessagesContract.Presenter, ChatDataSo
             Collections.reverse(messages);
             view.showMessages(messages);
         }
+    }
+
+    @Override
+    public void onMessageSent() {
+        view.clearMessageText();
+        refreshMessages();
     }
 }

@@ -33,6 +33,7 @@ public class MessagesView extends VBox implements MessagesContract.View {
         refresh.setOnMouseClicked(event -> presenter.refreshMessages());
         input = new TextField();
         sendMessage = new Button("Send");
+        sendMessage.setOnMouseClicked(event -> presenter.sendMessage());
         HBox sendBox = new HBox();
         sendBox.getChildren().addAll(input, sendMessage);
         getChildren().addAll(chatInfo, messageList, refresh, sendBox);
@@ -69,5 +70,15 @@ public class MessagesView extends VBox implements MessagesContract.View {
     @Override
     public void showNoChatSelected() {
         chatInfo.setText("No Chat Selected");
+    }
+
+    @Override
+    public String getMessageText() {
+        return input.getText();
+    }
+
+    @Override
+    public void clearMessageText() {
+        input.clear();
     }
 }
