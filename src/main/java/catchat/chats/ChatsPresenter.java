@@ -34,12 +34,17 @@ public class ChatsPresenter implements ChatsContract.Presenter, ChatDataSource.C
 
     @Override
     public void dataNotAvailable() {
-
+        System.out.println("Data Not Available");
     }
 
     @Override
     public void notAuthorized() {
+        System.out.println("Not Authorized");
+    }
 
+    @Override
+    public void unknownResponseCode(String code) {
+        System.out.println("Unknown Response Code: " + code);
     }
 
     @Override
@@ -63,7 +68,6 @@ public class ChatsPresenter implements ChatsContract.Presenter, ChatDataSource.C
     @Override
     public void refreshChats() {
         dataSource.getChats(chatsPage, 5, this);
-
     }
 
     @Override

@@ -44,12 +44,20 @@ public class GroupMeDirectChatDS extends ChatDataSource {
         try {
             HttpRequest httpRequest = httpRequestFactory.buildGetRequest(url);
             HttpResponse httpResponse = httpRequest.execute();
-            String response = httpResponse.parseAsString();
-            callback.onChatsLoaded(parseChats(response));
+            JsonNode responseTree = mapper.readTree(httpResponse.getContent());
+            JsonNode metaNode = responseTree.get("meta");
+
+            String responseCode = metaNode.get("code").asText();
+            switch (responseCode) {
+                case RESPONSE_OK :
+                    JsonNode responseNode = responseTree.get("response");
+                    callback.onChatsLoaded(parseChats(responseNode));
+                    break;
+                default :
+                    callback.unknownResponseCode(responseCode);
+            }
         } catch (IOException e) {
-            // TODO: Should parse out the return code from the http response and alert the callback accordingly
             e.printStackTrace();
-            callback.dataNotAvailable();
         }
     }
 
@@ -63,12 +71,20 @@ public class GroupMeDirectChatDS extends ChatDataSource {
         try {
             HttpRequest httpRequest = httpRequestFactory.buildGetRequest(url);
             HttpResponse httpResponse = httpRequest.execute();
-            String response = httpResponse.parseAsString();
-            callback.onMessagesLoaded(parseMessages(response));
+            JsonNode responseTree = mapper.readTree(httpResponse.getContent());
+            JsonNode metaNode = responseTree.get("meta");
+
+            String responseCode = metaNode.get("code").asText();
+            switch (responseCode) {
+                case RESPONSE_OK :
+                    JsonNode responseNode = responseTree.get("response");
+                    callback.onMessagesLoaded(parseMessages(responseNode));
+                    break;
+                default :
+                    callback.unknownResponseCode(responseCode);
+            }
         } catch (IOException e) {
-            // TODO: Should parse out the return code from the http response and alert the callback accordingly
             e.printStackTrace();
-            callback.dataNotAvailable();
         }
     }
 
@@ -85,12 +101,19 @@ public class GroupMeDirectChatDS extends ChatDataSource {
         try {
             HttpRequest httpRequest = httpRequestFactory.buildPostRequest(url, httpContent);
             HttpResponse httpResponse = httpRequest.execute();
-            String response = httpResponse.parseAsString();
-            callback.onMessageSent();
+            JsonNode responseTree = mapper.readTree(httpResponse.getContent());
+            JsonNode metaNode = responseTree.get("meta");
+
+            String responseCode = metaNode.get("code").asText();
+            switch (responseCode) {
+                case RESPONSE_CREATED :
+                    callback.onMessageSent();
+                    break;
+                default :
+                    callback.unknownResponseCode(responseCode);
+            }
         } catch (IOException e) {
-            // TODO: Should parse out the return code from the http response and alert the callback accordingly
             e.printStackTrace();
-            callback.dataNotAvailable();
         }
     }
 
@@ -104,50 +127,37 @@ public class GroupMeDirectChatDS extends ChatDataSource {
 
     }
 
-    private List<Chat> parseChats(String json) {
+    private List<Chat> parseChats(JsonNode responseNode) {
         List<Chat> chatList = new ArrayList<>();
-        try {
-            JsonNode chats = mapper.readTree(json).get("response");
-            if (chats.isArray()) {
-                for (JsonNode node : chats) {
-                    chatList.add(parseChatFromJson(node));
-                }
+        if (responseNode.isArray()) {
+            for (JsonNode node : responseNode) {
+                List<Profile> memberList = new ArrayList<>();
+                String preview = node.get("last_message").get("text").asText();
+
+                JsonNode otherMember = node.get("other_user");
+                String otherName = otherMember.get("name").asText();
+                String otherId = otherMember.get("id").asText();
+                memberList.add(new MemberProfile(otherId, otherName, ""));
+
+                chatList.add(new DirectChat(otherId, otherName, preview, memberList));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return chatList;
     }
 
-    private Chat parseChatFromJson(JsonNode node) {
-        List<Profile> memberList = new ArrayList<>();
-
-        String preview = node.get("last_message").get("text").asText();
-
-        JsonNode otherMember = node.get("other_user");
-        String otherName = otherMember.get("name").asText();
-        String otherId = otherMember.get("id").asText();
-
-        memberList.add(new MemberProfile(otherId, otherName, ""));
-        return new DirectChat(otherId, otherName, preview, memberList);
-    }
-
-    private List<Message> parseMessages(String json) {
+    private List<Message> parseMessages(JsonNode responseNode) {
         List<Message> messageList = new ArrayList<>();
-        try {
-            JsonNode messages = mapper.readTree(json).get("response").get("direct_messages");
-            if (messages.isArray()) {
-                for (JsonNode message : messages) {
-                    String messageId = message.get("id").asText();
-                    String messageGUID = message.get("source_guid").asText();
-                    String senderId = message.get("sender_id").asText();
-                    long createdAt = message.get("created_at").asLong();
-                    String text = message.get("text").asText();
-                    messageList.add(new DirectMessage(messageId, messageGUID, text, senderId, createdAt));
-                }
+        JsonNode messages = responseNode.get("direct_messages");
+
+        if (messages.isArray()) {
+            for (JsonNode message : messages) {
+                String messageId = message.get("id").asText();
+                String messageGUID = message.get("source_guid").asText();
+                String senderId = message.get("sender_id").asText();
+                long createdAt = message.get("created_at").asLong();
+                String text = message.get("text").asText();
+                messageList.add(new DirectMessage(messageId, messageGUID, text, senderId, createdAt));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return messageList;
     }

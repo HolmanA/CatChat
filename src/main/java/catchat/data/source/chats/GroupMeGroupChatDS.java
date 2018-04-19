@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.http.json.JsonHttpContent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,12 +44,20 @@ public class GroupMeGroupChatDS extends ChatDataSource {
         try {
             HttpRequest httpRequest = httpRequestFactory.buildGetRequest(url);
             HttpResponse httpResponse = httpRequest.execute();
-            String response = httpResponse.parseAsString();
-            callback.onChatsLoaded(parseGroups(response));
+            JsonNode responseTree = mapper.readTree(httpResponse.getContent());
+            JsonNode metaNode = responseTree.get("meta");
+
+            String responseCode = metaNode.get("code").asText();
+            switch (responseCode) {
+                case RESPONSE_OK :
+                    JsonNode responseNode = responseTree.get("response");
+                    callback.onChatsLoaded(parseGroups(responseNode));
+                    break;
+                default :
+                    callback.unknownResponseCode(responseCode);
+            }
         } catch (IOException e) {
-            // TODO: Should parse out the return code from the http response and alert the callback accordingly
             e.printStackTrace();
-            callback.dataNotAvailable();
         }
     }
 
@@ -63,12 +70,20 @@ public class GroupMeGroupChatDS extends ChatDataSource {
         try {
             HttpRequest httpRequest = httpRequestFactory.buildGetRequest(url);
             HttpResponse httpResponse = httpRequest.execute();
-            String response = httpResponse.parseAsString();
-            callback.onMessagesLoaded(parseMessages(response));
+            JsonNode responseTree = mapper.readTree(httpResponse.getContent());
+            JsonNode metaNode = responseTree.get("meta");
+
+            String responseCode = metaNode.get("code").asText();
+            switch (responseCode) {
+                case RESPONSE_OK :
+                    JsonNode responseNode = responseTree.get("response");
+                    callback.onMessagesLoaded(parseMessages(responseNode));
+                    break;
+                default :
+                    callback.unknownResponseCode(responseCode);
+            }
         } catch (IOException e) {
-            // TODO: Should parse out the return code from the http response and alert the callback accordingly
             e.printStackTrace();
-            callback.dataNotAvailable();
         }
     }
 
@@ -85,12 +100,19 @@ public class GroupMeGroupChatDS extends ChatDataSource {
         try {
             HttpRequest httpRequest = httpRequestFactory.buildPostRequest(url, httpContent);
             HttpResponse httpResponse = httpRequest.execute();
-            String response = httpResponse.parseAsString();
-            callback.onMessageSent();
+            JsonNode responseTree = mapper.readTree(httpResponse.getContent());
+            JsonNode metaNode = responseTree.get("meta");
+
+            String responseCode = metaNode.get("code").asText();
+            switch (responseCode) {
+                case RESPONSE_CREATED :
+                    callback.onMessageSent();
+                    break;
+                default :
+                    callback.unknownResponseCode(responseCode);
+            }
         } catch (IOException e) {
-            // TODO: Should parse out the return code from the http response and alert the callback accordingly
             e.printStackTrace();
-            callback.dataNotAvailable();
         }
     }
 
@@ -104,56 +126,42 @@ public class GroupMeGroupChatDS extends ChatDataSource {
 
     }
 
-    private List<Chat> parseGroups(String json) {
+    private List<Chat> parseGroups(JsonNode responseNode) {
         List<Chat> groupList = new ArrayList<>();
 
-        try {
-            JsonNode groups = mapper.readTree(json).get("response");
-            if (groups.isArray()) {
-                for (JsonNode node : groups) {
-                    groupList.add(parseGroupFromJson(node));
+        if (responseNode.isArray()) {
+            for (JsonNode node : responseNode) {
+                String groupId = node.get("group_id").asText();
+                String name = node.get("name").asText();
+                String preview = node.get("messages").get("preview").get("text").asText();
+                JsonNode members = node.get("members");
+
+                List<Profile> memberList = new ArrayList<>();
+                if (members.isArray()) {
+                    for (JsonNode member : members) {
+                        String nickname = member.get("nickname").asText();
+                        String userId = member.get("user_id").asText();
+                        String memberId = member.get("id").asText();
+                        memberList.add(new MemberProfile(userId, nickname, memberId));
+                    }
                 }
+                groupList.add(new GroupChat(groupId, name, preview, memberList));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return groupList;
     }
 
-    private Chat parseGroupFromJson(JsonNode node) {
-        String groupId = node.get("group_id").asText();
-        String name = node.get("name").asText();
-        String preview = node.get("messages").get("preview").get("text").asText();
-
-        JsonNode members = node.get("members");
-        List<Profile> memberList = new ArrayList<>();
-        if (members.isArray()) {
-            for (JsonNode member : members) {
-                String nickname = member.get("nickname").asText();
-                String userId = member.get("user_id").asText();
-                String memberId = member.get("id").asText();
-                memberList.add(new MemberProfile(userId, nickname, memberId));
-            }
-        }
-        return new GroupChat(groupId, name, preview, memberList);
-    }
-
-    private List<Message> parseMessages(String json) {
+    private List<Message> parseMessages(JsonNode responseNode) {
         List<Message> messageList = new ArrayList<>();
-        try {
-            JsonNode messages = mapper.readTree(json).get("response").get("messages");
-            if (messages.isArray()) {
-                for (JsonNode message : messages) {
-                    String messageId = message.get("id").asText();
-                    String messageGUID = message.get("source_guid").asText();
-                    String senderId = message.get("sender_id").asText();
-                    String text = message.get("text").asText();
-                    long createdAt = message.get("created_at").asLong();
-                    messageList.add(new GroupMessage(messageId, messageGUID, text, senderId, createdAt));
-                }
+        if (responseNode.isArray()) {
+            for (JsonNode node : responseNode) {
+                String messageId = node.get("id").asText();
+                String messageGUID = node.get("source_guid").asText();
+                String senderId = node.get("sender_id").asText();
+                String text = node.get("text").asText();
+                long createdAt = node.get("created_at").asLong();
+                messageList.add(new GroupMessage(messageId, messageGUID, text, senderId, createdAt));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return messageList;
     }

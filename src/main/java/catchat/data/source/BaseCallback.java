@@ -6,4 +6,5 @@ package catchat.data.source;
 public interface BaseCallback {
     void dataNotAvailable();
     void notAuthorized();
+    void unknownResponseCode(String code);
 }

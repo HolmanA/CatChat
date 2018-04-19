@@ -14,6 +14,19 @@ public abstract class ChatDataSource extends BaseDataSource {
     protected static final String BASE_API_URL = "https://api.groupme.com/v3/";
     protected static final String BASE_SOURCE_GUID = "com.catchat.guid-";
 
+    protected static final String RESPONSE_OK = "200";
+    protected static final String RESPONSE_CREATED = "201";
+    protected static final String RESPONSE_N0_CONTENT = "204";
+    protected static final String RESPONSE_N0T_MODIFIED = "304";
+    protected static final String RESPONSE_BAD_REQUEST = "400";
+    protected static final String RESPONSE_UNAUTHORIZED = "401";
+    protected static final String RESPONSE_FORBIDDEN = "403";
+    protected static final String RESPONSE_NOT_FOUND = "404";
+    protected static final String RESPONSE_ENHANCE_YOUR_CALM = "420";
+    protected static final String RESPONSE_INTERNAL_SERVER_ERROR = "500";
+    protected static final String RESPONSE_BAD_GATEWAY = "502";
+    protected static final String RESPONSE_SERVICE_UNAVAILABLE = "503";
+
     public interface ChatsCallback extends BaseCallback {
         void onChatsLoaded(List<Chat> chats);
     }
