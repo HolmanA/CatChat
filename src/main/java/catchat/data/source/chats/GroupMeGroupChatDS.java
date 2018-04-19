@@ -153,13 +153,15 @@ public class GroupMeGroupChatDS extends ChatDataSource {
 
     private List<Message> parseMessages(JsonNode responseNode) {
         List<Message> messageList = new ArrayList<>();
-        if (responseNode.isArray()) {
-            for (JsonNode node : responseNode) {
-                String messageId = node.get("id").asText();
-                String messageGUID = node.get("source_guid").asText();
-                String senderId = node.get("sender_id").asText();
-                String text = node.get("text").asText();
-                long createdAt = node.get("created_at").asLong();
+
+        JsonNode messages = responseNode.get("messages");
+        if (messages.isArray()) {
+            for (JsonNode message : messages) {
+                String messageId = message.get("id").asText();
+                String messageGUID = message.get("source_guid").asText();
+                String senderId = message.get("sender_id").asText();
+                String text = message.get("text").asText();
+                long createdAt = message.get("created_at").asLong();
                 messageList.add(new GroupMessage(messageId, messageGUID, text, senderId, createdAt));
             }
         }
