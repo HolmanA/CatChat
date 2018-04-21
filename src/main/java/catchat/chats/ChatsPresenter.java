@@ -1,22 +1,22 @@
 package catchat.chats;
 
 import catchat.data.entities.chat.Chat;
-import catchat.data.source.chats.ChatDataSource;
+import catchat.data.source.DataSource;
 
 import java.util.List;
 
 /**
  * Created by andrew on 4/15/18.
  */
-public class ChatsPresenter implements ChatsContract.Presenter, ChatDataSource.ChatsCallback {
-    private ChatDataSource dataSource;
+public class ChatsPresenter implements ChatsContract.Presenter, DataSource.ChatsCallback {
+    private DataSource dataSource;
     private ChatsContract.View view;
-    private ChatDataSource.MessagesCallback chatCallback;
+    private DataSource.MessagesCallback chatCallback;
     private int chatsPage;
 
-    public ChatsPresenter(ChatDataSource dataSource,
+    public ChatsPresenter(DataSource dataSource,
                           ChatsContract.View view,
-                          ChatDataSource.MessagesCallback chatCallback) {
+                          DataSource.MessagesCallback chatCallback) {
         this.dataSource = dataSource;
         this.view = view;
         this.chatCallback = chatCallback;

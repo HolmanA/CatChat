@@ -1,8 +1,8 @@
-package catchat.data.source.chats;
+package catchat.data.source;
 
 import catchat.data.entities.chat.Chat;
-import catchat.data.entities.chat.GroupChat;
-import catchat.data.entities.message.GroupMessage;
+import catchat.data.entities.chat.DirectChat;
+import catchat.data.entities.message.DirectMessage;
 import catchat.data.entities.message.Message;
 import catchat.data.entities.profile.MemberProfile;
 import catchat.data.entities.profile.Profile;
@@ -16,19 +16,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by andrew on 4/13/18.
+ * Created by andrew on 4/17/18.
  */
-public class GroupMeGroupChatDS extends ChatDataSource {
-    private static GroupMeGroupChatDS INSTANCE;
+public class GroupMeDirectDS extends DataSource {
+    private static GroupMeDirectDS INSTANCE;
     private ObjectMapper mapper;
 
-    private GroupMeGroupChatDS() {
+    private GroupMeDirectDS() {
         mapper = new ObjectMapper();
     }
 
-    public static GroupMeGroupChatDS getInstance() {
+    public static GroupMeDirectDS getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new GroupMeGroupChatDS();
+            INSTANCE = new GroupMeDirectDS();
         }
         return INSTANCE;
     }
@@ -36,7 +36,7 @@ public class GroupMeGroupChatDS extends ChatDataSource {
     @Override
     public void getChats(int page, int pageSize, ChatsCallback callback) {
         HttpRequestFactory httpRequestFactory = new NetHttpTransport().createRequestFactory();
-        GenericUrl url = new GenericUrl(BASE_API_URL + "groups");
+        GenericUrl url = new GenericUrl(BASE_API_URL + "chats");
         url.set("token", getAuthToken());
         url.set("page", page);
         url.set("per_page", pageSize);
@@ -51,7 +51,7 @@ public class GroupMeGroupChatDS extends ChatDataSource {
             switch (responseCode) {
                 case RESPONSE_OK :
                     JsonNode responseNode = responseTree.get("response");
-                    callback.onChatsLoaded(parseGroups(responseNode));
+                    callback.onChatsLoaded(parseChats(responseNode));
                     break;
                 default :
                     callback.unknownResponseCode(responseCode);
@@ -64,8 +64,9 @@ public class GroupMeGroupChatDS extends ChatDataSource {
     @Override
     public void getMessages(String chatId, String beforeMessageId, String sinceMessageId, MessagesCallback callback) {
         HttpRequestFactory httpRequestFactory = new NetHttpTransport().createRequestFactory();
-        GenericUrl url = new GenericUrl(BASE_API_URL + "groups/" + chatId + "/messages");
+        GenericUrl url = new GenericUrl(BASE_API_URL + "direct_messages");
         url.set("token", getAuthToken());
+        url.set("other_user_id", chatId);
 
         try {
             HttpRequest httpRequest = httpRequestFactory.buildGetRequest(url);
@@ -90,7 +91,7 @@ public class GroupMeGroupChatDS extends ChatDataSource {
     @Override
     public void sendMessage(String chatId, String sourceGUID, String messageText, MessagesCallback callback) {
         HttpRequestFactory httpRequestFactory = new NetHttpTransport().createRequestFactory();
-        GenericUrl url = new GenericUrl(BASE_API_URL + "groups/" + chatId + "/messages");
+        GenericUrl url = new GenericUrl(BASE_API_URL + "direct_messages");
         url.set("token", getAuthToken());
 
         sourceGUID = BASE_SOURCE_GUID + sourceGUID;
@@ -126,51 +127,45 @@ public class GroupMeGroupChatDS extends ChatDataSource {
 
     }
 
-    private List<Chat> parseGroups(JsonNode responseNode) {
-        List<Chat> groupList = new ArrayList<>();
-
+    private List<Chat> parseChats(JsonNode responseNode) {
+        List<Chat> chatList = new ArrayList<>();
         if (responseNode.isArray()) {
             for (JsonNode node : responseNode) {
-                String groupId = node.get("group_id").asText();
-                String name = node.get("name").asText();
-                String preview = node.get("messages").get("preview").get("text").asText();
-                JsonNode members = node.get("members");
-
                 List<Profile> memberList = new ArrayList<>();
-                if (members.isArray()) {
-                    for (JsonNode member : members) {
-                        String nickname = member.get("nickname").asText();
-                        String userId = member.get("user_id").asText();
-                        String memberId = member.get("id").asText();
-                        memberList.add(new MemberProfile(userId, nickname, memberId));
-                    }
-                }
-                groupList.add(new GroupChat(groupId, name, preview, memberList));
+                String preview = node.get("last_message").get("text").asText();
+
+                JsonNode otherMember = node.get("other_user");
+                String otherName = otherMember.get("name").asText();
+                String otherId = otherMember.get("id").asText();
+                memberList.add(new MemberProfile(otherId, otherName, ""));
+
+                chatList.add(new DirectChat(otherId, otherName, preview, memberList));
             }
         }
-        return groupList;
+        return chatList;
     }
 
     private List<Message> parseMessages(JsonNode responseNode) {
         List<Message> messageList = new ArrayList<>();
+        JsonNode messages = responseNode.get("direct_messages");
 
-        JsonNode messages = responseNode.get("messages");
         if (messages.isArray()) {
             for (JsonNode message : messages) {
                 String messageId = message.get("id").asText();
                 String messageGUID = message.get("source_guid").asText();
                 String senderId = message.get("sender_id").asText();
-                String text = message.get("text").asText();
                 long createdAt = message.get("created_at").asLong();
-                messageList.add(new GroupMessage(messageId, messageGUID, text, senderId, createdAt));
+                String text = message.get("text").asText();
+                messageList.add(new DirectMessage(messageId, messageGUID, text, senderId, createdAt));
             }
         }
         return messageList;
     }
 
     private byte[] createMessage(String chatId, String sourceGUID, String messageText) {
-        String message = "{\"message\": {";
+        String message = "{\"direct_message\": {";
         message += "\"source_guid\": \"" + sourceGUID + "\", ";
+        message += "\"recipient_id\": \"" + chatId + "\", ";
         message += "\"text\": \"" + messageText + "\"}}";
         try {
             return message.getBytes("UTF-8");

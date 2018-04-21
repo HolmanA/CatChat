@@ -3,9 +3,9 @@ package catchat;
 import catchat.chats.ChatsPresenter;
 import catchat.chats.ChatsView;
 import catchat.data.auth.OAuthService;
-import catchat.data.source.chats.ChatDataSource;
-import catchat.data.source.chats.GroupMeDirectChatDS;
-import catchat.data.source.chats.GroupMeGroupChatDS;
+import catchat.data.source.DataSource;
+import catchat.data.source.GroupMeDirectDS;
+import catchat.data.source.GroupMeGroupDS;
 import catchat.messages.MessagesPresenter;
 import catchat.messages.MessagesView;
 import javafx.scene.Scene;
@@ -17,13 +17,13 @@ import javafx.stage.Stage;
  */
 public class ApplicationStage extends Stage {
     private OAuthService service;
-    private ChatDataSource groupChatDS;
-    private ChatDataSource directChatDS;
+    private DataSource groupChatDS;
+    private DataSource directChatDS;
 
     public ApplicationStage(OAuthService service) {
         this.service = service;
-        this.groupChatDS = GroupMeGroupChatDS.getInstance();
-        this.directChatDS = GroupMeDirectChatDS.getInstance();
+        this.groupChatDS = GroupMeGroupDS.getInstance();
+        this.directChatDS = GroupMeDirectDS.getInstance();
         groupChatDS.setAuthenticationToken(service.getAPIToken());
         directChatDS.setAuthenticationToken(service.getAPIToken());
     }

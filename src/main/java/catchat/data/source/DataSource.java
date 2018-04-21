@@ -1,16 +1,14 @@
-package catchat.data.source.chats;
+package catchat.data.source;
 
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
-import catchat.data.source.BaseCallback;
-import catchat.data.source.BaseDataSource;
 
 import java.util.List;
 
 /**
  * Created by andrew on 4/13/18.
  */
-public abstract class ChatDataSource extends BaseDataSource {
+public abstract class DataSource {
     protected static final String BASE_API_URL = "https://api.groupme.com/v3/";
     protected static final String BASE_SOURCE_GUID = "com.catchat.guid-";
 
@@ -27,12 +25,22 @@ public abstract class ChatDataSource extends BaseDataSource {
     protected static final String RESPONSE_BAD_GATEWAY = "502";
     protected static final String RESPONSE_SERVICE_UNAVAILABLE = "503";
 
+    private String authToken;
+
+    public void setAuthenticationToken(String authToken) {
+        this.authToken = authToken;
+    }
+
+    protected String getAuthToken() {
+        return authToken;
+    }
+
     public interface ChatsCallback extends BaseCallback {
         void onChatsLoaded(List<Chat> chats);
     }
 
     public interface MessagesCallback extends BaseCallback {
-        void setDataSource(ChatDataSource dataSource);
+        void setDataSource(DataSource dataSource);
         void onChatLoaded(Chat chat);
         void onMessagesLoaded(List<Message> messages);
         void onMessageSent();

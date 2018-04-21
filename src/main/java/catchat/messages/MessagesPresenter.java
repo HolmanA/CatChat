@@ -2,7 +2,7 @@ package catchat.messages;
 
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
-import catchat.data.source.chats.ChatDataSource;
+import catchat.data.source.DataSource;
 
 import java.util.Collections;
 import java.util.List;
@@ -10,9 +10,9 @@ import java.util.List;
 /**
  * Created by andrew on 4/16/18.
  */
-public class MessagesPresenter implements MessagesContract.Presenter, ChatDataSource.MessagesCallback {
+public class MessagesPresenter implements MessagesContract.Presenter, DataSource.MessagesCallback {
 
-    private ChatDataSource dataSource;
+    private DataSource dataSource;
     private MessagesContract.View view;
     private Chat chat;
     private int sentId;
@@ -55,7 +55,7 @@ public class MessagesPresenter implements MessagesContract.Presenter, ChatDataSo
     }
 
     @Override
-    public void setDataSource(ChatDataSource dataSource) {
+    public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
