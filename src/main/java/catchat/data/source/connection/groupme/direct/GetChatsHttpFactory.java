@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by andrew on 4/21/18.
  */
-public class GetChatsHttpFactory implements HttpFactory {
+public class GetChatsHttpFactory implements HttpFactory<List<Chat>> {
     private static final String URL = "https://api.groupme.com/v3/chats";
     private GenericUrl url;
 

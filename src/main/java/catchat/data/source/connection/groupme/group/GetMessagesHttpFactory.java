@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by andrew on 4/21/18.
  */
-public class GetMessagesHttpFactory implements HttpFactory {
+public class GetMessagesHttpFactory implements HttpFactory<List<Message>> {
     private static final String URL = "https://api.groupme.com/v3/groups/";
     private GenericUrl url;
 
