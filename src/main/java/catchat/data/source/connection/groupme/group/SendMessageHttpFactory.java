@@ -15,7 +15,7 @@ public class SendMessageHttpFactory implements HttpFactory {
     private GenericUrl url;
     private String message;
 
-    SendMessageHttpFactory(String authToken, String chatId, String sourceGUID, String text) {
+    public SendMessageHttpFactory(String authToken, String chatId, String sourceGUID, String text) {
         url = new GenericUrl(URL + chatId + "/messages");
         url.set("token", authToken);
 

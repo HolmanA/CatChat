@@ -1,4 +1,4 @@
-package catchat.data.source.connection.groupme.group;
+package catchat.data.source.connection.groupme;
 
 import catchat.data.source.connection.HttpFactory;
 import catchat.data.source.connection.HttpResponseParser;
@@ -17,7 +17,7 @@ public class LikeMessageHttpFactory implements HttpFactory {
     private static final String URL = "https://api.groupme.com/v3/messages/";
     private GenericUrl url;
 
-    LikeMessageHttpFactory(String authToken, String chatId, String messageId) {
+    public LikeMessageHttpFactory(String authToken, String chatId, String messageId) {
         url = new GenericUrl(URL + chatId + "/" + messageId + "/like");
         url.set("token", authToken);
     }

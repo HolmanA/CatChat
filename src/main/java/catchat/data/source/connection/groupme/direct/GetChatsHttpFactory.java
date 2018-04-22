@@ -21,11 +21,11 @@ import java.util.List;
 /**
  * Created by andrew on 4/21/18.
  */
-class GetChatsHttpFactory implements HttpFactory {
+public class GetChatsHttpFactory implements HttpFactory {
     private static final String URL = "https://api.groupme.com/v3/chats";
     private GenericUrl url;
 
-    GetChatsHttpFactory(String authToken, int page, int pageSize) {
+    public GetChatsHttpFactory(String authToken, int page, int pageSize) {
         url = new GenericUrl(URL);
         url.set("token", authToken);
         url.set("page", page);

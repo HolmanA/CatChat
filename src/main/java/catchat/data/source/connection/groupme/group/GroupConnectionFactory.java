@@ -2,6 +2,8 @@ package catchat.data.source.connection.groupme.group;
 
 import catchat.data.source.connection.ConnectionFactory;
 import catchat.data.source.connection.HttpFactory;
+import catchat.data.source.connection.groupme.LikeMessageHttpFactory;
+import catchat.data.source.connection.groupme.UnlikeMessageHttpFactory;
 
 /**
  * Created by andrew on 4/21/18.

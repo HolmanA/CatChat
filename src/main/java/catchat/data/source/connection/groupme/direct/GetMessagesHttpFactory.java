@@ -19,11 +19,11 @@ import java.util.List;
 /**
  * Created by andrew on 4/21/18.
  */
-class GetMessagesHttpFactory implements HttpFactory {
+public class GetMessagesHttpFactory implements HttpFactory {
     private static final String URL = "https://api.groupme.com/v3/direct_messages";
     private GenericUrl url;
 
-    GetMessagesHttpFactory(String authToken, String chatId, String beforeMessageId, String afterMessageId) {
+    public GetMessagesHttpFactory(String authToken, String chatId, String beforeMessageId, String afterMessageId) {
         url = new GenericUrl(URL);
         url.set("token", authToken);
         url.set("other_user_id", chatId);
