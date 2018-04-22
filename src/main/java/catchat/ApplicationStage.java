@@ -4,8 +4,9 @@ import catchat.chats.ChatsPresenter;
 import catchat.chats.ChatsView;
 import catchat.data.auth.OAuthService;
 import catchat.data.source.DataSource;
-import catchat.data.source.GroupMeDirectDS;
-import catchat.data.source.GroupMeGroupDS;
+import catchat.data.source.HttpDataSource;
+import catchat.data.source.connection.groupme.direct.DirectConnectionFactory;
+import catchat.data.source.connection.groupme.group.GroupConnectionFactory;
 import catchat.messages.MessagesPresenter;
 import catchat.messages.MessagesView;
 import javafx.scene.Scene;
@@ -22,10 +23,8 @@ public class ApplicationStage extends Stage {
 
     public ApplicationStage(OAuthService service) {
         this.service = service;
-        this.groupChatDS = GroupMeGroupDS.getInstance();
-        this.directChatDS = GroupMeDirectDS.getInstance();
-        groupChatDS.setAuthenticationToken(service.getAPIToken());
-        directChatDS.setAuthenticationToken(service.getAPIToken());
+        this.groupChatDS = new HttpDataSource(service, new GroupConnectionFactory());
+        this.directChatDS = new HttpDataSource(service, new DirectConnectionFactory());
     }
 
     public void start() {

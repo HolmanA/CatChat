@@ -33,16 +33,6 @@ public class MessagesPresenter implements MessagesContract.Presenter, DataSource
     }
 
     @Override
-    public void dataNotAvailable() {
-        System.out.println("Data Not Available");
-    }
-
-    @Override
-    public void notAuthorized() {
-        System.out.println("Not Authorized");
-    }
-
-    @Override
     public void unknownResponseCode(String code) {
         System.out.println("Unknown Response Code: " + code);
     }

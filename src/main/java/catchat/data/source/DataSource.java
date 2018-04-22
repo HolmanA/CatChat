@@ -8,52 +8,22 @@ import java.util.List;
 /**
  * Created by andrew on 4/13/18.
  */
-public abstract class DataSource {
-    protected static final String BASE_API_URL = "https://api.groupme.com/v3/";
-    protected static final String BASE_SOURCE_GUID = "com.catchat.guid-";
-
-    protected static final String RESPONSE_OK = "200";
-    protected static final String RESPONSE_CREATED = "201";
-    protected static final String RESPONSE_N0_CONTENT = "204";
-    protected static final String RESPONSE_N0T_MODIFIED = "304";
-    protected static final String RESPONSE_BAD_REQUEST = "400";
-    protected static final String RESPONSE_UNAUTHORIZED = "401";
-    protected static final String RESPONSE_FORBIDDEN = "403";
-    protected static final String RESPONSE_NOT_FOUND = "404";
-    protected static final String RESPONSE_ENHANCE_YOUR_CALM = "420";
-    protected static final String RESPONSE_INTERNAL_SERVER_ERROR = "500";
-    protected static final String RESPONSE_BAD_GATEWAY = "502";
-    protected static final String RESPONSE_SERVICE_UNAVAILABLE = "503";
-
-    private String authToken;
-
-    public void setAuthenticationToken(String authToken) {
-        this.authToken = authToken;
-    }
-
-    protected String getAuthToken() {
-        return authToken;
-    }
-
-    public interface ChatsCallback extends BaseCallback {
+public interface DataSource {
+    interface ChatsCallback extends Callback {
         void onChatsLoaded(List<Chat> chats);
     }
 
-    public interface MessagesCallback extends BaseCallback {
+    interface MessagesCallback extends Callback {
         void setDataSource(DataSource dataSource);
         void onChatLoaded(Chat chat);
         void onMessagesLoaded(List<Message> messages);
         void onMessageSent();
     }
 
-    public void getChat(Chat chat, MessagesCallback callback) {
-        callback.setDataSource(this);
-        callback.onChatLoaded(chat);
-    }
-
-    abstract public void getChats(int page, int pageSize, ChatsCallback callback);
-    abstract public void getMessages(String chatId, String beforeMessageId, String sinceMessageId, MessagesCallback callback);
-    abstract public void sendMessage(String chatId, String sourceGUID, String messageText, MessagesCallback callback);
-    abstract public void likeMessage(String chatId, String messageId, MessagesCallback callback);
-    abstract public void unlikeMessage(String chatId, String messageId, MessagesCallback callback);
+    void getChat(Chat chat, MessagesCallback callback);
+    void getChats(int page, int pageSize, ChatsCallback callback);
+    void getMessages(String chatId, String beforeMessageId, String sinceMessageId, MessagesCallback callback);
+    void sendMessage(String chatId, String sourceGUID, String messageText, MessagesCallback callback);
+    void likeMessage(String chatId, String messageId, MessagesCallback callback);
+    void unlikeMessage(String chatId, String messageId, MessagesCallback callback);
 }

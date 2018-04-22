@@ -1,0 +1,140 @@
+package catchat.data.source;
+
+import catchat.data.auth.OAuthService;
+import catchat.data.entities.chat.Chat;
+import catchat.data.entities.message.Message;
+import catchat.data.source.connection.ConnectionFactory;
+import catchat.data.source.connection.HttpFactory;
+import catchat.data.source.connection.HttpResponseParser;
+import com.google.api.client.http.*;
+
+import java.io.IOException;
+import java.util.List;
+
+/**
+ * Created by andrew on 4/13/18.
+ */
+public class HttpDataSource implements DataSource {
+    private static final String BASE_SOURCE_GUID = "com.catchat.guid-";
+    private OAuthService authService;
+    private ConnectionFactory connectionFactory;
+
+    public HttpDataSource(OAuthService authService, ConnectionFactory connectionFactory) {
+        this.authService = authService;
+        this.connectionFactory = connectionFactory;
+    }
+
+    @Override
+    public void getChat(Chat chat, MessagesCallback callback) {
+        callback.setDataSource(this);
+        callback.onChatLoaded(chat);
+    }
+
+    @Override
+    public void getChats(int page, int pageSize, ChatsCallback callback) {
+        HttpFactory<List<Chat>> httpFactory = connectionFactory.createGetChatsFactory(
+                authService.getAPIToken(), page, pageSize);
+
+        HttpResponseParser<List<Chat>> parser = httpFactory.getResponseParser();
+
+        try {
+            HttpRequest httpRequest = httpFactory.getRequest();
+            HttpResponse httpResponse = httpRequest.execute();
+            List<Chat> chats = parser.parseResponse(httpResponse);
+            callback.onChatsLoaded(chats);
+        } catch (HttpResponseException e) {
+            switch (e.getStatusCode()) {
+                default :
+                    callback.unknownResponseCode(e.getStatusCode() + ": " + e.getStatusMessage());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void getMessages(String chatId, String beforeMessageId, String sinceMessageId, MessagesCallback callback) {
+        HttpFactory<List<Message>> httpFactory = connectionFactory.createGetMessagesFactory(
+                authService.getAPIToken(), chatId, beforeMessageId, sinceMessageId);
+
+        HttpResponseParser<List<Message>> parser = httpFactory.getResponseParser();
+
+        try {
+            HttpRequest httpRequest = httpFactory.getRequest();
+            HttpResponse httpResponse = httpRequest.execute();
+            List<Message> messages = parser.parseResponse(httpResponse);
+            callback.onMessagesLoaded(messages);
+        } catch (HttpResponseException e) {
+            switch (e.getStatusCode()) {
+                default :
+                    callback.unknownResponseCode(e.getStatusCode() + ": " + e.getStatusMessage());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void sendMessage(String chatId, String sourceGUID, String messageText, MessagesCallback callback) {
+        HttpFactory httpFactory = connectionFactory.createSendMessageFactory(
+                authService.getAPIToken(), chatId, BASE_SOURCE_GUID + sourceGUID, messageText);
+
+        HttpResponseParser parser = httpFactory.getResponseParser();
+
+        try {
+            HttpRequest httpRequest = httpFactory.getRequest();
+            HttpResponse httpResponse = httpRequest.execute();
+            parser.parseResponse(httpResponse);
+            callback.onMessageSent();
+        } catch (HttpResponseException e) {
+            switch (e.getStatusCode()) {
+                default :
+                    callback.unknownResponseCode(e.getStatusCode() + ": " + e.getStatusMessage());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+   }
+
+    @Override
+    public void likeMessage(String chatId, String messageId, MessagesCallback callback) {
+        HttpFactory httpFactory = connectionFactory.createLikeMessageFactory(
+                authService.getAPIToken(), chatId, messageId);
+
+        HttpResponseParser parser = httpFactory.getResponseParser();
+
+        try {
+            HttpRequest httpRequest = httpFactory.getRequest();
+            HttpResponse httpResponse = httpRequest.execute();
+            parser.parseResponse(httpResponse);
+        } catch (HttpResponseException e) {
+            switch (e.getStatusCode()) {
+                default :
+                    callback.unknownResponseCode(e.getStatusCode() + ": " + e.getStatusMessage());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void unlikeMessage(String chatId, String messageId, MessagesCallback callback) {
+        HttpFactory httpFactory = connectionFactory.createUnlikeMessageFactory(
+                authService.getAPIToken(), chatId, messageId);
+
+        HttpResponseParser parser = httpFactory.getResponseParser();
+
+        try {
+            HttpRequest httpRequest = httpFactory.getRequest();
+            HttpResponse httpResponse = httpRequest.execute();
+            parser.parseResponse(httpResponse);
+        } catch (HttpResponseException e) {
+            switch (e.getStatusCode()) {
+                default :
+                    callback.unknownResponseCode(e.getStatusCode() + ": " + e.getStatusMessage());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
