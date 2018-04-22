@@ -43,10 +43,7 @@ public class HttpDataSource implements DataSource {
             List<Chat> chats = parser.parseResponse(httpResponse);
             callback.onChatsLoaded(chats);
         } catch (HttpResponseException e) {
-            switch (e.getStatusCode()) {
-                default :
-                    callback.unknownResponseCode(e.getStatusCode() + ": " + e.getStatusMessage());
-            }
+            handleBaseResponseException(e, callback);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -65,10 +62,7 @@ public class HttpDataSource implements DataSource {
             List<Message> messages = parser.parseResponse(httpResponse);
             callback.onMessagesLoaded(messages);
         } catch (HttpResponseException e) {
-            switch (e.getStatusCode()) {
-                default :
-                    callback.unknownResponseCode(e.getStatusCode() + ": " + e.getStatusMessage());
-            }
+            handleBaseResponseException(e, callback);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -87,10 +81,7 @@ public class HttpDataSource implements DataSource {
             parser.parseResponse(httpResponse);
             callback.onMessageSent();
         } catch (HttpResponseException e) {
-            switch (e.getStatusCode()) {
-                default :
-                    callback.unknownResponseCode(e.getStatusCode() + ": " + e.getStatusMessage());
-            }
+            handleBaseResponseException(e, callback);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -108,10 +99,7 @@ public class HttpDataSource implements DataSource {
             HttpResponse httpResponse = httpRequest.execute();
             parser.parseResponse(httpResponse);
         } catch (HttpResponseException e) {
-            switch (e.getStatusCode()) {
-                default :
-                    callback.unknownResponseCode(e.getStatusCode() + ": " + e.getStatusMessage());
-            }
+            handleBaseResponseException(e, callback);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -129,12 +117,16 @@ public class HttpDataSource implements DataSource {
             HttpResponse httpResponse = httpRequest.execute();
             parser.parseResponse(httpResponse);
         } catch (HttpResponseException e) {
-            switch (e.getStatusCode()) {
-                default :
-                    callback.unknownResponseCode(e.getStatusCode() + ": " + e.getStatusMessage());
-            }
+            handleBaseResponseException(e, callback);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void handleBaseResponseException(HttpResponseException exception, Callback callback) {
+        switch (exception.getStatusCode()) {
+            default :
+                callback.unknownResponseCode(exception.getStatusCode() + ": " + exception.getStatusMessage());
         }
     }
 }
