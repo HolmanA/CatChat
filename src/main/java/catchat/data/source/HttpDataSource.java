@@ -7,7 +7,9 @@ import catchat.data.source.connection.ConnectionFactory;
 import catchat.data.source.connection.HttpFactory;
 import catchat.data.source.connection.HttpResponseParser;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.api.client.http.*;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.HttpResponseException;
 
 import java.io.IOException;
 import java.util.List;

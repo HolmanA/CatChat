@@ -2,10 +2,10 @@ package catchat.data.source.connection.groupme.direct;
 
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
-import catchat.data.source.connection.groupme.LikeMessageHttpFactory;
-import catchat.data.source.connection.groupme.UnlikeMessageHttpFactory;
 import catchat.data.source.connection.ConnectionFactory;
 import catchat.data.source.connection.HttpFactory;
+import catchat.data.source.connection.groupme.LikeMessageHttpFactory;
+import catchat.data.source.connection.groupme.UnlikeMessageHttpFactory;
 
 import java.util.List;
 
