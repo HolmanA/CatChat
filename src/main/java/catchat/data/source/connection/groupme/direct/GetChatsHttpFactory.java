@@ -7,11 +7,7 @@ import catchat.data.entities.profile.Profile;
 import catchat.data.source.connection.HttpFactory;
 import catchat.data.source.connection.HttpResponseParser;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpResponseException;
+import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 
 import java.io.IOException;
@@ -40,38 +36,25 @@ public class GetChatsHttpFactory implements HttpFactory<List<Chat>> {
 
     @Override
     public HttpResponseParser<List<Chat>> getResponseParser() {
-        return response -> {
-            if (response.isSuccessStatusCode()) {
-                List<Chat> chats = new ArrayList<>();
-                try {
-                    ObjectMapper mapper = new ObjectMapper();
-                    JsonNode responseTree = mapper.readTree(response.getContent());
-                    chats = parse(responseTree.get("response"));
-                } catch (IOException e) {
-                    e.printStackTrace();
+        return new HttpResponseParser<List<Chat>>() {
+            @Override
+            public List<Chat> parseContent(JsonNode content) {
+                List<Chat> chatList = new ArrayList<>();
+                if (content.isArray()) {
+                    for (JsonNode node : content) {
+                        List<Profile> memberList = new ArrayList<>();
+                        String preview = node.get("last_message").get("text").asText();
+
+                        JsonNode otherMember = node.get("other_user");
+                        String otherName = otherMember.get("name").asText();
+                        String otherId = otherMember.get("id").asText();
+                        memberList.add(new MemberProfile(otherId, otherName, ""));
+
+                        chatList.add(new DirectChat(otherId, otherName, preview, memberList));
+                    }
                 }
-                return chats;
-            } else {
-                throw new HttpResponseException(response);
+                return chatList;
             }
         };
-    }
-
-    private List<Chat> parse(JsonNode responseNode) {
-        List<Chat> chatList = new ArrayList<>();
-        if (responseNode.isArray()) {
-            for (JsonNode node : responseNode) {
-                List<Profile> memberList = new ArrayList<>();
-                String preview = node.get("last_message").get("text").asText();
-
-                JsonNode otherMember = node.get("other_user");
-                String otherName = otherMember.get("name").asText();
-                String otherId = otherMember.get("id").asText();
-                memberList.add(new MemberProfile(otherId, otherName, ""));
-
-                chatList.add(new DirectChat(otherId, otherName, preview, memberList));
-            }
-        }
-        return chatList;
     }
 }

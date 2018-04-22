@@ -36,37 +36,24 @@ public class GetMessagesHttpFactory implements HttpFactory<List<Message>> {
 
     @Override
     public HttpResponseParser<List<Message>> getResponseParser() {
-        return response -> {
-            if (response.isSuccessStatusCode()) {
-                List<Message> messages = new ArrayList<>();
-                try {
-                    ObjectMapper mapper = new ObjectMapper();
-                    JsonNode responseTree = mapper.readTree(response.getContent());
-                    messages = parse(responseTree.get("response"));
-                } catch (IOException e) {
-                    e.printStackTrace();
+        return new HttpResponseParser<List<Message>>() {
+            @Override
+            public List<Message> parseContent(JsonNode content) {
+                List<Message> messageList = new ArrayList<>();
+
+                JsonNode messages = content.get("messages");
+                if (messages.isArray()) {
+                    for (JsonNode message : messages) {
+                        String messageId = message.get("id").asText();
+                        String messageGUID = message.get("source_guid").asText();
+                        String senderId = message.get("sender_id").asText();
+                        String text = message.get("text").asText();
+                        long createdAt = message.get("created_at").asLong();
+                        messageList.add(new GroupMessage(messageId, messageGUID, text, senderId, createdAt));
+                    }
                 }
-                return messages;
-            } else {
-                throw new HttpResponseException(response);
+                return messageList;
             }
         };
-    }
-
-    private List<Message> parse(JsonNode responseNode) {
-        List<Message> messageList = new ArrayList<>();
-
-        JsonNode messages = responseNode.get("messages");
-        if (messages.isArray()) {
-            for (JsonNode message : messages) {
-                String messageId = message.get("id").asText();
-                String messageGUID = message.get("source_guid").asText();
-                String senderId = message.get("sender_id").asText();
-                String text = message.get("text").asText();
-                long createdAt = message.get("created_at").asLong();
-                messageList.add(new GroupMessage(messageId, messageGUID, text, senderId, createdAt));
-            }
-        }
-        return messageList;
     }
 }

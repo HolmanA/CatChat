@@ -2,6 +2,7 @@ package catchat.data.source.connection.groupme.group;
 
 import catchat.data.source.connection.HttpFactory;
 import catchat.data.source.connection.HttpResponseParser;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 
@@ -34,11 +35,11 @@ public class SendMessageHttpFactory implements HttpFactory {
 
     @Override
     public HttpResponseParser getResponseParser() {
-        return response -> {
-            if (!response.isSuccessStatusCode()) {
-                throw new HttpResponseException(response);
+        return new HttpResponseParser() {
+            @Override
+            public Object parseContent(JsonNode content) {
+                return null;
             }
-            return null;
         };
     }
 }

@@ -40,45 +40,32 @@ public class GetChatsHttpFactory implements HttpFactory<List<Chat>> {
 
     @Override
     public HttpResponseParser<List<Chat>> getResponseParser() {
-        return response -> {
-            if (response.isSuccessStatusCode()) {
-                List<Chat> chats = new ArrayList<>();
-                try {
-                    ObjectMapper mapper = new ObjectMapper();
-                    JsonNode responseTree = mapper.readTree(response.getContent());
-                    chats = parse(responseTree.get("response"));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return chats;
-            } else {
-                throw new HttpResponseException(response);
-            }
-        };
-    }
+        return new HttpResponseParser<List<Chat>>() {
+            @Override
+            public List<Chat> parseContent(JsonNode content) {
+                List<Chat> groupList = new ArrayList<>();
 
-    private List<Chat> parse(JsonNode responseNode) {
-        List<Chat> groupList = new ArrayList<>();
+                if (content.isArray()) {
+                    for (JsonNode node : content) {
+                        String groupId = node.get("group_id").asText();
+                        String name = node.get("name").asText();
+                        String preview = node.get("messages").get("preview").get("text").asText();
+                        JsonNode members = node.get("members");
 
-        if (responseNode.isArray()) {
-            for (JsonNode node : responseNode) {
-                String groupId = node.get("group_id").asText();
-                String name = node.get("name").asText();
-                String preview = node.get("messages").get("preview").get("text").asText();
-                JsonNode members = node.get("members");
-
-                List<Profile> memberList = new ArrayList<>();
-                if (members.isArray()) {
-                    for (JsonNode member : members) {
-                        String nickname = member.get("nickname").asText();
-                        String userId = member.get("user_id").asText();
-                        String memberId = member.get("id").asText();
-                        memberList.add(new MemberProfile(userId, nickname, memberId));
+                        List<Profile> memberList = new ArrayList<>();
+                        if (members.isArray()) {
+                            for (JsonNode member : members) {
+                                String nickname = member.get("nickname").asText();
+                                String userId = member.get("user_id").asText();
+                                String memberId = member.get("id").asText();
+                                memberList.add(new MemberProfile(userId, nickname, memberId));
+                            }
+                        }
+                        groupList.add(new GroupChat(groupId, name, preview, memberList));
                     }
                 }
-                groupList.add(new GroupChat(groupId, name, preview, memberList));
+                return groupList;
             }
-        }
-        return groupList;
+        };
     }
 }

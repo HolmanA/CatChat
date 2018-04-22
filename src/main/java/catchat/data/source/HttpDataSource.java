@@ -6,6 +6,7 @@ import catchat.data.entities.message.Message;
 import catchat.data.source.connection.ConnectionFactory;
 import catchat.data.source.connection.HttpFactory;
 import catchat.data.source.connection.HttpResponseParser;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.http.*;
 
 import java.io.IOException;
@@ -40,7 +41,8 @@ public class HttpDataSource implements DataSource {
         try {
             HttpRequest httpRequest = httpFactory.getRequest();
             HttpResponse httpResponse = httpRequest.execute();
-            List<Chat> chats = parser.parseResponse(httpResponse);  // Might throw HttpResponseException
+            JsonNode content = parser.getContentFromResponse(httpResponse); // Might throw HttpResponseException
+            List<Chat> chats = parser.parseContent(content);
             callback.onChatsLoaded(chats);
         } catch (HttpResponseException e) {
             handleBaseResponseException(e, callback);
@@ -59,7 +61,8 @@ public class HttpDataSource implements DataSource {
         try {
             HttpRequest httpRequest = httpFactory.getRequest();
             HttpResponse httpResponse = httpRequest.execute();
-            List<Message> messages = parser.parseResponse(httpResponse);  // Might throw HttpResponseException
+            JsonNode content = parser.getContentFromResponse(httpResponse); // Might throw HttpResponseException
+            List<Message> messages = parser.parseContent(content);
             callback.onMessagesLoaded(messages);
         } catch (HttpResponseException e) {
             handleBaseResponseException(e, callback);
@@ -78,7 +81,8 @@ public class HttpDataSource implements DataSource {
         try {
             HttpRequest httpRequest = httpFactory.getRequest();
             HttpResponse httpResponse = httpRequest.execute();
-            parser.parseResponse(httpResponse); // Might throw HttpResponseException
+            JsonNode content = parser.getContentFromResponse(httpResponse); // Might throw HttpResponseException
+            parser.parseContent(content);
             callback.onMessageSent();
         } catch (HttpResponseException e) {
             handleBaseResponseException(e, callback);
@@ -97,7 +101,8 @@ public class HttpDataSource implements DataSource {
         try {
             HttpRequest httpRequest = httpFactory.getRequest();
             HttpResponse httpResponse = httpRequest.execute();
-            parser.parseResponse(httpResponse); // Might throw HttpResponseException
+            JsonNode content = parser.getContentFromResponse(httpResponse); // Might throw HttpResponseException
+            parser.parseContent(content);
         } catch (HttpResponseException e) {
             handleBaseResponseException(e, callback);
         } catch (IOException e) {
@@ -115,7 +120,8 @@ public class HttpDataSource implements DataSource {
         try {
             HttpRequest httpRequest = httpFactory.getRequest();
             HttpResponse httpResponse = httpRequest.execute();
-            parser.parseResponse(httpResponse); // Might throw HttpResponseException
+            JsonNode content = parser.getContentFromResponse(httpResponse); // Might throw HttpResponseException
+            parser.parseContent(content);
         } catch (HttpResponseException e) {
             handleBaseResponseException(e, callback);
         } catch (IOException e) {
