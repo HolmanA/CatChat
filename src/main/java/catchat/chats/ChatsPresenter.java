@@ -33,8 +33,8 @@ public class ChatsPresenter implements ChatsContract.Presenter, DataSource.Chats
     }
 
     @Override
-    public void unknownResponseCode(String code) {
-        System.out.println("Unknown Response Code: " + code);
+    public void unknownResponseCode(String response) {
+        System.out.println("Unknown Response Code: " + response);
     }
 
     @Override

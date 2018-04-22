@@ -40,7 +40,7 @@ public class HttpDataSource implements DataSource {
         try {
             HttpRequest httpRequest = httpFactory.getRequest();
             HttpResponse httpResponse = httpRequest.execute();
-            List<Chat> chats = parser.parseResponse(httpResponse);
+            List<Chat> chats = parser.parseResponse(httpResponse);  // Might throw HttpResponseException
             callback.onChatsLoaded(chats);
         } catch (HttpResponseException e) {
             handleBaseResponseException(e, callback);
@@ -59,7 +59,7 @@ public class HttpDataSource implements DataSource {
         try {
             HttpRequest httpRequest = httpFactory.getRequest();
             HttpResponse httpResponse = httpRequest.execute();
-            List<Message> messages = parser.parseResponse(httpResponse);
+            List<Message> messages = parser.parseResponse(httpResponse);  // Might throw HttpResponseException
             callback.onMessagesLoaded(messages);
         } catch (HttpResponseException e) {
             handleBaseResponseException(e, callback);
@@ -78,7 +78,7 @@ public class HttpDataSource implements DataSource {
         try {
             HttpRequest httpRequest = httpFactory.getRequest();
             HttpResponse httpResponse = httpRequest.execute();
-            parser.parseResponse(httpResponse);
+            parser.parseResponse(httpResponse); // Might throw HttpResponseException
             callback.onMessageSent();
         } catch (HttpResponseException e) {
             handleBaseResponseException(e, callback);
@@ -97,7 +97,7 @@ public class HttpDataSource implements DataSource {
         try {
             HttpRequest httpRequest = httpFactory.getRequest();
             HttpResponse httpResponse = httpRequest.execute();
-            parser.parseResponse(httpResponse);
+            parser.parseResponse(httpResponse); // Might throw HttpResponseException
         } catch (HttpResponseException e) {
             handleBaseResponseException(e, callback);
         } catch (IOException e) {
@@ -115,7 +115,7 @@ public class HttpDataSource implements DataSource {
         try {
             HttpRequest httpRequest = httpFactory.getRequest();
             HttpResponse httpResponse = httpRequest.execute();
-            parser.parseResponse(httpResponse);
+            parser.parseResponse(httpResponse); // Might throw HttpResponseException
         } catch (HttpResponseException e) {
             handleBaseResponseException(e, callback);
         } catch (IOException e) {
