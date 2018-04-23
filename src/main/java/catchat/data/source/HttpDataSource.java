@@ -98,18 +98,7 @@ public class HttpDataSource implements DataSource {
         HttpFactory httpFactory = connectionFactory.createLikeMessageFactory(
                 authService.getAPIToken(), chatId, messageId);
 
-        HttpResponseParser parser = httpFactory.getResponseParser();
-
-        try {
-            HttpRequest httpRequest = httpFactory.getRequest();
-            HttpResponse httpResponse = httpRequest.execute();
-            JsonNode content = parser.getContentFromResponse(httpResponse); // Might throw HttpResponseException
-            parser.parseContent(content);
-        } catch (HttpResponseException e) {
-            handleBaseResponseException(e, callback);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        simpleRequest(httpFactory, callback);
     }
 
     @Override
@@ -117,6 +106,10 @@ public class HttpDataSource implements DataSource {
         HttpFactory httpFactory = connectionFactory.createUnlikeMessageFactory(
                 authService.getAPIToken(), chatId, messageId);
 
+        simpleRequest(httpFactory, callback);
+    }
+
+    private void simpleRequest(HttpFactory httpFactory, Callback callback) {
         HttpResponseParser parser = httpFactory.getResponseParser();
 
         try {
