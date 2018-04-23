@@ -18,7 +18,7 @@ public abstract class HttpResponseParser<T> {
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode responseTree = mapper.readTree(response.getContent());
-                content = responseTree.get("response");
+                content = (responseTree.get("response") != null) ? responseTree.get("response") : content;
             } catch (IOException e) {
                 e.printStackTrace();
             }

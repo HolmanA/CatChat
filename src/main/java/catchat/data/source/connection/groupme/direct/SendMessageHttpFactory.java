@@ -12,7 +12,7 @@ import java.io.IOException;
  * Created by andrew on 4/21/18.
  */
 public class SendMessageHttpFactory implements HttpFactory {
-    private static final String URL = "https://api.groupme.com/v3/direct_messages/";
+    private static final String URL = "https://api.groupme.com/v3/direct_messages";
     private GenericUrl url;
     private String message;
 

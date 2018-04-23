@@ -1,6 +1,6 @@
 package catchat.data.source.connection.groupme.direct;
 
-import catchat.data.entities.chat.Chat;
+import catchat.data.entities.message.Message;
 import catchat.data.source.connection.HttpFactory;
 import catchat.data.source.connection.HttpResponseParser;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -17,22 +17,21 @@ import java.util.List;
 /**
  * Created by andrew on 4/22/18.
  */
-public class GetChatsHttpFactoryTest {
-    private HttpFactory<List<Chat>> httpFactory;
+public class GetMessagesHttpFactoryTest {
+    private HttpFactory<List<Message>> httpFactory;
 
     private String testToken = "test_token";
-    private int testPage = 2;
-    private int testPageSize = 10;
+    private String testId = "test id";
 
     @Before
     public void setupMocks() {
         MockitoAnnotations.initMocks(this);
-        httpFactory = new GetChatsHttpFactory(testToken, testPage, testPageSize);
+        httpFactory = new GetMessagesHttpFactory(testToken, testId, "", "");
     }
 
     @Test
     public void getRequest_verifyUrlPath() throws IOException {
-        String testUrl = "https://api.groupme.com/v3/chats";
+        String testUrl = "https://api.groupme.com/v3/direct_messages";
         HttpRequest request = httpFactory.getRequest();
         GenericUrl url = request.getUrl();
         String generatedUrl = url.buildAuthority() + url.getRawPath();
@@ -44,8 +43,7 @@ public class GetChatsHttpFactoryTest {
         HttpRequest request = httpFactory.getRequest();
         GenericUrl url = request.getUrl();
         assert (url.get("token").equals(testToken));
-        assert (url.get("page").equals(testPage));
-        assert (url.get("per_page").equals(testPageSize));
+        assert (url.get("other_user_id").equals(testId));
     }
 
     @Test
@@ -57,10 +55,10 @@ public class GetChatsHttpFactoryTest {
 
     @Test
     public void responseParser_parseContent_nullContent() throws IOException {
-        HttpResponseParser<List<Chat>> parser = httpFactory.getResponseParser();
-        List<Chat> chats = parser.parseContent(NullNode.getInstance());
-        assert (chats != null);
-        assert (chats.size() == 0);
+        HttpResponseParser<List<Message>> parser = httpFactory.getResponseParser();
+        List<Message> messages = parser.parseContent(NullNode.getInstance());
+        assert (messages != null);
+        assert (messages.size() == 0);
     }
 }
 

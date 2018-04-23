@@ -41,7 +41,7 @@ public class GetMessagesHttpFactory implements HttpFactory<List<Message>> {
                 List<Message> messageList = new ArrayList<>();
                 JsonNode messages = content.get("direct_messages");
 
-                if (messages.isArray()) {
+                if (messages != null && messages.isArray()) {
                     for (JsonNode message : messages) {
                         String messageId = message.get("id").asText();
                         String messageGUID = message.get("source_guid").asText();

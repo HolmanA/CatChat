@@ -1,4 +1,4 @@
-package catchat.data.source.connection.groupme.direct;
+package catchat.data.source.connection.groupme.group;
 
 import catchat.data.entities.chat.Chat;
 import catchat.data.source.connection.HttpFactory;
@@ -32,7 +32,7 @@ public class GetChatsHttpFactoryTest {
 
     @Test
     public void getRequest_verifyUrlPath() throws IOException {
-        String testUrl = "https://api.groupme.com/v3/chats";
+        String testUrl = "https://api.groupme.com/v3/groups";
         HttpRequest request = httpFactory.getRequest();
         GenericUrl url = request.getUrl();
         String generatedUrl = url.buildAuthority() + url.getRawPath();
@@ -43,24 +43,24 @@ public class GetChatsHttpFactoryTest {
     public void getRequest_verifyParameters() throws IOException {
         HttpRequest request = httpFactory.getRequest();
         GenericUrl url = request.getUrl();
-        assert (url.get("token").equals(testToken));
-        assert (url.get("page").equals(testPage));
-        assert (url.get("per_page").equals(testPageSize));
+        assert(url.get("token").equals(testToken));
+        assert(url.get("page").equals(testPage));
+        assert(url.get("per_page").equals(testPageSize));
     }
 
     @Test
     public void getRequest_verifyMethod() throws IOException {
         HttpRequest request = httpFactory.getRequest();
         String method = request.getRequestMethod();
-        assert (method.equals(HttpMethods.GET));
+        assert(method.equals(HttpMethods.GET));
     }
 
     @Test
     public void responseParser_parseContent_nullContent() throws IOException {
         HttpResponseParser<List<Chat>> parser = httpFactory.getResponseParser();
         List<Chat> chats = parser.parseContent(NullNode.getInstance());
-        assert (chats != null);
-        assert (chats.size() == 0);
+        assert(chats != null);
+        assert(chats.size() == 0);
     }
 }
 
