@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface ConnectionFactory {
     HttpFactory<List<Chat>> createGetChatsFactory(String authToken, int page, int pageSize);
-    HttpFactory<List<Message>> createGetMessagesFactory(String authToken, String chatId, String beforeMessageId, String afterMessageId);
+    HttpFactory<List<Message>> createGetMessagesFactory(String authToken, Chat chat, String beforeMessageId, String afterMessageId);
     HttpFactory createSendMessageFactory(String authToken, String chatId, String sourceGUID, String text);
     HttpFactory createLikeMessageFactory(String authToken, String chatId, String messageId);
     HttpFactory createUnlikeMessageFactory(String authToken, String chatId, String messageId);

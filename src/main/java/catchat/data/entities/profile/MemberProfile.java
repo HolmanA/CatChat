@@ -10,4 +10,8 @@ public class MemberProfile extends Profile {
         super(id, name);
         this.memberId = memberId;
     }
+
+    public String getMemberId() {
+        return memberId;
+    }
 }

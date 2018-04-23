@@ -34,7 +34,7 @@ public class MessagesPresenter implements MessagesContract.Presenter, DataSource
 
     @Override
     public void unknownResponseCode(String response) {
-        System.out.println("Unknown Response Code: " + response);
+        System.out.println(response);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class MessagesPresenter implements MessagesContract.Presenter, DataSource
     @Override
     public void refreshMessages() {
         if (dataSource != null) {
-            dataSource.getMessages(chat.getId(), "", "", this);
+            dataSource.getMessages(chat, "", "", this);
         }
     }
 
@@ -61,6 +61,20 @@ public class MessagesPresenter implements MessagesContract.Presenter, DataSource
         String text;
         if (dataSource != null && !(text = view.getMessageText()).equals("")) {
             dataSource.sendMessage(chat.getId(), Integer.toString(sentId++), text, this);
+        }
+    }
+
+    @Override
+    public void likeMessage(Message message) {
+        if (message != null && dataSource != null) {
+            dataSource.likeMessage(chat.getId(), message.getId(), this);
+        }
+    }
+
+    @Override
+    public void unlikeMessage(Message message) {
+        if (message != null && dataSource != null) {
+            dataSource.unlikeMessage(chat.getId(), message.getId(), this);
         }
     }
 
@@ -77,6 +91,16 @@ public class MessagesPresenter implements MessagesContract.Presenter, DataSource
     @Override
     public void onMessageSent() {
         view.clearMessageText();
+        refreshMessages();
+    }
+
+    @Override
+    public void onMessageLiked() {
+        refreshMessages();
+    }
+
+    @Override
+    public void onMessageUnliked() {
         refreshMessages();
     }
 }

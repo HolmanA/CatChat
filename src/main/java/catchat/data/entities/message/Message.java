@@ -1,18 +1,24 @@
 package catchat.data.entities.message;
 
+import catchat.data.entities.profile.Profile;
+
+import java.util.List;
+
 public abstract class Message {
     private String id;
     private String sourceGUID;
     private String text;
-    private String senderId;
+    private String senderName;
     private long createdAt;
+    private List<Profile> likes;
 
-    protected Message(String id, String sourceGUID, String text, String senderId, long createdAt) {
+    protected Message(String id, String sourceGUID, String text, String senderName, long createdAt, List<Profile> likes) {
         this.id = id;
         this.sourceGUID = sourceGUID;
         this.text = text;
-        this.senderId = senderId;
+        this.senderName = senderName;
         this.createdAt = createdAt;
+        this.likes = likes;
     }
 
     public String getId() {
@@ -27,11 +33,19 @@ public abstract class Message {
         return text;
     }
 
-    public String getSenderId() {
-        return senderId;
+    public String getSenderName() {
+        return senderName;
     }
 
     public long getCreatedAt() {
         return createdAt;
+    }
+
+    public int getLikeCount() {
+        return likes.size();
+    }
+
+    public List<Profile> getLikes() {
+        return likes;
     }
 }

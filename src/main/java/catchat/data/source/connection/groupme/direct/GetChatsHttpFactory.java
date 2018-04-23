@@ -14,7 +14,9 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by andrew on 4/21/18.
@@ -44,15 +46,15 @@ public class GetChatsHttpFactory implements HttpFactory<List<Chat>> {
                 List<Chat> chatList = new ArrayList<>();
                 if (content.isArray()) {
                     for (JsonNode node : content) {
-                        List<Profile> memberList = new ArrayList<>();
+                        Map<String,Profile> memberMap = new HashMap<>();
                         String preview = node.get("last_message").get("text").asText();
 
                         JsonNode otherMember = node.get("other_user");
                         String otherName = otherMember.get("name").asText();
                         String otherId = otherMember.get("id").asText();
-                        memberList.add(new MemberProfile(otherId, otherName, ""));
+                        memberMap.put(otherId, new MemberProfile(otherId, otherName, ""));
 
-                        chatList.add(new DirectChat(otherId, otherName, preview, memberList));
+                        chatList.add(new DirectChat(otherId, otherName, preview, memberMap));
                     }
                 }
                 return chatList;

@@ -18,11 +18,13 @@ public interface DataSource {
         void onChatLoaded(Chat chat);
         void onMessagesLoaded(List<Message> messages);
         void onMessageSent();
+        void onMessageLiked();
+        void onMessageUnliked();
     }
 
     void getChat(Chat chat, MessagesCallback callback);
     void getChats(int page, int pageSize, ChatsCallback callback);
-    void getMessages(String chatId, String beforeMessageId, String sinceMessageId, MessagesCallback callback);
+    void getMessages(Chat chat, String beforeMessageId, String sinceMessageId, MessagesCallback callback);
     void sendMessage(String chatId, String sourceGUID, String messageText, MessagesCallback callback);
     void likeMessage(String chatId, String messageId, MessagesCallback callback);
     void unlikeMessage(String chatId, String messageId, MessagesCallback callback);

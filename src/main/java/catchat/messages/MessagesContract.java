@@ -17,11 +17,14 @@ public interface MessagesContract {
         void showChatDetails(Chat chat);
         void showNoChatSelected();
         String getMessageText();
+        Message getFocusedMessage();
         void clearMessageText();
     }
 
     interface Presenter extends BasePresenter {
         void refreshMessages();
         void sendMessage();
+        void likeMessage(Message message);
+        void unlikeMessage(Message message);
     }
 }

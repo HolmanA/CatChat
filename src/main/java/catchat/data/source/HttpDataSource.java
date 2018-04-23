@@ -54,9 +54,9 @@ public class HttpDataSource implements DataSource {
     }
 
     @Override
-    public void getMessages(String chatId, String beforeMessageId, String sinceMessageId, MessagesCallback callback) {
+    public void getMessages(Chat chat, String beforeMessageId, String sinceMessageId, MessagesCallback callback) {
         HttpFactory<List<Message>> httpFactory = connectionFactory.createGetMessagesFactory(
-                authService.getAPIToken(), chatId, beforeMessageId, sinceMessageId);
+                authService.getAPIToken(), chat, beforeMessageId, sinceMessageId);
 
         HttpResponseParser<List<Message>> parser = httpFactory.getResponseParser();
 

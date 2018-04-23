@@ -19,8 +19,8 @@ public class GroupConnectionFactory implements ConnectionFactory {
     }
 
     @Override
-    public HttpFactory<List<Message>> createGetMessagesFactory(String authToken, String chatId, String beforeMessageId, String afterMessageId) {
-        return new GetMessagesHttpFactory(authToken, chatId, beforeMessageId, afterMessageId);
+    public HttpFactory<List<Message>> createGetMessagesFactory(String authToken, Chat chat, String beforeMessageId, String afterMessageId) {
+        return new GetMessagesHttpFactory(authToken, chat, beforeMessageId, afterMessageId);
     }
 
     @Override

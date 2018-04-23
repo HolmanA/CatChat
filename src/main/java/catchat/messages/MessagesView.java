@@ -6,9 +6,11 @@ import catchat.data.entities.profile.Profile;
 import catchat.messages.view.MessageListCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -29,6 +31,7 @@ public class MessagesView extends VBox implements MessagesContract.View {
     public MessagesView() {
         chatInfo = new Text();
         messageList = new ListView<>();
+        messageList.setFocusTraversable(false);
         refresh = new Button("Refresh");
         refresh.setOnMouseClicked(event -> presenter.refreshMessages());
         input = new TextField();
@@ -48,7 +51,8 @@ public class MessagesView extends VBox implements MessagesContract.View {
     public void showMessages(List<Message> messages) {
         ObservableList<Message> obsMessageList = FXCollections.observableArrayList(messages);
         messageList.setItems(obsMessageList);
-        messageList.setCellFactory(param -> new MessageListCell());
+        messageList.setCellFactory(param ->
+                new MessageListCell(presenter));
         messageList.scrollTo(messages.size() - 1);
     }
 
@@ -75,6 +79,11 @@ public class MessagesView extends VBox implements MessagesContract.View {
     @Override
     public String getMessageText() {
         return input.getText();
+    }
+
+    @Override
+    public Message getFocusedMessage() {
+        return messageList.getFocusModel().getFocusedItem();
     }
 
     @Override
