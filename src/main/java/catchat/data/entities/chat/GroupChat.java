@@ -2,8 +2,6 @@ package catchat.data.entities.chat;
 
 import catchat.data.entities.profile.Profile;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

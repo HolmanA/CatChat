@@ -2,7 +2,10 @@ package catchat.data.entities.chat;
 
 import catchat.data.entities.profile.Profile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public abstract class Chat {
     protected String id;

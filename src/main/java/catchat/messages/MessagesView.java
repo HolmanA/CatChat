@@ -2,18 +2,19 @@ package catchat.messages;
 
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
-import catchat.data.entities.profile.Profile;
 import catchat.messages.view.MessageListCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 import java.util.List;
 
@@ -22,24 +23,34 @@ import java.util.List;
  */
 public class MessagesView extends VBox implements MessagesContract.View {
     private MessagesContract.Presenter presenter;
-    private Text chatInfo;
+    private Label chatInfo;
     private ListView<Message> messageList;
     private Button refresh;
     private TextField input;
     private Button sendMessage;
 
     public MessagesView() {
-        chatInfo = new Text();
+        super(5);
+        chatInfo = new Label();
+        chatInfo.setFont(Font.font(null, FontWeight.BOLD, 14));
+        HBox chatInfoBox = new HBox(5);
+        chatInfoBox.getChildren().addAll(chatInfo);
+        chatInfoBox.setAlignment(Pos.CENTER);
+
         messageList = new ListView<>();
         messageList.setFocusTraversable(false);
+
+        input = new TextField();
         refresh = new Button("Refresh");
         refresh.setOnMouseClicked(event -> presenter.refreshMessages());
-        input = new TextField();
         sendMessage = new Button("Send");
         sendMessage.setOnMouseClicked(event -> presenter.sendMessage());
-        HBox sendBox = new HBox();
-        sendBox.getChildren().addAll(input, sendMessage);
-        getChildren().addAll(chatInfo, messageList, refresh, sendBox);
+        HBox sendBox = new HBox(2);
+        sendBox.getChildren().addAll(refresh, input, sendMessage);
+        HBox.setHgrow(input, Priority.ALWAYS);
+
+        getChildren().addAll(chatInfoBox, messageList, sendBox);
+        VBox.setVgrow(messageList, Priority.ALWAYS);
     }
 
     @Override
@@ -63,12 +74,7 @@ public class MessagesView extends VBox implements MessagesContract.View {
 
     @Override
     public void showChatDetails(Chat chat) {
-        String preview = "Name: " + chat.getName();
-        preview += "\nMembers:";
-        for (Profile p : chat.getMembers()) {
-            preview += "\n\t" + p.getName();
-        }
-        chatInfo.setText(preview);
+        chatInfo.setText(chat.getName());
     }
 
     @Override

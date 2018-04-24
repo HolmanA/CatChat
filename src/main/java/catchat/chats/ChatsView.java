@@ -4,9 +4,11 @@ import catchat.chats.view.ChatListCell;
 import catchat.data.entities.chat.Chat;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -21,16 +23,26 @@ public class ChatsView extends VBox implements ChatsContract.View {
     private Text pageNumber;
 
     public ChatsView() {
+        super(5);
         chatList = new ListView<>();
         chatList.setOnMouseClicked(event -> presenter.loadChat(chatList.getSelectionModel().getSelectedItem()));
 
         pageNumber = new Text();
-        Button prevPage = new PrevButton();
-        Button nextPage = new NextButton();
-        Button refreshButton = new RefreshButton();
-        HBox pageButtons = new HBox();
+        Button prevPage = new Button("Prev Page");
+        prevPage.setOnMouseClicked(event -> presenter.prevPage());
+        Button nextPage = new Button("Next Page");
+        nextPage.setOnMouseClicked(event -> presenter.nextPage());
+        Button refreshButton = new Button("Refresh");
+        refreshButton.setOnMouseClicked(event -> presenter.refreshChats());
+        HBox pageButtons = new HBox(5);
         pageButtons.getChildren().addAll(prevPage, nextPage);
+        pageButtons.setAlignment(Pos.CENTER);
+        HBox.setHgrow(prevPage, Priority.SOMETIMES);
+        HBox.setHgrow(nextPage, Priority.SOMETIMES);
+
         getChildren().addAll(chatList, pageNumber, pageButtons, refreshButton);
+        VBox.setVgrow(chatList, Priority.ALWAYS);
+        setAlignment(Pos.CENTER);
     }
 
     @Override
@@ -48,26 +60,5 @@ public class ChatsView extends VBox implements ChatsContract.View {
     @Override
     public void setPageNumber(int number) {
         pageNumber.setText(Integer.toString(number));
-    }
-
-    private class RefreshButton extends Button {
-        RefreshButton() {
-            setText("Refresh");
-            setOnMouseClicked(event -> presenter.refreshChats());
-        }
-    }
-
-    private class NextButton extends Button {
-        NextButton() {
-            setText("Next Page");
-            setOnMouseClicked(event -> presenter.nextPage());
-        }
-    }
-
-    private class PrevButton extends Button {
-        PrevButton() {
-            setText("Prev Page");
-            setOnMouseClicked(event -> presenter.prevPage());
-        }
     }
 }

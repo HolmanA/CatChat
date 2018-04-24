@@ -3,13 +3,11 @@ package catchat.messages.view;
 import catchat.data.entities.message.Message;
 import catchat.messages.MessagesContract;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 
 import java.text.SimpleDateFormat;
