@@ -10,9 +10,9 @@ public abstract class Message {
     private String text;
     private String senderName;
     private long createdAt;
-    private List<Profile> likes;
+    private List<String> likes;
 
-    protected Message(String id, String sourceGUID, String text, String senderName, long createdAt, List<Profile> likes) {
+    protected Message(String id, String sourceGUID, String text, String senderName, long createdAt, List<String> likes) {
         this.id = id;
         this.sourceGUID = sourceGUID;
         this.text = text;
@@ -45,7 +45,7 @@ public abstract class Message {
         return likes.size();
     }
 
-    public List<Profile> getLikes() {
+    public List<String> getLikes() {
         return likes;
     }
 }
