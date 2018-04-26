@@ -1,12 +1,8 @@
 package catchat.data.source.groupme.group;
 
-import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.GroupMessage;
 import catchat.data.entities.message.Message;
-import catchat.data.entities.profile.Profile;
 import catchat.data.source.ApiInteractor;
-import catchat.data.source.connection.HttpFactory;
-import catchat.data.source.connection.HttpResponseParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;

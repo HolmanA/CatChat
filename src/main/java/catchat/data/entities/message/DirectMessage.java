@@ -1,7 +1,5 @@
 package catchat.data.entities.message;
 
-import catchat.data.entities.profile.Profile;
-
 import java.util.List;
 
 /**
