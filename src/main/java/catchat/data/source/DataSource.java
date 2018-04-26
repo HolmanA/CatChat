@@ -13,8 +13,12 @@ public interface DataSource {
         void onChatsLoaded(List<Chat> chats);
     }
 
-    interface GetChatCallback extends Callback {
-        void onChatLoaded(Chat chat);
+    interface GetGroupChatCallback extends Callback {
+        void onGroupChatLoaded(Chat chat);
+    }
+
+    interface GetDirectChatCallback extends Callback {
+        void onDirectChatLoaded(Chat chat);
     }
 
     interface GetMessagesCallback extends Callback {
@@ -38,16 +42,16 @@ public interface DataSource {
     }
 
     void getGroupChats(GetChatsCallback callback);
-    void getGroupChat(Chat chat, GetChatCallback callback);
+    void getGroupChat(Chat chat, GetGroupChatCallback callback);
     void getGroupMessages(Chat chat, GetMessagesCallback callback);
-    void sendGroupMessage(Chat chat, Message message, SendMessageCallback callback);
+    void sendGroupMessage(Chat chat, String messageId, String text, SendMessageCallback callback);
     void likeGroupMessage(Chat chat, Message message, LikeMessageCallback callback);
     void unlikeGroupMessage(Chat chat, Message message, UnlikeMessageCallback callback);
 
     void getDirectChats(GetChatsCallback callback);
-    void getDirectChat(Chat chat, GetChatCallback callback);
+    void getDirectChat(Chat chat, GetDirectChatCallback callback);
     void getDirectMessages(Chat chat, GetMessagesCallback callback);
-    void sendDirectMessage(Chat chat, Message message, SendMessageCallback callback);
+    void sendDirectMessage(Chat chat, String messageId, String text, SendMessageCallback callback);
     void likeDirectMessage(Chat chat, Message message, LikeMessageCallback callback);
     void unlikeDirectMessage(Chat chat, Message message, UnlikeMessageCallback callback);
 

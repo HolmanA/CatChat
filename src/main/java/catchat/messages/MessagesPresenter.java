@@ -1,5 +1,6 @@
 package catchat.messages;
 
+import catchat.data.entities.ChatType;
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
 import catchat.data.source.DataSource;
@@ -10,14 +11,23 @@ import java.util.List;
 /**
  * Created by andrew on 4/16/18.
  */
-public class MessagesPresenter implements MessagesContract.Presenter, DataSource.MessagesCallback {
+public class MessagesPresenter implements
+        MessagesContract.Presenter,
+        DataSource.GetGroupChatCallback,
+        DataSource.GetDirectChatCallback,
+        DataSource.GetMessagesCallback,
+        DataSource.SendMessageCallback,
+        DataSource.LikeMessageCallback,
+        DataSource.UnlikeMessageCallback {
 
     private DataSource dataSource;
     private MessagesContract.View view;
+    private ChatType type;
     private Chat chat;
     private int sentId;
 
-    public MessagesPresenter(MessagesContract.View view) {
+    public MessagesPresenter(DataSource dataSource, MessagesContract.View view) {
+        this.dataSource = dataSource;
         this.view = view;
         sentId = 1;
     }
@@ -38,43 +48,63 @@ public class MessagesPresenter implements MessagesContract.Presenter, DataSource
     }
 
     @Override
-    public void onChatLoaded(Chat chat) {
-        this.chat = chat;
-        view.showChatDetails(this.chat);
-        refreshMessages();
-    }
-
-    @Override
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    @Override
     public void refreshMessages() {
-        if (dataSource != null) {
-            dataSource.getMessages(chat, "", "", this);
+        if (chat != null) {
+            switch (type) {
+                case GROUP:
+                    dataSource.getGroupMessages(chat, this);
+                    break;
+                case DIRECT:
+                    dataSource.getDirectMessages(chat, this);
+                    break;
+                default:
+            }
         }
     }
 
     @Override
     public void sendMessage() {
         String text;
-        if (dataSource != null && !(text = view.getMessageText()).equals("")) {
-            dataSource.sendMessage(chat.getId(), Integer.toString(sentId++), text, this);
+        if (chat != null && !(text = view.getMessageText()).equals("")) {
+            switch (type) {
+                case GROUP:
+                    dataSource.sendGroupMessage(chat, Integer.toString(sentId), text, this);
+                    break;
+                case DIRECT:
+                    dataSource.sendDirectMessage(chat, Integer.toString(sentId), text, this);
+                    break;
+                default:
+            }
         }
     }
 
     @Override
     public void likeMessage(Message message) {
-        if (message != null && dataSource != null) {
-            dataSource.likeMessage(chat.getId(), message.getId(), this);
+        if (message != null && chat != null) {
+            switch (type) {
+                case GROUP:
+                    dataSource.likeGroupMessage(chat, message, this);
+                    break;
+                case DIRECT:
+                    dataSource.likeDirectMessage(chat, message, this);
+                    break;
+                default:
+            }
         }
     }
 
     @Override
     public void unlikeMessage(Message message) {
-        if (message != null && dataSource != null) {
-            dataSource.unlikeMessage(chat.getId(), message.getId(), this);
+        if (message != null && chat != null) {
+            switch (type) {
+                case GROUP:
+                    dataSource.unlikeGroupMessage(chat, message, this);
+                    break;
+                case DIRECT:
+                    dataSource.unlikeDirectMessage(chat, message, this);
+                    break;
+                default:
+            }
         }
     }
 
@@ -90,7 +120,6 @@ public class MessagesPresenter implements MessagesContract.Presenter, DataSource
 
     @Override
     public void onMessageSent() {
-        view.clearMessageText();
         refreshMessages();
     }
 
@@ -101,6 +130,24 @@ public class MessagesPresenter implements MessagesContract.Presenter, DataSource
 
     @Override
     public void onMessageUnliked() {
+        refreshMessages();
+    }
+
+    @Override
+    public void onGroupChatLoaded(Chat chat) {
+        type = ChatType.GROUP;
+        chatLoaded(chat);
+    }
+
+    @Override
+    public void onDirectChatLoaded(Chat chat) {
+        type = ChatType.DIRECT;
+        chatLoaded(chat);
+    }
+
+    private void chatLoaded(Chat chat) {
+        this.chat = chat;
+        view.showChatDetails(this.chat);
         refreshMessages();
     }
 }

@@ -8,15 +8,18 @@ import java.util.List;
 /**
  * Created by andrew on 4/15/18.
  */
-public class ChatsPresenter implements ChatsContract.Presenter, DataSource.ChatsCallback {
+public class DirectChatsPresenter implements
+        ChatsContract.Presenter,
+        DataSource.GetChatsCallback {
+
     private DataSource dataSource;
     private ChatsContract.View view;
-    private DataSource.MessagesCallback chatCallback;
+    private DataSource.GetDirectChatCallback chatCallback;
     private int chatsPage;
 
-    public ChatsPresenter(DataSource dataSource,
-                          ChatsContract.View view,
-                          DataSource.MessagesCallback chatCallback) {
+    public DirectChatsPresenter(DataSource dataSource,
+                                ChatsContract.View view,
+                                DataSource.GetDirectChatCallback chatCallback) {
         this.dataSource = dataSource;
         this.view = view;
         this.chatCallback = chatCallback;
@@ -57,13 +60,13 @@ public class ChatsPresenter implements ChatsContract.Presenter, DataSource.Chats
 
     @Override
     public void refreshChats() {
-        dataSource.getChats(chatsPage, 5, this);
+        dataSource.getDirectChats(this);
     }
 
     @Override
     public void loadChat(Chat chat) {
         if (chat != null) {
-            dataSource.getChat(chat, chatCallback);
+            dataSource.getDirectChat(chat, chatCallback);
         }
     }
 }

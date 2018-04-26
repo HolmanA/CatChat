@@ -46,8 +46,8 @@ public class GroupMeDataSource implements DataSource {
     }
 
     @Override
-    public void getGroupChat(Chat chat, GetChatCallback callback) {
-        callback.onChatLoaded(chat);
+    public void getGroupChat(Chat chat, GetGroupChatCallback callback) {
+        callback.onGroupChatLoaded(chat);
     }
 
     @Override
@@ -67,9 +67,9 @@ public class GroupMeDataSource implements DataSource {
     }
 
     @Override
-    public void sendGroupMessage(Chat chat, Message message, SendMessageCallback callback) {
+    public void sendGroupMessage(Chat chat, String messageId, String text, SendMessageCallback callback) {
         ApiInteractor interactor = new SendGroupMessageInteractor(
-                authService.getAPIToken(), chat.getId(), BASE_SOURCE_GUID, message.getText());
+                authService.getAPIToken(), chat.getId(), BASE_SOURCE_GUID + messageId, text);
 
         try {
             HttpRequest request = interactor.getRequest();
@@ -131,8 +131,8 @@ public class GroupMeDataSource implements DataSource {
     }
 
     @Override
-    public void getDirectChat(Chat chat, GetChatCallback callback) {
-        callback.onChatLoaded(chat);
+    public void getDirectChat(Chat chat, GetDirectChatCallback callback) {
+        callback.onDirectChatLoaded(chat);
     }
 
     @Override
@@ -152,9 +152,9 @@ public class GroupMeDataSource implements DataSource {
     }
 
     @Override
-    public void sendDirectMessage(Chat chat, Message message, SendMessageCallback callback) {
+    public void sendDirectMessage(Chat chat, String messageId, String text, SendMessageCallback callback) {
         ApiInteractor interactor = new SendDirectMessageInteractor(
-                authService.getAPIToken(), chat.getId(), BASE_SOURCE_GUID, message.getText());
+                authService.getAPIToken(), chat.getId(), BASE_SOURCE_GUID + messageId, text);
 
         try {
             HttpRequest request = interactor.getRequest();
