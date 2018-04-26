@@ -9,23 +9,47 @@ import java.util.List;
  * Created by andrew on 4/13/18.
  */
 public interface DataSource {
-    interface ChatsCallback extends Callback {
+    interface GetChatsCallback extends Callback {
         void onChatsLoaded(List<Chat> chats);
     }
 
-    interface MessagesCallback extends Callback {
-        void setDataSource(DataSource dataSource);
+    interface GetChatCallback extends Callback {
         void onChatLoaded(Chat chat);
+    }
+
+    interface GetMessagesCallback extends Callback {
         void onMessagesLoaded(List<Message> messages);
+    }
+
+    interface SendMessageCallback extends Callback {
         void onMessageSent();
+    }
+
+    interface LikeMessageCallback extends Callback {
         void onMessageLiked();
+    }
+
+    interface UnlikeMessageCallback extends Callback {
         void onMessageUnliked();
     }
 
-    void getChat(Chat chat, MessagesCallback callback);
-    void getChats(int page, int pageSize, ChatsCallback callback);
-    void getMessages(Chat chat, String beforeMessageId, String sinceMessageId, MessagesCallback callback);
-    void sendMessage(String chatId, String sourceGUID, String messageText, MessagesCallback callback);
-    void likeMessage(String chatId, String messageId, MessagesCallback callback);
-    void unlikeMessage(String chatId, String messageId, MessagesCallback callback);
+    interface GetUserProfileCallback extends Callback {
+        void onUserProfileLoaded();
+    }
+
+    void getGroupChats(GetChatsCallback callback);
+    void getGroupChat(Chat chat, GetChatCallback callback);
+    void getGroupMessages(Chat chat, GetMessagesCallback callback);
+    void sendGroupMessage(Chat chat, Message message, SendMessageCallback callback);
+    void likeGroupMessage(Chat chat, Message message, LikeMessageCallback callback);
+    void unlikeGroupMessage(Chat chat, Message message, UnlikeMessageCallback callback);
+
+    void getDirectChats(GetChatsCallback callback);
+    void getDirectChat(Chat chat, GetChatCallback callback);
+    void getDirectMessages(Chat chat, GetMessagesCallback callback);
+    void sendDirectMessage(Chat chat, Message message, SendMessageCallback callback);
+    void likeDirectMessage(Chat chat, Message message, LikeMessageCallback callback);
+    void unlikeDirectMessage(Chat chat, Message message, UnlikeMessageCallback callback);
+
+    void getUserProfile(GetUserProfileCallback callback);
 }
