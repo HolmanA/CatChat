@@ -20,9 +20,13 @@ public class GetGroupMessagesInteractor implements ApiInteractor<List<Message>> 
     private static final String URL = "https://api.groupme.com/v3/groups/";
     private GenericUrl url;
 
-    public GetGroupMessagesInteractor(String authToken, String chatId, String beforeMessageId, String afterMessageId) {
+    public GetGroupMessagesInteractor(String authToken, String chatId, String beforeId, String sinceId, String afterId, int limit) {
         url = new GenericUrl(URL + chatId + "/messages");
         url.set("token", authToken);
+        url.set("before_id", beforeId);
+        url.set("since_id", sinceId);
+        url.set("after_id", afterId);
+        url.set("limit", limit);
     }
 
     @Override

@@ -23,34 +23,41 @@ import java.util.List;
  */
 public class MessagesView extends VBox implements MessagesContract.View {
     private MessagesContract.Presenter presenter;
+    private ObservableList<Message> messageList;
     private Label chatInfo;
-    private ListView<Message> messageList;
+    private ListView<Message> messageListView;
+    private Button loadMore;
     private Button refresh;
     private TextField input;
     private Button sendMessage;
 
     public MessagesView() {
         super(5);
+        messageList = FXCollections.observableArrayList();
         chatInfo = new Label();
         chatInfo.setFont(Font.font(null, FontWeight.BOLD, 14));
         HBox chatInfoBox = new HBox(5);
         chatInfoBox.getChildren().addAll(chatInfo);
         chatInfoBox.setAlignment(Pos.CENTER);
 
-        messageList = new ListView<>();
-        messageList.setFocusTraversable(false);
+        messageListView = new ListView<>(messageList);
+        messageListView.setFocusTraversable(false);
+        messageListView.setCellFactory(param ->
+                new MessageListCell(presenter));
 
         input = new TextField();
+        loadMore = new Button("Load More");
+        loadMore.setOnMouseClicked(event -> presenter.loadMoreMessages());
         refresh = new Button("Refresh");
         refresh.setOnMouseClicked(event -> presenter.refreshMessages());
         sendMessage = new Button("Send");
         sendMessage.setOnMouseClicked(event -> presenter.sendMessage());
         HBox sendBox = new HBox(2);
-        sendBox.getChildren().addAll(refresh, input, sendMessage);
+        sendBox.getChildren().addAll(loadMore, refresh, input, sendMessage);
         HBox.setHgrow(input, Priority.ALWAYS);
 
-        getChildren().addAll(chatInfoBox, messageList, sendBox);
-        VBox.setVgrow(messageList, Priority.ALWAYS);
+        getChildren().addAll(chatInfoBox, messageListView, sendBox);
+        VBox.setVgrow(messageListView, Priority.ALWAYS);
     }
 
     @Override
@@ -60,16 +67,18 @@ public class MessagesView extends VBox implements MessagesContract.View {
 
     @Override
     public void showMessages(List<Message> messages) {
-        ObservableList<Message> obsMessageList = FXCollections.observableArrayList(messages);
-        messageList.setItems(obsMessageList);
-        messageList.setCellFactory(param ->
-                new MessageListCell(presenter));
-        messageList.scrollTo(messages.size() - 1);
+        messageList.addAll(0, messages);
+        messageListView.scrollTo(messages.size() - 1);
     }
 
     @Override
     public void showNoMessages() {
         chatInfo.setText("No Messages");
+    }
+
+    @Override
+    public void clearMessages() {
+        messageList.clear();
     }
 
     @Override
@@ -85,11 +94,6 @@ public class MessagesView extends VBox implements MessagesContract.View {
     @Override
     public String getMessageText() {
         return input.getText();
-    }
-
-    @Override
-    public Message getFocusedMessage() {
-        return messageList.getFocusModel().getFocusedItem();
     }
 
     @Override

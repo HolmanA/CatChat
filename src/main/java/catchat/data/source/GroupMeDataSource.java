@@ -55,9 +55,10 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
     }
 
     @Override
-    public void getGroupMessages(Chat chat, GetMessagesCallback callback) {
+    public void getGroupMessages(Chat chat, Message lastMessage, GetMessagesCallback callback) {
         ApiInteractor<List<Message>> interactor = new GetGroupMessagesInteractor(
-                authService.getAPIToken(), chat.getId(), "", "");
+                authService.getAPIToken(), chat.getId(),
+                (lastMessage == null) ? "" : lastMessage.getId(), "", "", 20);
 
         try {
             HttpRequest request = interactor.getRequest();
@@ -140,9 +141,10 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
     }
 
     @Override
-    public void getDirectMessages(Chat chat, GetMessagesCallback callback) {
+    public void getDirectMessages(Chat chat, Message lastMessage, GetMessagesCallback callback) {
         ApiInteractor<List<Message>> interactor = new GetDirectMessagesInteractor(
-                authService.getAPIToken(), chat.getId(), "", "");
+                authService.getAPIToken(), chat.getId(),
+                (lastMessage == null) ? "" : lastMessage.getId(), "");
 
         try {
             HttpRequest request = interactor.getRequest();

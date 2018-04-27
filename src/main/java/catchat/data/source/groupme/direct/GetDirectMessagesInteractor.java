@@ -20,10 +20,12 @@ public class GetDirectMessagesInteractor implements ApiInteractor<List<Message>>
     private static final String URL = "https://api.groupme.com/v3/direct_messages";
     private GenericUrl url;
 
-    public GetDirectMessagesInteractor(String authToken, String chatId, String beforeMessageId, String afterMessageId) {
+    public GetDirectMessagesInteractor(String authToken, String chatId, String beforeId, String sinceId) {
         url = new GenericUrl(URL);
         url.set("token", authToken);
         url.set("other_user_id", chatId);
+        url.set("before_id", beforeId);
+        url.set("since_id", sinceId);
     }
 
     @Override
