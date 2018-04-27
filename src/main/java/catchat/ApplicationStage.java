@@ -1,12 +1,11 @@
 package catchat;
 
-import catchat.chats.ChatsPresenter;
 import catchat.chats.ChatsView;
+import catchat.chats.DirectChatsPresenter;
+import catchat.chats.GroupChatsPresenter;
 import catchat.data.auth.OAuthService;
 import catchat.data.source.DataSource;
-import catchat.data.source.HttpDataSource;
-import catchat.data.source.connection.groupme.direct.DirectConnectionFactory;
-import catchat.data.source.connection.groupme.group.GroupConnectionFactory;
+import catchat.data.source.GroupMeDataSource;
 import catchat.messages.MessagesPresenter;
 import catchat.messages.MessagesView;
 import javafx.scene.Scene;
@@ -18,13 +17,11 @@ import javafx.stage.Stage;
  */
 public class ApplicationStage extends Stage {
     private OAuthService service;
-    private DataSource groupChatDS;
-    private DataSource directChatDS;
+    private DataSource dataSource;
 
     public ApplicationStage(OAuthService service) {
         this.service = service;
-        this.groupChatDS = new HttpDataSource(service, new GroupConnectionFactory());
-        this.directChatDS = new HttpDataSource(service, new DirectConnectionFactory());
+        this.dataSource = new GroupMeDataSource(service);
     }
 
     public void start() {
@@ -44,23 +41,23 @@ public class ApplicationStage extends Stage {
         BorderPane borderPane = new BorderPane();
 
         MessagesView messagesView = new MessagesView();
-        MessagesPresenter messagesPresenter = new MessagesPresenter(messagesView);
+        MessagesPresenter messagesPresenter = new MessagesPresenter(dataSource, messagesView);
         messagesView.setPresenter(messagesPresenter);
         messagesPresenter.start();
 
-        ChatsView groupsView = new ChatsView();
-        ChatsPresenter groupsPresenter = new ChatsPresenter(groupChatDS, groupsView, messagesPresenter);
-        groupsView.setPresenter(groupsPresenter);
-        groupsPresenter.start();
+        ChatsView groupChatsView = new ChatsView();
+        GroupChatsPresenter groupChatsPresenter = new GroupChatsPresenter(dataSource, groupChatsView, messagesPresenter);
+        groupChatsView.setPresenter(groupChatsPresenter);
+        groupChatsPresenter.start();
 
-        ChatsView chatsView = new ChatsView();
-        ChatsPresenter chatsPresenter = new ChatsPresenter(directChatDS, chatsView, messagesPresenter);
-        chatsView.setPresenter(chatsPresenter);
-        chatsPresenter.start();
+        ChatsView directChatsView = new ChatsView();
+        DirectChatsPresenter directChatsPresenter = new DirectChatsPresenter(dataSource, directChatsView, messagesPresenter);
+        directChatsView.setPresenter(directChatsPresenter);
+        directChatsPresenter.start();
 
-        borderPane.setLeft(groupsView);
+        borderPane.setLeft(groupChatsView);
         borderPane.setCenter(messagesView);
-        borderPane.setRight(chatsView);
+        borderPane.setRight(directChatsView);
 
         return borderPane;
     }

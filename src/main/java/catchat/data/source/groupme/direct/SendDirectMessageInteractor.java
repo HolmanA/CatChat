@@ -1,22 +1,20 @@
-package catchat.data.source.connection.groupme.direct;
+package catchat.data.source.groupme.direct;
 
-import catchat.data.source.connection.HttpFactory;
-import catchat.data.source.connection.HttpResponseParser;
-import com.fasterxml.jackson.databind.JsonNode;
+import catchat.data.source.ApiInteractor;
 import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 
 import java.io.IOException;
 
 /**
- * Created by andrew on 4/21/18.
+ * Created by andrew on 4/26/18.
  */
-public class SendMessageHttpFactory implements HttpFactory {
+public class SendDirectMessageInteractor implements ApiInteractor {
     private static final String URL = "https://api.groupme.com/v3/direct_messages";
     private GenericUrl url;
     private String message;
 
-    public SendMessageHttpFactory(String authToken, String chatId, String sourceGUID, String text) {
+    public SendDirectMessageInteractor(String authToken, String chatId, String sourceGUID, String text) {
         url = new GenericUrl(URL);
         url.set("token", authToken);
         url.set("other_user_id", chatId);
@@ -36,12 +34,11 @@ public class SendMessageHttpFactory implements HttpFactory {
     }
 
     @Override
-    public HttpResponseParser getResponseParser() {
-        return new HttpResponseParser() {
-            @Override
-            public Object parseContent(JsonNode content) {
-                return null;
-            }
-        };
+    public Object parseResponse(HttpResponse response) throws HttpResponseException {
+        if (response.isSuccessStatusCode()) {
+            return null;
+        } else {
+            throw new HttpResponseException(response);
+        }
     }
 }
