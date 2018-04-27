@@ -3,6 +3,8 @@ package catchat.data.source;
 import catchat.data.auth.OAuthService;
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
+import catchat.data.entities.profile.Profile;
+import catchat.data.source.groupme.GetUserProfileInteractor;
 import catchat.data.source.groupme.LikeMessageInteractor;
 import catchat.data.source.groupme.UnlikeMessageInteractor;
 import catchat.data.source.groupme.direct.GetDirectChatsInteractor;
@@ -21,18 +23,20 @@ import java.util.List;
 /**
  * Created by andrew on 4/26/18.
  */
-public class GroupMeDataSource implements DataSource {
+public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileCallback {
     private static final String BASE_SOURCE_GUID = "com.catchat.guid-";
     private OAuthService authService;
+    private Profile userProfile;
 
     public GroupMeDataSource(OAuthService authService) {
         this.authService = authService;
+        getUserProfile(this);
     }
 
     @Override
     public void getGroupChats(GetChatsCallback callback) {
         ApiInteractor<List<Chat>> interactor = new GetGroupChatsInteractor(
-                authService.getAPIToken(), 1, 10);
+                authService.getAPIToken(), 1, 20);
 
         try {
             HttpRequest request = interactor.getRequest();
@@ -117,7 +121,7 @@ public class GroupMeDataSource implements DataSource {
     @Override
     public void getDirectChats(GetChatsCallback callback) {
         ApiInteractor<List<Chat>> interactor = new GetDirectChatsInteractor(
-                authService.getAPIToken(), 1, 10);
+                authService.getAPIToken(), 1, 20);
 
         try {
             HttpRequest request = interactor.getRequest();
@@ -169,32 +173,61 @@ public class GroupMeDataSource implements DataSource {
 
     @Override
     public void likeDirectMessage(Chat chat, Message message, LikeMessageCallback callback) {
-        // FIXME: chatId for direct messages is "user_id+other_user_id"
-        ApiInteractor interactor = new LikeMessageInteractor(
-                authService.getAPIToken(), chat.getId(), message.getId());
+        if (userProfile != null) {
+            //FIXME: Conversation ID is still incorrect resulting in 404 error on liking a message
+            String id = chat.getId() + "+" + userProfile.getId();
 
-        try {
-            HttpRequest request = interactor.getRequest();
-            HttpResponse response = request.execute();
-            interactor.parseResponse(response);
-            callback.onMessageLiked();
-        } catch (HttpResponseException e) {
-        } catch (IOException e) {
-            e.printStackTrace();
+            ApiInteractor interactor = new LikeMessageInteractor(
+                    authService.getAPIToken(), id, message.getId());
+
+            try {
+                HttpRequest request = interactor.getRequest();
+                HttpResponse response = request.execute();
+                interactor.parseResponse(response);
+                callback.onMessageLiked();
+            } catch (HttpResponseException e) {
+                System.err.println(e.getStatusCode() + ": " + e.getStatusMessage());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            getUserProfile(this);
         }
     }
 
     @Override
     public void unlikeDirectMessage(Chat chat, Message message, UnlikeMessageCallback callback) {
-        // FIXME: chatId for direct messages is "user_id+other_user_id"
-        ApiInteractor interactor = new UnlikeMessageInteractor(
-                authService.getAPIToken(), chat.getId(), message.getId());
+        if (userProfile != null) {
+            //FIXME: Conversation ID is still incorrect resulting in 404 error on unliking a message
+            String id = userProfile.getId() + "+" + chat.getId();
+
+            ApiInteractor interactor = new UnlikeMessageInteractor(
+                    authService.getAPIToken(), id, message.getId());
+
+            try {
+                HttpRequest request = interactor.getRequest();
+                HttpResponse response = request.execute();
+                interactor.parseResponse(response);
+                callback.onMessageUnliked();
+            } catch (HttpResponseException e) {
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            getUserProfile(this);
+        }
+    }
+
+    @Override
+    public void getUserProfile(GetUserProfileCallback callback) {
+        ApiInteractor<Profile> interactor = new GetUserProfileInteractor(
+                authService.getAPIToken());
 
         try {
             HttpRequest request = interactor.getRequest();
             HttpResponse response = request.execute();
-            interactor.parseResponse(response);
-            callback.onMessageUnliked();
+            Profile profile = interactor.parseResponse(response);
+            callback.onUserProfileLoaded(profile);
         } catch (HttpResponseException e) {
         } catch (IOException e) {
             e.printStackTrace();
@@ -202,7 +235,12 @@ public class GroupMeDataSource implements DataSource {
     }
 
     @Override
-    public void getUserProfile(GetUserProfileCallback callback) {
-        //TODO: Finish implementation
+    public void onUserProfileLoaded(Profile profile) {
+        this.userProfile = profile;
+    }
+
+    @Override
+    public void unknownResponseCode(String response) {
+        System.err.println(response);
     }
 }

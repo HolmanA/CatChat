@@ -4,6 +4,7 @@ import catchat.data.entities.chat.Chat;
 import catchat.data.entities.chat.GroupChat;
 import catchat.data.entities.profile.MemberProfile;
 import catchat.data.entities.profile.Profile;
+import catchat.data.entities.profile.UserProfile;
 import catchat.data.source.ApiInteractor;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,15 +21,13 @@ import java.util.Map;
 /**
  * Created by andrew on 4/26/18.
  */
-public class GetUserProfileInteractor implements ApiInteractor<List<Chat>> {
-    private static final String URL = "https://api.groupme.com/v3/groups";
+public class GetUserProfileInteractor implements ApiInteractor<Profile> {
+    private static final String URL = "https://api.groupme.com/v3/users/me";
     private GenericUrl url;
 
-    public GetUserProfileInteractor(String authToken, int page, int pageSize) {
+    public GetUserProfileInteractor(String authToken) {
         url = new GenericUrl(URL);
         url.set("token", authToken);
-        url.set("page", page);
-        url.set("per_page", pageSize);
     }
     @Override
     public HttpRequest getRequest() throws IOException {
@@ -37,7 +36,7 @@ public class GetUserProfileInteractor implements ApiInteractor<List<Chat>> {
     }
 
     @Override
-    public List<Chat> parseResponse(HttpResponse response) throws HttpResponseException {
+    public Profile parseResponse(HttpResponse response) throws HttpResponseException {
         if (response.isSuccessStatusCode()) {
             JsonNode content = NullNode.getInstance();
             try {
@@ -54,28 +53,9 @@ public class GetUserProfileInteractor implements ApiInteractor<List<Chat>> {
         }
     }
 
-    private List<Chat> parseContent(JsonNode content) {
-        List<Chat> groupList = new ArrayList<>();
-
-        if (content.isArray()) {
-            for (JsonNode node : content) {
-                String groupId = node.get("group_id").asText();
-                String name = node.get("name").asText();
-                String preview = node.get("messages").get("preview").get("text").asText();
-                JsonNode members = node.get("members");
-
-                Map<String,Profile> memberMap = new HashMap<>();
-                if (members.isArray()) {
-                    for (JsonNode member : members) {
-                        String nickname = member.get("nickname").asText();
-                        String userId = member.get("user_id").asText();
-                        String memberId = member.get("id").asText();
-                        memberMap.put(userId, new MemberProfile(userId, nickname, memberId));
-                    }
-                }
-                groupList.add(new GroupChat(groupId, name, preview, memberMap));
-            }
-        }
-        return groupList;
+    private Profile parseContent(JsonNode content) {
+        String userId = content.get("id").asText();
+        String userName = content.get("name").asText();
+        return new UserProfile(userId, userName);
     }
 }

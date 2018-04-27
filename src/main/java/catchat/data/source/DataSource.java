@@ -2,6 +2,7 @@ package catchat.data.source;
 
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
+import catchat.data.entities.profile.Profile;
 
 import java.util.List;
 
@@ -38,7 +39,7 @@ public interface DataSource {
     }
 
     interface GetUserProfileCallback extends Callback {
-        void onUserProfileLoaded();
+        void onUserProfileLoaded(Profile profile);
     }
 
     void getGroupChats(GetChatsCallback callback);
