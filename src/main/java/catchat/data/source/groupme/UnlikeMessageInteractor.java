@@ -1,35 +1,32 @@
 package catchat.data.source.groupme;
 
 import catchat.data.source.ApiInteractor;
-import com.google.api.client.http.*;
-import com.google.api.client.http.javanet.NetHttpTransport;
+import com.fasterxml.jackson.databind.JsonNode;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * Created by andrew on 4/26/18.
  */
-public class UnlikeMessageInteractor implements ApiInteractor {
+public class UnlikeMessageInteractor extends BaseApiInteractor {
     private static final String URL = "https://api.groupme.com/v3/messages/";
-    private GenericUrl url;
 
-    public UnlikeMessageInteractor(String authToken, String chatId, String messageId) {
-        url = new GenericUrl(URL + chatId + "/" + messageId + "/unlike");
-        url.set("token", authToken);
+    public UnlikeMessageInteractor(String authToken, String chatId, String messageId) throws IOException {
+        URL url = new URL(URL + chatId + "/" + messageId + "/unlike");
+        connection = (HttpsURLConnection)url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("X-Access-Token", authToken);
     }
 
     @Override
-    public HttpRequest getRequest() throws IOException {
-        HttpRequestFactory httpRequestFactory = new NetHttpTransport().createRequestFactory();
-        return httpRequestFactory.buildPostRequest(url, null);
+    public Object getContent() {
+        return null;
     }
 
     @Override
-    public Object parseResponse(HttpResponse response) throws HttpResponseException {
-        if (response.isSuccessStatusCode()) {
-            return null;
-        } else {
-            throw new HttpResponseException(response);
-        }
+    protected Object parseContent(JsonNode content) {
+        return null;
     }
 }
