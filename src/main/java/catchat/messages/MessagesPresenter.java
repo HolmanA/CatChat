@@ -72,7 +72,7 @@ public class MessagesPresenter implements
                     dataSource.getGroupMessages(chat, lastMessage, this);
                     break;
                 case DIRECT:
-                    dataSource.getGroupMessages(chat, lastMessage, this);
+                    dataSource.getDirectMessages(chat, lastMessage, this);
                     break;
                 default:
             }

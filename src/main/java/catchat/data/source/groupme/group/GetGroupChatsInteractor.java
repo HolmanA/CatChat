@@ -4,11 +4,8 @@ import catchat.data.entities.chat.Chat;
 import catchat.data.entities.chat.GroupChat;
 import catchat.data.entities.profile.MemberProfile;
 import catchat.data.entities.profile.Profile;
-import catchat.data.source.ApiInteractor;
 import catchat.data.source.groupme.BaseApiInteractor;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;

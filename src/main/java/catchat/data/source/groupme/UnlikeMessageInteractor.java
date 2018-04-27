@@ -1,6 +1,5 @@
 package catchat.data.source.groupme;
 
-import catchat.data.source.ApiInteractor;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import javax.net.ssl.HttpsURLConnection;

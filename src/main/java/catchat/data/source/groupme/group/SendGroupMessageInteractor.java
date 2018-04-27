@@ -1,11 +1,7 @@
 package catchat.data.source.groupme.group;
 
-import catchat.data.source.ApiInteractor;
 import catchat.data.source.groupme.BaseApiInteractor;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.api.client.http.*;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.Json;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
