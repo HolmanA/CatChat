@@ -4,14 +4,12 @@ import catchat.data.entities.chat.Chat;
 import catchat.data.entities.chat.DirectChat;
 import catchat.data.entities.profile.MemberProfile;
 import catchat.data.entities.profile.Profile;
-import catchat.data.source.ApiInteractor;
+import catchat.data.source.groupme.BaseApiInteractor;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.google.api.client.http.*;
-import com.google.api.client.http.javanet.NetHttpTransport;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,41 +18,22 @@ import java.util.Map;
 /**
  * Created by andrew on 4/26/18.
  */
-public class GetDirectChatsInteractor implements ApiInteractor<List<Chat>> {
+public class GetDirectChatsInteractor extends BaseApiInteractor<List<Chat>> {
     private static final String URL = "https://api.groupme.com/v3/chats";
-    private GenericUrl url;
 
-    public GetDirectChatsInteractor(String authToken, int page, int pageSize) {
-        url = new GenericUrl(URL);
-        url.set("token", authToken);
-        url.set("page", page);
-        url.set("per_page", pageSize);
-    }
-    @Override
-    public HttpRequest getRequest() throws IOException {
-        HttpRequestFactory httpRequestFactory = new NetHttpTransport().createRequestFactory();
-        return httpRequestFactory.buildGetRequest(url);
+    public GetDirectChatsInteractor(String authToken, int page, int pageSize) throws IOException {
+        String parameters = "?";
+        parameters += "page=" + Integer.toString(page);
+        parameters += "&per_page=" + Integer.toString(pageSize);
+
+        URL url = new URL(URL + parameters);
+        connection = (HttpsURLConnection)url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("X-Access-Token", authToken);
     }
 
     @Override
-    public List<Chat> parseResponse(HttpResponse response) throws HttpResponseException {
-        if (response.isSuccessStatusCode()) {
-            JsonNode content = NullNode.getInstance();
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode responseTree = mapper.readTree(response.getContent());
-                content = (responseTree.get("response") != null) ? responseTree.get("response") : content;
-                response.disconnect();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return parseContent(content);
-        } else {
-            throw new HttpResponseException(response);
-        }
-    }
-
-    private List<Chat> parseContent(JsonNode content) {
+    protected List<Chat> parseContent(JsonNode content) {
         List<Chat> chatList = new ArrayList<>();
         if (content.isArray()) {
             for (JsonNode node : content) {

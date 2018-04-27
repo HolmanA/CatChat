@@ -2,55 +2,36 @@ package catchat.data.source.groupme.direct;
 
 import catchat.data.entities.message.DirectMessage;
 import catchat.data.entities.message.Message;
-import catchat.data.source.ApiInteractor;
+import catchat.data.source.groupme.BaseApiInteractor;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.google.api.client.http.*;
-import com.google.api.client.http.javanet.NetHttpTransport;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by andrew on 4/21/18.
  */
-public class GetDirectMessagesInteractor implements ApiInteractor<List<Message>> {
+public class GetDirectMessagesInteractor extends BaseApiInteractor<List<Message>> {
     private static final String URL = "https://api.groupme.com/v3/direct_messages";
-    private GenericUrl url;
 
-    public GetDirectMessagesInteractor(String authToken, String chatId, String beforeMessageId, String afterMessageId) {
-        url = new GenericUrl(URL);
-        url.set("token", authToken);
-        url.set("other_user_id", chatId);
+    public GetDirectMessagesInteractor(String authToken, String chatId,
+                                       String beforeId, String sinceId) throws IOException {
+        String parameters = "?";
+        parameters += "other_user_id=" + chatId;
+        parameters += "&before_id=" + beforeId;
+        parameters += "&since_id=" + sinceId;
+
+        URL url = new URL(URL + parameters);
+        connection = (HttpsURLConnection)url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("X-Access-Token", authToken);
     }
 
     @Override
-    public HttpRequest getRequest() throws IOException {
-        HttpRequestFactory httpRequestFactory = new NetHttpTransport().createRequestFactory();
-        return httpRequestFactory.buildGetRequest(url);
-    }
-
-    @Override
-    public List<Message> parseResponse(HttpResponse response) throws HttpResponseException {
-        if (response.isSuccessStatusCode()) {
-            JsonNode content = NullNode.getInstance();
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode responseTree = mapper.readTree(response.getContent());
-                content = (responseTree.get("response") != null) ? responseTree.get("response") : content;
-                response.disconnect();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return parseContent(content);
-        } else {
-            throw new HttpResponseException(response);
-        }
-    }
-
-    private List<Message> parseContent(JsonNode content) {
+    protected List<Message> parseContent(JsonNode content) {
         List<Message> messageList = new ArrayList<>();
         JsonNode messages = content.get("direct_messages");
 

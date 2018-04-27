@@ -44,14 +44,14 @@ public interface DataSource {
 
     void getGroupChats(GetChatsCallback callback);
     void getGroupChat(Chat chat, GetGroupChatCallback callback);
-    void getGroupMessages(Chat chat, GetMessagesCallback callback);
+    void getGroupMessages(Chat chat, Message lastMessage, GetMessagesCallback callback);
     void sendGroupMessage(Chat chat, String messageId, String text, SendMessageCallback callback);
     void likeGroupMessage(Chat chat, Message message, LikeMessageCallback callback);
     void unlikeGroupMessage(Chat chat, Message message, UnlikeMessageCallback callback);
 
     void getDirectChats(GetChatsCallback callback);
     void getDirectChat(Chat chat, GetDirectChatCallback callback);
-    void getDirectMessages(Chat chat, GetMessagesCallback callback);
+    void getDirectMessages(Chat chat, Message lastMessage, GetMessagesCallback callback);
     void sendDirectMessage(Chat chat, String messageId, String text, SendMessageCallback callback);
     void likeDirectMessage(Chat chat, Message message, LikeMessageCallback callback);
     void unlikeDirectMessage(Chat chat, Message message, UnlikeMessageCallback callback);

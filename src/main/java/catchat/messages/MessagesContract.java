@@ -14,15 +14,16 @@ public interface MessagesContract {
     interface View extends BaseView<Presenter> {
         void showMessages(List<Message> messages);
         void showNoMessages();
+        void clearMessages();
         void showChatDetails(Chat chat);
         void showNoChatSelected();
         String getMessageText();
-        Message getFocusedMessage();
         void clearMessageText();
     }
 
     interface Presenter extends BasePresenter {
         void refreshMessages();
+        void loadMoreMessages();
         void sendMessage();
         void likeMessage(Message message);
         void unlikeMessage(Message message);

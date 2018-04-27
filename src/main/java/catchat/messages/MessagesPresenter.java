@@ -25,6 +25,7 @@ public class MessagesPresenter implements
     private ChatType type;
     private Chat chat;
     private int sentId;
+    private Message lastMessage;
 
     public MessagesPresenter(DataSource dataSource, MessagesContract.View view) {
         this.dataSource = dataSource;
@@ -44,18 +45,34 @@ public class MessagesPresenter implements
 
     @Override
     public void unknownResponseCode(String response) {
-        System.out.println(response);
+        System.err.println(response);
     }
 
     @Override
     public void refreshMessages() {
         if (chat != null) {
+            view.clearMessages();
             switch (type) {
                 case GROUP:
-                    dataSource.getGroupMessages(chat, this);
+                    dataSource.getGroupMessages(chat, null, this);
                     break;
                 case DIRECT:
-                    dataSource.getDirectMessages(chat, this);
+                    dataSource.getDirectMessages(chat, null, this);
+                    break;
+                default:
+            }
+        }
+    }
+
+    @Override
+    public void loadMoreMessages() {
+        if (chat != null && lastMessage != null) {
+            switch (type) {
+                case GROUP:
+                    dataSource.getGroupMessages(chat, lastMessage, this);
+                    break;
+                case DIRECT:
+                    dataSource.getDirectMessages(chat, lastMessage, this);
                     break;
                 default:
             }
@@ -114,6 +131,7 @@ public class MessagesPresenter implements
             view.showNoMessages();
         } else {
             Collections.reverse(messages);
+            lastMessage = messages.get(0);
             view.showMessages(messages);
         }
     }

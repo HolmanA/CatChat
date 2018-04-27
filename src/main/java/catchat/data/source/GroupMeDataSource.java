@@ -13,9 +13,6 @@ import catchat.data.source.groupme.direct.SendDirectMessageInteractor;
 import catchat.data.source.groupme.group.GetGroupChatsInteractor;
 import catchat.data.source.groupme.group.GetGroupMessagesInteractor;
 import catchat.data.source.groupme.group.SendGroupMessageInteractor;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.HttpResponseException;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,15 +32,18 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
 
     @Override
     public void getGroupChats(GetChatsCallback callback) {
-        ApiInteractor<List<Chat>> interactor = new GetGroupChatsInteractor(
-                authService.getAPIToken(), 1, 20);
-
         try {
-            HttpRequest request = interactor.getRequest();
-            HttpResponse response = request.execute();
-            List<Chat> chats = interactor.parseResponse(response);
-            callback.onChatsLoaded(chats);
-        } catch (HttpResponseException e) {
+            ApiInteractor<List<Chat>> interactor = new GetGroupChatsInteractor(
+                    authService.getAPIToken(), 1, 20);
+
+            int responseCode = interactor.getResponseCode();
+            if (200 <= responseCode && responseCode < 300) {
+                List<Chat> chats = interactor.getContent();
+                callback.onChatsLoaded(chats);
+            } else {
+                callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
+            }
+            interactor.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,16 +55,20 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
     }
 
     @Override
-    public void getGroupMessages(Chat chat, GetMessagesCallback callback) {
-        ApiInteractor<List<Message>> interactor = new GetGroupMessagesInteractor(
-                authService.getAPIToken(), chat.getId(), "", "");
-
+    public void getGroupMessages(Chat chat, Message lastMessage, GetMessagesCallback callback) {
         try {
-            HttpRequest request = interactor.getRequest();
-            HttpResponse response = request.execute();
-            List<Message> messages = interactor.parseResponse(response);
-            callback.onMessagesLoaded(messages);
-        } catch (HttpResponseException e) {
+            ApiInteractor<List<Message>> interactor = new GetGroupMessagesInteractor(
+                    authService.getAPIToken(), chat.getId(),
+                    (lastMessage == null) ? "" : lastMessage.getId(), "", "", 20);
+
+            int responseCode = interactor.getResponseCode();
+            if (200 <= responseCode && responseCode < 300) {
+                List<Message> messages = interactor.getContent();
+                callback.onMessagesLoaded(messages);
+            } else {
+                callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
+            }
+            interactor.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -72,15 +76,17 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
 
     @Override
     public void sendGroupMessage(Chat chat, String messageId, String text, SendMessageCallback callback) {
-        ApiInteractor interactor = new SendGroupMessageInteractor(
-                authService.getAPIToken(), chat.getId(), BASE_SOURCE_GUID + messageId, text);
-
         try {
-            HttpRequest request = interactor.getRequest();
-            HttpResponse response = request.execute();
-            interactor.parseResponse(response);
-            callback.onMessageSent();
-        } catch (HttpResponseException e) {
+            ApiInteractor interactor = new SendGroupMessageInteractor(
+                    authService.getAPIToken(), chat.getId(), BASE_SOURCE_GUID + messageId, text);
+
+            int responseCode = interactor.getResponseCode();
+            if (200 <= responseCode && responseCode < 300) {
+                callback.onMessageSent();
+            } else {
+                callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
+            }
+            interactor.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,15 +94,17 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
 
     @Override
     public void likeGroupMessage(Chat chat, Message message, LikeMessageCallback callback) {
-        ApiInteractor interactor = new LikeMessageInteractor(
-                authService.getAPIToken(), chat.getId(), message.getId());
-
         try {
-            HttpRequest request = interactor.getRequest();
-            HttpResponse response = request.execute();
-            interactor.parseResponse(response);
-            callback.onMessageLiked();
-        } catch (HttpResponseException e) {
+            ApiInteractor interactor = new LikeMessageInteractor(
+                    authService.getAPIToken(), chat.getId(), message.getId());
+
+            int responseCode = interactor.getResponseCode();
+            if (200 <= responseCode && responseCode < 300) {
+                callback.onMessageLiked();
+            } else {
+                callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
+            }
+            interactor.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -104,15 +112,17 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
 
     @Override
     public void unlikeGroupMessage(Chat chat, Message message, UnlikeMessageCallback callback) {
-        ApiInteractor interactor = new UnlikeMessageInteractor(
-                authService.getAPIToken(), chat.getId(), message.getId());
-
         try {
-            HttpRequest request = interactor.getRequest();
-            HttpResponse response = request.execute();
-            interactor.parseResponse(response);
-            callback.onMessageUnliked();
-        } catch (HttpResponseException e) {
+            ApiInteractor interactor = new UnlikeMessageInteractor(
+                    authService.getAPIToken(), chat.getId(), message.getId());
+
+            int responseCode = interactor.getResponseCode();
+            if (200 <= responseCode && responseCode < 300) {
+                callback.onMessageUnliked();
+            } else {
+                callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
+            }
+            interactor.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -120,15 +130,18 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
 
     @Override
     public void getDirectChats(GetChatsCallback callback) {
-        ApiInteractor<List<Chat>> interactor = new GetDirectChatsInteractor(
-                authService.getAPIToken(), 1, 20);
-
         try {
-            HttpRequest request = interactor.getRequest();
-            HttpResponse response = request.execute();
-            List<Chat> chats = interactor.parseResponse(response);
-            callback.onChatsLoaded(chats);
-        } catch (HttpResponseException e) {
+            ApiInteractor<List<Chat>> interactor = new GetDirectChatsInteractor(
+                    authService.getAPIToken(), 1, 20);
+
+            int responseCode = interactor.getResponseCode();
+            if (200 <= responseCode && responseCode < 300) {
+                List<Chat> chats = interactor.getContent();
+                callback.onChatsLoaded(chats);
+            } else {
+                callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
+            }
+            interactor.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -140,16 +153,20 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
     }
 
     @Override
-    public void getDirectMessages(Chat chat, GetMessagesCallback callback) {
-        ApiInteractor<List<Message>> interactor = new GetDirectMessagesInteractor(
-                authService.getAPIToken(), chat.getId(), "", "");
-
+    public void getDirectMessages(Chat chat, Message lastMessage, GetMessagesCallback callback) {
         try {
-            HttpRequest request = interactor.getRequest();
-            HttpResponse response = request.execute();
-            List<Message> messages = interactor.parseResponse(response);
-            callback.onMessagesLoaded(messages);
-        } catch (HttpResponseException e) {
+            ApiInteractor<List<Message>> interactor = new GetDirectMessagesInteractor(
+                    authService.getAPIToken(), chat.getId(),
+                    (lastMessage == null) ? "" : lastMessage.getId(), "");
+
+            int responseCode = interactor.getResponseCode();
+            if (200 <= responseCode && responseCode < 300) {
+                List<Message> messages = interactor.getContent();
+                callback.onMessagesLoaded(messages);
+            } else {
+                callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
+            }
+            interactor.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -157,15 +174,17 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
 
     @Override
     public void sendDirectMessage(Chat chat, String messageId, String text, SendMessageCallback callback) {
-        ApiInteractor interactor = new SendDirectMessageInteractor(
-                authService.getAPIToken(), chat.getId(), BASE_SOURCE_GUID + messageId, text);
-
         try {
-            HttpRequest request = interactor.getRequest();
-            HttpResponse response = request.execute();
-            interactor.parseResponse(response);
-            callback.onMessageSent();
-        } catch (HttpResponseException e) {
+            ApiInteractor interactor = new SendDirectMessageInteractor(
+                    authService.getAPIToken(), chat.getId(), BASE_SOURCE_GUID + messageId, text);
+
+            int responseCode = interactor.getResponseCode();
+            if (200 <= responseCode && responseCode < 300) {
+                callback.onMessageSent();
+            } else {
+                callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
+            }
+            interactor.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -174,19 +193,19 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
     @Override
     public void likeDirectMessage(Chat chat, Message message, LikeMessageCallback callback) {
         if (userProfile != null) {
-            //FIXME: Conversation ID is still incorrect resulting in 404 error on liking a message
             String id = chat.getId() + "+" + userProfile.getId();
 
-            ApiInteractor interactor = new LikeMessageInteractor(
-                    authService.getAPIToken(), id, message.getId());
-
             try {
-                HttpRequest request = interactor.getRequest();
-                HttpResponse response = request.execute();
-                interactor.parseResponse(response);
-                callback.onMessageLiked();
-            } catch (HttpResponseException e) {
-                System.err.println(e.getStatusCode() + ": " + e.getStatusMessage());
+                ApiInteractor interactor = new LikeMessageInteractor(
+                        authService.getAPIToken(), id, message.getId());
+
+                int responseCode = interactor.getResponseCode();
+                if (200 <= responseCode && responseCode < 300) {
+                    callback.onMessageLiked();
+                } else {
+                    callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
+                }
+                interactor.disconnect();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -198,18 +217,19 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
     @Override
     public void unlikeDirectMessage(Chat chat, Message message, UnlikeMessageCallback callback) {
         if (userProfile != null) {
-            //FIXME: Conversation ID is still incorrect resulting in 404 error on unliking a message
-            String id = userProfile.getId() + "+" + chat.getId();
-
-            ApiInteractor interactor = new UnlikeMessageInteractor(
-                    authService.getAPIToken(), id, message.getId());
+            String id = chat.getId() + "+" + userProfile.getId();
 
             try {
-                HttpRequest request = interactor.getRequest();
-                HttpResponse response = request.execute();
-                interactor.parseResponse(response);
-                callback.onMessageUnliked();
-            } catch (HttpResponseException e) {
+                ApiInteractor interactor = new UnlikeMessageInteractor(
+                        authService.getAPIToken(), id, message.getId());
+
+                int responseCode = interactor.getResponseCode();
+                if (200 <= responseCode && responseCode < 300) {
+                    callback.onMessageUnliked();
+                } else {
+                    callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
+                }
+                interactor.disconnect();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -220,15 +240,18 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
 
     @Override
     public void getUserProfile(GetUserProfileCallback callback) {
-        ApiInteractor<Profile> interactor = new GetUserProfileInteractor(
-                authService.getAPIToken());
-
         try {
-            HttpRequest request = interactor.getRequest();
-            HttpResponse response = request.execute();
-            Profile profile = interactor.parseResponse(response);
-            callback.onUserProfileLoaded(profile);
-        } catch (HttpResponseException e) {
+            ApiInteractor<Profile> interactor = new GetUserProfileInteractor(
+                    authService.getAPIToken());
+
+            int responseCode = interactor.getResponseCode();
+            if (200 <= responseCode && responseCode < 300) {
+                Profile profile = interactor.getContent();
+                callback.onUserProfileLoaded(profile);
+            } else {
+                callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
+            }
+            interactor.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
