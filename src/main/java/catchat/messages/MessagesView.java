@@ -109,18 +109,18 @@ public class MessagesView extends VBox implements MessagesContract.View {
                 ScrollBar bar = (ScrollBar)node;
                 if (bar.getOrientation().equals(Orientation.VERTICAL)) {
                     messageListScrollBar = bar;
+                    messageListScrollBar.valueProperty().addListener(((observable, oldValue, newValue) -> {
+                        PauseTransition pause = new PauseTransition(Duration.millis(500));
+                        pause.setOnFinished(event -> {
+                            double position = newValue.doubleValue();
+                            if (position == messageListScrollBar.getMin()) {
+                                presenter.loadMoreMessages();
+                            }
+                        });
+                        pause.playFromStart();
+                    }));
                 }
             }
         }
-        messageListScrollBar.valueProperty().addListener(((observable, oldValue, newValue) -> {
-            PauseTransition pause = new PauseTransition(Duration.millis(500));
-            pause.setOnFinished(event -> {
-                double position = newValue.doubleValue();
-                if (position == messageListScrollBar.getMin()) {
-                    presenter.loadMoreMessages();
-                }
-            });
-            pause.playFromStart();
-        }));
     }
 }

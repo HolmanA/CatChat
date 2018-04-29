@@ -15,7 +15,7 @@ public class GroupChatsPresenter implements
     private DataSource dataSource;
     private ChatsContract.View view;
     private DataSource.GetGroupChatCallback chatCallback;
-    private int chatsPage;
+    private int lastPageLoaded;
 
     public GroupChatsPresenter(DataSource dataSource,
                                ChatsContract.View view,
@@ -23,12 +23,13 @@ public class GroupChatsPresenter implements
         this.dataSource = dataSource;
         this.view = view;
         this.chatCallback = chatCallback;
-        chatsPage = 1;
+        lastPageLoaded = 1;
     }
 
     @Override
     public void start() {
         refreshChats();
+        view.setTitle("Group Chats");
     }
 
     @Override
@@ -42,25 +43,19 @@ public class GroupChatsPresenter implements
 
     @Override
     public void onChatsLoaded(List<Chat> chats) {
-        view.showGroups(chats);
-        view.setPageNumber(chatsPage);
-    }
-
-    @Override
-    public void prevPage() {
-        chatsPage = (--chatsPage > 1) ? chatsPage : 1;
-        refreshChats();
-    }
-
-    @Override
-    public void nextPage() {
-        chatsPage++;
-        refreshChats();
+        view.showChats(chats);
     }
 
     @Override
     public void refreshChats() {
-        dataSource.getGroupChats(this);
+        view.clearChats();
+        lastPageLoaded = 1;
+        dataSource.getGroupChats(1, 10, this);
+    }
+
+    @Override
+    public void loadMoreChats() {
+        dataSource.getGroupChats(++lastPageLoaded, 10, this);
     }
 
     @Override
