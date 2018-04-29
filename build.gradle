@@ -21,7 +21,11 @@ dependencies {
 jar {
     manifest {
         attributes(
+                'Class-Path': configurations.compileClasspath.files.collect {"$it.name"}.join(' '),
                 'Main-Class': 'catchat.Main'
         )
+    }
+    from {
+        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
