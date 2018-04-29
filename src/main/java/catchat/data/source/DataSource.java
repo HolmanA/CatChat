@@ -42,14 +42,14 @@ public interface DataSource {
         void onUserProfileLoaded(Profile profile);
     }
 
-    void getGroupChats(GetChatsCallback callback);
+    void getGroupChats(int page, int pageSize, GetChatsCallback callback);
     void getGroupChat(Chat chat, GetGroupChatCallback callback);
     void getGroupMessages(Chat chat, Message lastMessage, GetMessagesCallback callback);
     void sendGroupMessage(Chat chat, String messageId, String text, SendMessageCallback callback);
     void likeGroupMessage(Chat chat, Message message, LikeMessageCallback callback);
     void unlikeGroupMessage(Chat chat, Message message, UnlikeMessageCallback callback);
 
-    void getDirectChats(GetChatsCallback callback);
+    void getDirectChats(int page, int pageSize, GetChatsCallback callback);
     void getDirectChat(Chat chat, GetDirectChatCallback callback);
     void getDirectMessages(Chat chat, Message lastMessage, GetMessagesCallback callback);
     void sendDirectMessage(Chat chat, String messageId, String text, SendMessageCallback callback);

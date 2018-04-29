@@ -31,10 +31,10 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
     }
 
     @Override
-    public void getGroupChats(GetChatsCallback callback) {
+    public void getGroupChats(int page, int pageSize, GetChatsCallback callback) {
         try {
             ApiInteractor<List<Chat>> interactor = new GetGroupChatsInteractor(
-                    authService.getAPIToken(), 1, 20);
+                    authService.getAPIToken(), page, pageSize);
 
             int responseCode = interactor.getResponseCode();
             if (200 <= responseCode && responseCode < 300) {
@@ -129,10 +129,10 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
     }
 
     @Override
-    public void getDirectChats(GetChatsCallback callback) {
+    public void getDirectChats(int page, int pageSize, GetChatsCallback callback) {
         try {
             ApiInteractor<List<Chat>> interactor = new GetDirectChatsInteractor(
-                    authService.getAPIToken(), 1, 20);
+                    authService.getAPIToken(), page, pageSize);
 
             int responseCode = interactor.getResponseCode();
             if (200 <= responseCode && responseCode < 300) {
