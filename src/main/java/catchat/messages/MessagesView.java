@@ -3,18 +3,19 @@ package catchat.messages;
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
 import catchat.messages.view.MessageListCell;
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.util.Duration;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class MessagesView extends VBox implements MessagesContract.View {
     private ObservableList<Message> messageList;
     private Label chatInfo;
     private ListView<Message> messageListView;
-    private Button loadMore;
+    private ScrollBar messageListScrollBar;
     private Button refresh;
     private TextField input;
     private Button sendMessage;
@@ -46,14 +47,12 @@ public class MessagesView extends VBox implements MessagesContract.View {
                 new MessageListCell(presenter));
 
         input = new TextField();
-        loadMore = new Button("Load More");
-        loadMore.setOnMouseClicked(event -> presenter.loadMoreMessages());
         refresh = new Button("Refresh");
         refresh.setOnMouseClicked(event -> presenter.refreshMessages());
         sendMessage = new Button("Send");
         sendMessage.setOnMouseClicked(event -> presenter.sendMessage());
         HBox sendBox = new HBox(2);
-        sendBox.getChildren().addAll(loadMore, refresh, input, sendMessage);
+        sendBox.getChildren().addAll(refresh, input, sendMessage);
         HBox.setHgrow(input, Priority.ALWAYS);
 
         getChildren().addAll(chatInfoBox, messageListView, sendBox);
@@ -68,7 +67,10 @@ public class MessagesView extends VBox implements MessagesContract.View {
     @Override
     public void showMessages(List<Message> messages) {
         messageList.addAll(0, messages);
-        messageListView.scrollTo(messages.size() - 1);
+        messageListView.scrollTo(messages.size());
+        if (messageListScrollBar == null) {
+            initializeMessageListScrollBar();
+        }
     }
 
     @Override
@@ -99,5 +101,26 @@ public class MessagesView extends VBox implements MessagesContract.View {
     @Override
     public void clearMessageText() {
         input.clear();
+    }
+
+    private void initializeMessageListScrollBar() {
+        for (Node node : messageListView.lookupAll(".scroll-bar")) {
+            if (node instanceof ScrollBar) {
+                ScrollBar bar = (ScrollBar)node;
+                if (bar.getOrientation().equals(Orientation.VERTICAL)) {
+                    messageListScrollBar = bar;
+                }
+            }
+        }
+        messageListScrollBar.valueProperty().addListener(((observable, oldValue, newValue) -> {
+            PauseTransition pause = new PauseTransition(Duration.millis(500));
+            pause.setOnFinished(event -> {
+                double position = newValue.doubleValue();
+                if (position == messageListScrollBar.getMin()) {
+                    presenter.loadMoreMessages();
+                }
+            });
+            pause.playFromStart();
+        }));
     }
 }
