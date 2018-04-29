@@ -10,6 +10,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -47,6 +48,11 @@ public class MessagesView extends VBox implements MessagesContract.View {
                 new MessageListCell(presenter));
 
         input = new TextField();
+        input.setOnKeyPressed(event -> {
+            if (event.getCode().equals(KeyCode.ENTER)) {
+                presenter.sendMessage();
+            }
+        });
         refresh = new Button("Refresh");
         refresh.setOnMouseClicked(event -> presenter.refreshMessages());
         sendMessage = new Button("Send");

@@ -85,10 +85,10 @@ public class MessagesPresenter implements
         if (chat != null && !(text = view.getMessageText()).equals("")) {
             switch (type) {
                 case GROUP:
-                    dataSource.sendGroupMessage(chat, Integer.toString(sentId), text, this);
+                    dataSource.sendGroupMessage(chat, Integer.toString(++sentId), text, this);
                     break;
                 case DIRECT:
-                    dataSource.sendDirectMessage(chat, Integer.toString(sentId), text, this);
+                    dataSource.sendDirectMessage(chat, Integer.toString(++sentId), text, this);
                     break;
                 default:
             }
@@ -138,6 +138,7 @@ public class MessagesPresenter implements
 
     @Override
     public void onMessageSent() {
+        view.clearMessageText();
         refreshMessages();
     }
 
