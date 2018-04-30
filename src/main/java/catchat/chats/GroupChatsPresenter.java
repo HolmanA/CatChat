@@ -1,6 +1,7 @@
 package catchat.chats;
 
 import catchat.data.entities.chat.Chat;
+import catchat.data.receiver.message.MessageChangeListener;
 import catchat.data.source.DataSource;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
  */
 public class GroupChatsPresenter implements
         ChatsContract.Presenter,
+        MessageChangeListener,
         DataSource.GetChatsCallback {
 
     private DataSource dataSource;
@@ -63,5 +65,10 @@ public class GroupChatsPresenter implements
         if (chat != null) {
             dataSource.getGroupChat(chat, chatCallback);
         }
+    }
+
+    @Override
+    public void changed() {
+        refreshChats();
     }
 }

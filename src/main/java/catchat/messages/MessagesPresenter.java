@@ -3,6 +3,8 @@ package catchat.messages;
 import catchat.data.entities.ChatType;
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
+import catchat.data.receiver.message.MessageChangeEventBus;
+import catchat.data.receiver.message.MessageChangeListener;
 import catchat.data.source.DataSource;
 
 import java.util.Collections;
@@ -13,22 +15,25 @@ import java.util.List;
  */
 public class MessagesPresenter implements
         MessagesContract.Presenter,
+        MessageChangeListener,
         DataSource.GetGroupChatCallback,
         DataSource.GetDirectChatCallback,
         DataSource.GetMessagesCallback,
-        DataSource.SendMessageCallback,
         DataSource.LikeMessageCallback,
         DataSource.UnlikeMessageCallback {
 
     private DataSource dataSource;
+    private MessageChangeEventBus eventBus;
     private MessagesContract.View view;
     private ChatType type;
     private Chat chat;
     private int sentId;
     private Message lastMessage;
 
-    public MessagesPresenter(DataSource dataSource, MessagesContract.View view) {
+    public MessagesPresenter(DataSource dataSource, MessageChangeEventBus eventBus, MessagesContract.View view) {
         this.dataSource = dataSource;
+        this.eventBus = eventBus;
+        this.eventBus.subscribe(this);
         this.view = view;
         sentId = 1;
     }
@@ -85,10 +90,10 @@ public class MessagesPresenter implements
         if (chat != null && !(text = view.getMessageText()).equals("")) {
             switch (type) {
                 case GROUP:
-                    dataSource.sendGroupMessage(chat, Integer.toString(++sentId), text, this);
+                    dataSource.sendGroupMessage(chat, Integer.toString(++sentId), text, eventBus);
                     break;
                 case DIRECT:
-                    dataSource.sendDirectMessage(chat, Integer.toString(++sentId), text, this);
+                    dataSource.sendDirectMessage(chat, Integer.toString(++sentId), text, eventBus);
                     break;
                 default:
             }
@@ -137,12 +142,6 @@ public class MessagesPresenter implements
     }
 
     @Override
-    public void onMessageSent() {
-        view.clearMessageText();
-        refreshMessages();
-    }
-
-    @Override
     public void onMessageLiked() {
         refreshMessages();
     }
@@ -167,6 +166,12 @@ public class MessagesPresenter implements
     private void chatLoaded(Chat chat) {
         this.chat = chat;
         view.showChatDetails(this.chat);
+        refreshMessages();
+    }
+
+    @Override
+    public void changed() {
+        view.clearMessageText();
         refreshMessages();
     }
 }

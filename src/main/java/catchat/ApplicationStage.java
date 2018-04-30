@@ -4,6 +4,7 @@ import catchat.chats.ChatsView;
 import catchat.chats.DirectChatsPresenter;
 import catchat.chats.GroupChatsPresenter;
 import catchat.data.auth.OAuthService;
+import catchat.data.receiver.message.MessageChangeEventBus;
 import catchat.data.source.DataSource;
 import catchat.data.source.GroupMeDataSource;
 import catchat.messages.MessagesPresenter;
@@ -40,18 +41,22 @@ public class ApplicationStage extends Stage {
     private BorderPane initializePane() {
         BorderPane borderPane = new BorderPane();
 
+        MessageChangeEventBus messageChangeEventBus = new MessageChangeEventBus();
+
         MessagesView messagesView = new MessagesView();
-        MessagesPresenter messagesPresenter = new MessagesPresenter(dataSource, messagesView);
+        MessagesPresenter messagesPresenter = new MessagesPresenter(dataSource, messageChangeEventBus, messagesView);
         messagesView.setPresenter(messagesPresenter);
         messagesPresenter.start();
 
         ChatsView groupChatsView = new ChatsView();
         GroupChatsPresenter groupChatsPresenter = new GroupChatsPresenter(dataSource, groupChatsView, messagesPresenter);
+        messageChangeEventBus.subscribe(groupChatsPresenter);
         groupChatsView.setPresenter(groupChatsPresenter);
         groupChatsPresenter.start();
 
         ChatsView directChatsView = new ChatsView();
         DirectChatsPresenter directChatsPresenter = new DirectChatsPresenter(dataSource, directChatsView, messagesPresenter);
+        messageChangeEventBus.subscribe(directChatsPresenter);
         directChatsView.setPresenter(directChatsPresenter);
         directChatsPresenter.start();
 
