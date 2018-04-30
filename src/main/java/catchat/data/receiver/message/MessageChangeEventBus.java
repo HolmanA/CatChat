@@ -8,7 +8,8 @@ import java.util.List;
 /**
  * Created by andrew on 4/29/18.
  */
-public class MessageChangeEventBus implements DataSource.SendMessageCallback {
+public class MessageChangeEventBus implements DataSource.SendMessageCallback,
+        MessageReceiver.MessageReceivedCallback {
     private List<MessageChangeListener> listeners;
 
     public MessageChangeEventBus() {
@@ -34,6 +35,11 @@ public class MessageChangeEventBus implements DataSource.SendMessageCallback {
 
     @Override
     public void onMessageSent() {
+        alertAll();
+    }
+
+    @Override
+    public void onMessageReceived() {
         alertAll();
     }
 
