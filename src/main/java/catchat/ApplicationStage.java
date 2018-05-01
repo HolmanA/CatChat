@@ -10,12 +10,9 @@ import catchat.data.source.DataSource;
 import catchat.data.source.GroupMeDataSource;
 import catchat.messages.MessagesPresenter;
 import catchat.messages.MessagesView;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 /**
  * Created by andrew on 4/14/18.
@@ -30,15 +27,17 @@ public class ApplicationStage extends Stage {
         this.service = service;
         this.dataSource = new GroupMeDataSource(service);
         this.messageChangeEventBus = new MessageChangeEventBus();
-        this.messageReceiver = new MessageReceiver(service.getAPIToken(), "47813963", messageChangeEventBus);
+        this.messageReceiver = new MessageReceiver(service, dataSource, messageChangeEventBus);
     }
 
     public void start() {
         System.out.println("Main Application Started");
-        messageReceiver.start();
+        Thread thread = new Thread(() -> messageReceiver.start());
+        thread.start();
         setMaximized(true);
         setOnCloseRequest(event -> {
             messageReceiver.stop();
+            System.exit(0);
         });
         initialize();
         show();

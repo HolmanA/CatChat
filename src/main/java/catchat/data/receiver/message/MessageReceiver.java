@@ -1,17 +1,18 @@
 package catchat.data.receiver.message;
 
-import catchat.data.entities.message.Message;
+import catchat.data.auth.OAuthService;
+import catchat.data.entities.profile.Profile;
+import catchat.data.source.DataSource;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by andrew on 4/29/18.
  */
-public class MessageReceiver {
+public class MessageReceiver implements DataSource.GetUserProfileCallback {
     interface MessageReceivedCallback {
         void onMessageReceived();
     }
@@ -19,18 +20,27 @@ public class MessageReceiver {
     private static final String URL = "ws://push.groupme.com/faye";
     private MessageWebSocket webSocket;
     private MessageReceivedCallback callback;
-    private String authToken;
-    private String userId;
+    private OAuthService authService;
+    private DataSource dataSource;
 
-    public MessageReceiver(String authToken, String userId, MessageReceivedCallback callback) {
-        this.authToken = authToken;
-        this.userId = userId;
+    public MessageReceiver(OAuthService authService, DataSource dataSource, MessageReceivedCallback callback) {
+        this.authService = authService;
+        this.dataSource = dataSource;
         this.callback = callback;
     }
 
     public void start() {
+        dataSource.getUserProfile(this);
+    }
+
+    public void stop() {
+        webSocket.close();
+    }
+
+    @Override
+    public void onUserProfileLoaded(Profile profile) {
         WebSocketClient clientSocket = new WebSocketClient();
-        webSocket = new MessageWebSocket(authToken, userId, callback);
+        webSocket = new MessageWebSocket(authService.getAPIToken(), profile.getId(), callback);
         try {
             clientSocket.start();
             URI uri = new URI(URL);
@@ -43,7 +53,8 @@ public class MessageReceiver {
         }
     }
 
-    public void stop() {
-        webSocket.close();
+    @Override
+    public void unknownResponseCode(String response) {
+
     }
 }
