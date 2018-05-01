@@ -4,6 +4,8 @@ import catchat.chats.ChatsView;
 import catchat.chats.DirectChatsPresenter;
 import catchat.chats.GroupChatsPresenter;
 import catchat.data.auth.OAuthService;
+import catchat.data.receiver.message.MessageChangeEventBus;
+import catchat.data.receiver.message.MessageReceiver;
 import catchat.data.source.DataSource;
 import catchat.data.source.GroupMeDataSource;
 import catchat.messages.MessagesPresenter;
@@ -18,15 +20,25 @@ import javafx.stage.Stage;
 public class ApplicationStage extends Stage {
     private OAuthService service;
     private DataSource dataSource;
+    private MessageChangeEventBus messageChangeEventBus;
+    private MessageReceiver messageReceiver;
 
     public ApplicationStage(OAuthService service) {
         this.service = service;
         this.dataSource = new GroupMeDataSource(service);
+        this.messageChangeEventBus = new MessageChangeEventBus();
+        this.messageReceiver = new MessageReceiver(service, dataSource, messageChangeEventBus);
     }
 
     public void start() {
         System.out.println("Main Application Started");
+        Thread thread = new Thread(() -> messageReceiver.start());
+        thread.start();
         setMaximized(true);
+        setOnCloseRequest(event -> {
+            messageReceiver.stop();
+            System.exit(0);
+        });
         initialize();
         show();
     }
@@ -40,18 +52,21 @@ public class ApplicationStage extends Stage {
     private BorderPane initializePane() {
         BorderPane borderPane = new BorderPane();
 
+
         MessagesView messagesView = new MessagesView();
-        MessagesPresenter messagesPresenter = new MessagesPresenter(dataSource, messagesView);
+        MessagesPresenter messagesPresenter = new MessagesPresenter(dataSource, messageChangeEventBus, messagesView);
         messagesView.setPresenter(messagesPresenter);
         messagesPresenter.start();
 
         ChatsView groupChatsView = new ChatsView();
         GroupChatsPresenter groupChatsPresenter = new GroupChatsPresenter(dataSource, groupChatsView, messagesPresenter);
+        messageChangeEventBus.subscribe(groupChatsPresenter);
         groupChatsView.setPresenter(groupChatsPresenter);
         groupChatsPresenter.start();
 
         ChatsView directChatsView = new ChatsView();
         DirectChatsPresenter directChatsPresenter = new DirectChatsPresenter(dataSource, directChatsView, messagesPresenter);
+        messageChangeEventBus.subscribe(directChatsPresenter);
         directChatsView.setPresenter(directChatsPresenter);
         directChatsPresenter.start();
 
