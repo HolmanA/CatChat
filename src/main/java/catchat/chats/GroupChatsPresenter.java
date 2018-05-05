@@ -1,6 +1,7 @@
 package catchat.chats;
 
 import catchat.data.entities.chat.Chat;
+import catchat.data.entities.message.Message;
 import catchat.data.receiver.message.MessageChangeListener;
 import catchat.data.source.DataSource;
 
@@ -68,7 +69,7 @@ public class GroupChatsPresenter implements
     }
 
     @Override
-    public void changed() {
+    public void changed(Message message) {
         refreshChats();
     }
 }

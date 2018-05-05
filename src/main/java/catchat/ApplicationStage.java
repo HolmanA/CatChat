@@ -10,6 +10,7 @@ import catchat.data.source.DataSource;
 import catchat.data.source.GroupMeDataSource;
 import catchat.messages.MessagesPresenter;
 import catchat.messages.MessagesView;
+import catchat.systemtray.TrayManager;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -19,6 +20,7 @@ import javafx.stage.Stage;
  */
 public class ApplicationStage extends Stage {
     private OAuthService service;
+    private TrayManager trayManager;
     private DataSource dataSource;
     private MessageChangeEventBus messageChangeEventBus;
     private MessageReceiver messageReceiver;
@@ -28,6 +30,14 @@ public class ApplicationStage extends Stage {
         this.dataSource = new GroupMeDataSource(service);
         this.messageChangeEventBus = new MessageChangeEventBus();
         this.messageReceiver = new MessageReceiver(service, dataSource, messageChangeEventBus);
+        this.trayManager = new TrayManager(messageChangeEventBus);
+        this.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue) {
+                trayManager.unsubscribeFromEventBus();
+            } else {
+                trayManager.subscribeToEventBus();
+            }
+        }));
     }
 
     public void start() {

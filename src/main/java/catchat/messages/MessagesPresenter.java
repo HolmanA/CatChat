@@ -170,7 +170,7 @@ public class MessagesPresenter implements
     }
 
     @Override
-    public void changed() {
+    public void changed(Message message) {
         view.clearMessageText();
         refreshMessages();
     }

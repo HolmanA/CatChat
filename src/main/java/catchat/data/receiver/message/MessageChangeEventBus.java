@@ -1,5 +1,6 @@
 package catchat.data.receiver.message;
 
+import catchat.data.entities.message.Message;
 import catchat.data.source.DataSource;
 
 import java.util.ArrayList;
@@ -35,17 +36,17 @@ public class MessageChangeEventBus implements DataSource.SendMessageCallback,
 
     @Override
     public void onMessageSent() {
-        alertAll();
+        alertAll(null);
     }
 
     @Override
-    public void onMessageReceived() {
-        alertAll();
+    public void onMessageReceived(Message message) {
+        alertAll(message);
     }
 
-    private void alertAll() {
+    private void alertAll(Message message) {
         for (MessageChangeListener listener : listeners) {
-            listener.changed();
+            listener.changed(message);
         }
     }
 }

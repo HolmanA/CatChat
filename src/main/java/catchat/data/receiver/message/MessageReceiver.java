@@ -1,6 +1,7 @@
 package catchat.data.receiver.message;
 
 import catchat.data.auth.OAuthService;
+import catchat.data.entities.message.Message;
 import catchat.data.entities.profile.Profile;
 import catchat.data.source.DataSource;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class MessageReceiver implements DataSource.GetUserProfileCallback {
     interface MessageReceivedCallback {
-        void onMessageReceived();
+        void onMessageReceived(Message message);
     }
 
     private static final String URL = "ws://push.groupme.com/faye";
