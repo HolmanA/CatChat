@@ -3,8 +3,6 @@ package catchat.systemtray;
 import catchat.data.entities.message.Message;
 import catchat.data.receiver.message.MessageChangeEventBus;
 import catchat.data.receiver.message.MessageChangeListener;
-import javafx.stage.Stage;
-
 import java.awt.SystemTray;
 import java.awt.Image;
 import java.awt.Toolkit;

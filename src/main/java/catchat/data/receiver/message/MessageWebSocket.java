@@ -28,7 +28,7 @@ public class MessageWebSocket {
     private ObjectMapper mapper;
     private MessageReceiver.MessageReceivedCallback callback;
 
-    public MessageWebSocket(String authToken, String userId, MessageReceiver.MessageReceivedCallback callback) {
+    MessageWebSocket(String authToken, String userId, MessageReceiver.MessageReceivedCallback callback) {
         this.closeLatch = new CountDownLatch(1);
         this.authToken = authToken;
         this.userId = userId;
@@ -36,11 +36,13 @@ public class MessageWebSocket {
         mapper = new ObjectMapper();
     }
 
-    public void close() {
-        session.close(StatusCode.NORMAL, "Session Closed");
+    void close() {
+        if (session.isOpen()) {
+            session.close(StatusCode.NORMAL, "Session Closed");
+        }
     }
 
-    public boolean awaitClose(int duration, TimeUnit unit) throws InterruptedException {
+    boolean awaitClose(int duration, TimeUnit unit) throws InterruptedException {
         return this.closeLatch.await(duration, unit);
     }
 
@@ -78,12 +80,14 @@ public class MessageWebSocket {
                     connect(clientId);
                     break;
                 default:
-                    JsonNode subjectNode = responseNode.get("data").get("subject");
-                    String senderName = subjectNode.get("name").asText();
-                    String messageText = subjectNode.get("text").asText();
-                    Platform.runLater(() -> {
-                        callback.onMessageReceived(new NotificationMessage(messageText, senderName));
-                    });
+                    if (responseNode.has("data")) {
+                        JsonNode subjectNode = responseNode.get("data").get("subject");
+                        String senderName = subjectNode.get("name").asText();
+                        String messageText = subjectNode.get("text").asText();
+                        Platform.runLater(() -> {
+                            callback.onMessageReceived(new NotificationMessage(messageText, senderName));
+                        });
+                    }
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -240,20 +240,24 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
 
     @Override
     public void getUserProfile(GetUserProfileCallback callback) {
-        try {
-            ApiInteractor<Profile> interactor = new GetUserProfileInteractor(
-                    authService.getAPIToken());
+        if (userProfile == null) {
+            try {
+                ApiInteractor<Profile> interactor = new GetUserProfileInteractor(
+                        authService.getAPIToken());
 
-            int responseCode = interactor.getResponseCode();
-            if (200 <= responseCode && responseCode < 300) {
-                Profile profile = interactor.getContent();
-                callback.onUserProfileLoaded(profile);
-            } else {
-                callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
+                int responseCode = interactor.getResponseCode();
+                if (200 <= responseCode && responseCode < 300) {
+                    Profile profile = interactor.getContent();
+                    callback.onUserProfileLoaded(profile);
+                } else {
+                    callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
+                }
+                interactor.disconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            interactor.disconnect();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
+            callback.onUserProfileLoaded(userProfile);
         }
     }
 
