@@ -4,10 +4,7 @@ import catchat.data.auth.OAuthService;
 import catchat.data.entities.message.Message;
 import catchat.data.entities.profile.Profile;
 import catchat.data.source.DataSource;
-import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
-import org.eclipse.jetty.websocket.client.WebSocketClient;
 
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -18,8 +15,7 @@ public class MessageReceiver implements DataSource.GetUserProfileCallback {
         void onMessageReceived(Message message);
     }
 
-    private static final String URL = "ws://push.groupme.com/faye";
-    private MessageWebSocket webSocket;
+    private MessageSocketListener webSocket;
     private MessageReceivedCallback callback;
     private OAuthService authService;
     private DataSource dataSource;
@@ -35,19 +31,18 @@ public class MessageReceiver implements DataSource.GetUserProfileCallback {
     }
 
     public void stop() {
-        webSocket.close();
+        try {
+            webSocket.awaitClose(500, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onUserProfileLoaded(Profile profile) {
-        WebSocketClient clientSocket = new WebSocketClient();
-        webSocket = new MessageWebSocket(authService.getAPIToken(), profile.getId(), callback);
+        webSocket = new MessageSocketListener(authService.getAPIToken(), profile.getId(), callback);
         try {
-            clientSocket.start();
-            URI uri = new URI(URL);
-            ClientUpgradeRequest upgradeRequest = new ClientUpgradeRequest();
-            clientSocket.connect(webSocket, uri, upgradeRequest);
-            System.out.println("Connecting to: " + uri);
+            webSocket.connect();
             webSocket.awaitClose(5, TimeUnit.SECONDS);
         } catch (Exception e) {
             e.printStackTrace();
@@ -56,6 +51,5 @@ public class MessageReceiver implements DataSource.GetUserProfileCallback {
 
     @Override
     public void unknownResponseCode(String response) {
-
     }
 }
