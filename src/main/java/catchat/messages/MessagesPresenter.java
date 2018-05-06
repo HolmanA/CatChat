@@ -3,8 +3,7 @@ package catchat.messages;
 import catchat.data.entities.ChatType;
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
-import catchat.data.receiver.message.MessageChangeEventBus;
-import catchat.data.receiver.message.MessageChangeListener;
+import catchat.data.MessageEventBus;
 import catchat.data.source.DataSource;
 
 import java.util.Collections;
@@ -15,7 +14,7 @@ import java.util.List;
  */
 public class MessagesPresenter implements
         MessagesContract.Presenter,
-        MessageChangeListener,
+        MessageEventBus.Listener,
         DataSource.GetGroupChatCallback,
         DataSource.GetDirectChatCallback,
         DataSource.GetMessagesCallback,
@@ -23,14 +22,14 @@ public class MessagesPresenter implements
         DataSource.UnlikeMessageCallback {
 
     private DataSource dataSource;
-    private MessageChangeEventBus eventBus;
+    private MessageEventBus eventBus;
     private MessagesContract.View view;
     private ChatType type;
     private Chat chat;
     private int sentId;
     private Message lastMessage;
 
-    public MessagesPresenter(DataSource dataSource, MessageChangeEventBus eventBus, MessagesContract.View view) {
+    public MessagesPresenter(DataSource dataSource, MessageEventBus eventBus, MessagesContract.View view) {
         this.dataSource = dataSource;
         this.eventBus = eventBus;
         this.eventBus.subscribe(this);

@@ -1,8 +1,8 @@
 package catchat.chats;
 
+import catchat.data.MessageEventBus;
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
-import catchat.data.receiver.message.MessageChangeListener;
 import catchat.data.source.DataSource;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class DirectChatsPresenter implements
         ChatsContract.Presenter,
-        MessageChangeListener,
+        MessageEventBus.Listener,
         DataSource.GetChatsCallback {
 
     private DataSource dataSource;

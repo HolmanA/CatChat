@@ -1,27 +1,30 @@
 package catchat.systemtray;
 
 import catchat.data.entities.message.Message;
-import catchat.data.receiver.message.MessageChangeEventBus;
-import catchat.data.receiver.message.MessageChangeListener;
+import catchat.data.MessageEventBus;
+
+import javax.imageio.ImageIO;
 import java.awt.SystemTray;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.AWTException;
+import java.io.IOException;
 
 /**
  * Created by andrew on 5/4/18.
  */
-public class TrayManager implements MessageChangeListener {
-    private MessageChangeEventBus eventBus;
+public class TrayManager implements MessageEventBus.Listener {
+    private MessageEventBus eventBus;
     private TrayIcon trayIcon;
 
-    public TrayManager(MessageChangeEventBus eventBus) {
+    public TrayManager(MessageEventBus eventBus) {
         this.eventBus = eventBus;
         if (SystemTray.isSupported()) {
             SystemTray systemTray = SystemTray.getSystemTray();
-            Image image = Toolkit.getDefaultToolkit().createImage("");
-            trayIcon = new TrayIcon(image, "CatChat");
+                Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/SystemTrayIcon.png"));
+                trayIcon = new TrayIcon(image, "CatChat");
+                trayIcon.setImageAutoSize(true);
             try {
                 systemTray.add(trayIcon);
             } catch (AWTException e) {

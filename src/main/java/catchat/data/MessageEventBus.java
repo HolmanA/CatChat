@@ -1,6 +1,7 @@
-package catchat.data.receiver.message;
+package catchat.data;
 
 import catchat.data.entities.message.Message;
+import catchat.data.receiver.message.MessageReceiver;
 import catchat.data.source.DataSource;
 
 import java.util.ArrayList;
@@ -9,19 +10,23 @@ import java.util.List;
 /**
  * Created by andrew on 4/29/18.
  */
-public class MessageChangeEventBus implements DataSource.SendMessageCallback,
+public class MessageEventBus implements DataSource.SendMessageCallback,
         MessageReceiver.MessageReceivedCallback {
-    private List<MessageChangeListener> listeners;
+    public interface Listener {
+        void changed(Message message);
+    }
 
-    public MessageChangeEventBus() {
+    private List<Listener> listeners;
+
+    public MessageEventBus() {
         listeners = new ArrayList<>();
     }
 
-    public void subscribe(MessageChangeListener listener) {
+    public void subscribe(Listener listener) {
         listeners.add(listener);
     }
 
-    public void unsubscribe(MessageChangeListener listener) {
+    public void unsubscribe(Listener listener) {
         listeners.remove(listener);
     }
 
@@ -45,7 +50,7 @@ public class MessageChangeEventBus implements DataSource.SendMessageCallback,
     }
 
     private void alertAll(Message message) {
-        for (MessageChangeListener listener : listeners) {
+        for (Listener listener : listeners) {
             listener.changed(message);
         }
     }

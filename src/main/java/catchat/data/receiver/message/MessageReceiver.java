@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  * Created by andrew on 4/29/18.
  */
 public class MessageReceiver implements DataSource.GetUserProfileCallback {
-    interface MessageReceivedCallback {
+    public interface MessageReceivedCallback {
         void onMessageReceived(Message message);
     }
 

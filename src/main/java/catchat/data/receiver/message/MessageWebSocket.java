@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.StatusCode;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.api.annotations.*;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -36,8 +33,12 @@ public class MessageWebSocket {
         mapper = new ObjectMapper();
     }
 
+    boolean isClosed() {
+        return (session == null || !session.isOpen());
+    }
+
     void close() {
-        if (session.isOpen()) {
+        if (session != null) {
             session.close(StatusCode.NORMAL, "Session Closed");
         }
     }
@@ -54,6 +55,12 @@ public class MessageWebSocket {
         this.closeLatch.countDown();
     }
 
+    @OnWebSocketError
+    @SuppressWarnings("unused")
+    public void onError(Throwable t) {
+        t.printStackTrace();
+    }
+
     @OnWebSocketConnect
     @SuppressWarnings("unused")
     public void onConnect(Session session) {
@@ -65,7 +72,6 @@ public class MessageWebSocket {
     @OnWebSocketMessage
     @SuppressWarnings("unused")
     public void onMessage(String responseMessage) {
-        System.out.println("Received: " + responseMessage);
         try {
             JsonNode responseTree = mapper.readTree(responseMessage);
             JsonNode responseNode = responseTree.get(0);
