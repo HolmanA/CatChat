@@ -12,10 +12,7 @@ public class AuthPresenter implements AuthContract.Presenter {
     }
 
     @Override
-    public void start() {
-        // If hide on start, execute right away
-        //authenticate();
-    }
+    public void start() {}
 
     @Override
     public void authenticate() {
@@ -26,10 +23,5 @@ public class AuthPresenter implements AuthContract.Presenter {
         thread.start();
 
         authView.openWebPage(authService.getAuthURL());
-    }
-
-    @Override
-    public void hideOnStart(boolean hide) {
-        System.out.println("hide dialog on start");
     }
 }

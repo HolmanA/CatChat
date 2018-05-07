@@ -3,12 +3,9 @@ package catchat.authentication;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -24,9 +21,6 @@ public class AuthView extends VBox implements AuthContract.View {
     private Label title;
     private Text prompt;
     private Button login;
-    private HBox hideDialogBox;
-    private Label hideDialogLabel;
-    private CheckBox hideDialog;
 
     public AuthView() {
         super(5);
@@ -44,15 +38,7 @@ public class AuthView extends VBox implements AuthContract.View {
         login = new Button("Login");
         login.setOnMouseClicked(event -> presenter.authenticate());
 
-        hideDialog = new CheckBox();
-        hideDialog.setOnMouseClicked(event -> presenter.hideOnStart(hideDialog.isSelected()));
-        hideDialogLabel = new Label("Check this box to hide this dialog on startup");
-        hideDialogLabel.setFont(Font.font(null, FontPosture.ITALIC, 12));
-        hideDialogBox = new HBox(5);
-        hideDialogBox.getChildren().addAll(hideDialog, hideDialogLabel);
-        hideDialogBox.setAlignment(Pos.CENTER);
-
-        getChildren().setAll(title, prompt, login, hideDialogBox);
+        getChildren().setAll(title, prompt, login);
         setAlignment(Pos.CENTER);
         setPadding(new Insets(20));
     }
@@ -78,6 +64,5 @@ public class AuthView extends VBox implements AuthContract.View {
     public void showAuthenticating() {
         prompt.setText("Authenticating...");
         login.setVisible(false);
-        hideDialogBox.setVisible(false);
     }
 }

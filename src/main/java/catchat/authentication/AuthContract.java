@@ -14,6 +14,5 @@ public interface AuthContract {
 
     interface Presenter extends BasePresenter {
         void authenticate();
-        void hideOnStart(boolean hide);
     }
 }
