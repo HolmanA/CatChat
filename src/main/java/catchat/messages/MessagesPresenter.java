@@ -43,11 +43,6 @@ public class MessagesPresenter implements
     }
 
     @Override
-    public void stop() {
-
-    }
-
-    @Override
     public void unknownResponseCode(String response) {
         System.err.println(response);
     }

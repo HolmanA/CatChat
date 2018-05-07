@@ -70,8 +70,11 @@ public class MessageSocketListener implements WebSocketListener {
                     sendConnect(clientId);
                     break;
                 default:
-                    if (responseNode.has("data")) {
-                        JsonNode subjectNode = responseNode.get("data").get("subject");
+                    JsonNode dataNode;
+                    JsonNode subjectNode;
+                    if ((dataNode = responseNode.get("data")) != null
+                            && (subjectNode = dataNode.get("subject")) != null) {
+
                         String senderName = subjectNode.get("name").asText();
                         String messageText = subjectNode.get("text").asText();
                         Platform.runLater(() -> {
@@ -80,7 +83,11 @@ public class MessageSocketListener implements WebSocketListener {
                     }
             }
         } catch (IOException e) {
+            System.err.println("Message: " + responseMessage);
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            System.err.println("Message " + responseMessage);
+            throw e;
         }
     }
 

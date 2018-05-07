@@ -8,7 +8,5 @@ public interface OAuthService extends Runnable {
     }
 
     String getAPIToken();
-    void setAuthListener(AuthListener listener);
-    void removeAuthListener();
     String getAuthURL();
 }

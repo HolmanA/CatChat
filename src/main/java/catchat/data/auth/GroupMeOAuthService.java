@@ -13,8 +13,6 @@ import java.util.Properties;
  * TODO: Gracefully handle errors in authentication with a call to the authListener to restart authentication
  */
 public class GroupMeOAuthService implements OAuthService {
-    private static GroupMeOAuthService INSTANCE;
-
     // Resource paths
     private static final String HTML_ROOT = "/authentication/web/html/";
     private static final String SUCCESS_HTML = HTML_ROOT + "authentication_successful.html";
@@ -34,29 +32,9 @@ public class GroupMeOAuthService implements OAuthService {
     private AuthListener authListener;
     private String authToken;
 
-    private GroupMeOAuthService() {
+    public GroupMeOAuthService(OAuthService.AuthListener authListener) {
+        this.authListener = authListener;
         loadProperties();
-    }
-
-    public static GroupMeOAuthService getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new GroupMeOAuthService();
-        }
-        return INSTANCE;
-    }
-
-    public static void destroyInstance() {
-        INSTANCE = null;
-    }
-
-    @Override
-    public void setAuthListener(AuthListener listener) {
-        authListener = listener;
-    }
-
-    @Override
-    public void removeAuthListener() {
-        authListener = null;
     }
 
     @Override

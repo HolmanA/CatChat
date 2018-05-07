@@ -9,8 +9,11 @@ import catchat.BaseView;
 public interface AuthContract {
     interface View extends BaseView<Presenter> {
         void openWebPage(String url);
-        void closeWebPage();
+        void showAuthenticating();
     }
 
-    interface Presenter extends BasePresenter {}
+    interface Presenter extends BasePresenter {
+        void authenticate();
+        void hideOnStart(boolean hide);
+    }
 }
