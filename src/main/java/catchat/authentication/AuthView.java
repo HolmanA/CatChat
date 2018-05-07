@@ -4,11 +4,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
 import java.awt.Desktop;
 import java.net.URI;
@@ -32,13 +32,12 @@ public class AuthView extends VBox implements AuthContract.View {
         promptMessage += "other cats.";
         prompt = new Text(promptMessage);
         prompt.setFont(Font.font(null, FontWeight.NORMAL, 14));
-        prompt.setTextAlignment(TextAlignment.CENTER);
         prompt.setWrappingWidth(350);
 
         login = new Button("Login");
         login.setOnMouseClicked(event -> presenter.authenticate());
 
-        getChildren().setAll(title, prompt, login);
+        getChildren().setAll(title, new Separator(), prompt, new Separator(), login);
         setAlignment(Pos.CENTER);
         setPadding(new Insets(20));
     }
