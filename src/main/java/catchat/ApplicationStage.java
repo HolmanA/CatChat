@@ -5,15 +5,17 @@ import catchat.authentication.AuthView;
 import catchat.chats.ChatsView;
 import catchat.chats.DirectChatsPresenter;
 import catchat.chats.GroupChatsPresenter;
+import catchat.data.MessageEventBus;
 import catchat.data.auth.GroupMeOAuthService;
 import catchat.data.auth.OAuthService;
-import catchat.data.MessageEventBus;
 import catchat.data.receiver.message.MessageReceiver;
 import catchat.data.source.DataSource;
 import catchat.data.source.GroupMeDataSource;
+import catchat.error.ErrorBox;
 import catchat.messages.MessagesPresenter;
 import catchat.messages.MessagesView;
 import catchat.systemtray.TrayManager;
+
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -61,8 +63,12 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
     }
 
     @Override
-    public void onFailure() {
-
+    public void onFailure(String message) {
+        messageReceiver.stop();
+        Scene scene = new Scene(new ErrorBox(message));
+        setWidth(scene.getWidth());
+        setHeight(scene.getHeight());
+        setScene(scene);
     }
 
     private void authenticate() {

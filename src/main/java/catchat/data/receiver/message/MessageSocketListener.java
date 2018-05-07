@@ -3,11 +3,12 @@ package catchat.data.receiver.message;
 import catchat.data.entities.message.NotificationMessage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.application.Platform;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketListener;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
+
+import javafx.application.Platform;
 
 import java.io.IOException;
 import java.net.URI;

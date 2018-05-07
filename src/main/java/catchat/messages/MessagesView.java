@@ -3,13 +3,18 @@ package catchat.messages;
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
 import catchat.messages.view.MessageListCell;
+
 import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -116,7 +121,7 @@ public class MessagesView extends VBox implements MessagesContract.View {
                 if (bar.getOrientation().equals(Orientation.VERTICAL)) {
                     messageListScrollBar = bar;
                     messageListScrollBar.valueProperty().addListener(((observable, oldValue, newValue) -> {
-                        PauseTransition pause = new PauseTransition(Duration.millis(500));
+                        PauseTransition pause = new PauseTransition(Duration.millis(250));
                         pause.setOnFinished(event -> {
                             double position = newValue.doubleValue();
                             if (position == messageListScrollBar.getMin()) {

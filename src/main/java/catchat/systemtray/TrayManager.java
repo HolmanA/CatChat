@@ -1,15 +1,13 @@
 package catchat.systemtray;
 
-import catchat.data.entities.message.Message;
 import catchat.data.MessageEventBus;
+import catchat.data.entities.message.Message;
 
-import javax.imageio.ImageIO;
-import java.awt.SystemTray;
+import java.awt.AWTException;
 import java.awt.Image;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
-import java.awt.AWTException;
-import java.io.IOException;
 
 /**
  * Created by andrew on 5/4/18.

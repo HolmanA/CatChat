@@ -1,9 +1,9 @@
 package catchat.messages;
 
+import catchat.data.MessageEventBus;
 import catchat.data.entities.ChatType;
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
-import catchat.data.MessageEventBus;
 import catchat.data.source.DataSource;
 
 import java.util.Collections;

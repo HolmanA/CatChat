@@ -42,6 +42,7 @@ public class AuthView extends VBox implements AuthContract.View {
     @Override
     public void openWebPage(String url) {
         try {
+            System.out.println("Opening Authentication Site in Default Browser...");
             // Open the provided URL using the system's default web browser
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
