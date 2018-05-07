@@ -78,6 +78,10 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
         authenticationPresenter.start();
 
         setScene(new Scene(authenticationView));
+        setOnCloseRequest(event -> {
+            Platform.exit();
+            System.exit(0);
+        });
         show();
     }
 
