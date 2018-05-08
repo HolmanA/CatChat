@@ -3,11 +3,12 @@ package catchat.data.receiver.message;
 import catchat.data.entities.message.NotificationMessage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.application.Platform;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketListener;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
+
+import javafx.application.Platform;
 
 import java.io.IOException;
 import java.net.URI;
@@ -70,8 +71,11 @@ public class MessageSocketListener implements WebSocketListener {
                     sendConnect(clientId);
                     break;
                 default:
-                    if (responseNode.has("data")) {
-                        JsonNode subjectNode = responseNode.get("data").get("subject");
+                    JsonNode dataNode;
+                    JsonNode subjectNode;
+                    if ((dataNode = responseNode.get("data")) != null
+                            && (subjectNode = dataNode.get("subject")) != null) {
+
                         String senderName = subjectNode.get("name").asText();
                         String messageText = subjectNode.get("text").asText();
                         Platform.runLater(() -> {
@@ -80,7 +84,11 @@ public class MessageSocketListener implements WebSocketListener {
                     }
             }
         } catch (IOException e) {
+            System.err.println("Message: " + responseMessage);
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            System.err.println("Message " + responseMessage);
+            throw e;
         }
     }
 

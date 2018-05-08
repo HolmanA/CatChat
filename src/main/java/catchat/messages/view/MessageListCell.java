@@ -2,13 +2,18 @@ package catchat.messages.view;
 
 import catchat.data.entities.message.Message;
 import catchat.messages.MessagesContract;
+
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

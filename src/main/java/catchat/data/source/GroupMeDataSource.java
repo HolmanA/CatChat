@@ -40,6 +40,8 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
             if (200 <= responseCode && responseCode < 300) {
                 List<Chat> chats = interactor.getContent();
                 callback.onChatsLoaded(chats);
+            } else if (responseCode == 401) {
+                authService.tokenRejected();
             } else {
                 callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
             }
@@ -65,6 +67,8 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
             if (200 <= responseCode && responseCode < 300) {
                 List<Message> messages = interactor.getContent();
                 callback.onMessagesLoaded(messages);
+            } else if (responseCode == 401) {
+                authService.tokenRejected();
             } else {
                 callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
             }
@@ -83,6 +87,8 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
             int responseCode = interactor.getResponseCode();
             if (200 <= responseCode && responseCode < 300) {
                 callback.onMessageSent();
+            } else if (responseCode == 401) {
+                authService.tokenRejected();
             } else {
                 callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
             }
@@ -101,6 +107,8 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
             int responseCode = interactor.getResponseCode();
             if (200 <= responseCode && responseCode < 300) {
                 callback.onMessageLiked();
+            } else if (responseCode == 401) {
+                authService.tokenRejected();
             } else {
                 callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
             }
@@ -119,6 +127,8 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
             int responseCode = interactor.getResponseCode();
             if (200 <= responseCode && responseCode < 300) {
                 callback.onMessageUnliked();
+            } else if (responseCode == 401) {
+                authService.tokenRejected();
             } else {
                 callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
             }
@@ -138,6 +148,8 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
             if (200 <= responseCode && responseCode < 300) {
                 List<Chat> chats = interactor.getContent();
                 callback.onChatsLoaded(chats);
+            } else if (responseCode == 401) {
+                authService.tokenRejected();
             } else {
                 callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
             }
@@ -163,6 +175,8 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
             if (200 <= responseCode && responseCode < 300) {
                 List<Message> messages = interactor.getContent();
                 callback.onMessagesLoaded(messages);
+            } else if (responseCode == 401) {
+                authService.tokenRejected();
             } else {
                 callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
             }
@@ -181,6 +195,8 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
             int responseCode = interactor.getResponseCode();
             if (200 <= responseCode && responseCode < 300) {
                 callback.onMessageSent();
+            } else if (responseCode == 401) {
+                authService.tokenRejected();
             } else {
                 callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
             }
@@ -202,6 +218,8 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
                 int responseCode = interactor.getResponseCode();
                 if (200 <= responseCode && responseCode < 300) {
                     callback.onMessageLiked();
+                } else if (responseCode == 401) {
+                    authService.tokenRejected();
                 } else {
                     callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
                 }
@@ -226,6 +244,8 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
                 int responseCode = interactor.getResponseCode();
                 if (200 <= responseCode && responseCode < 300) {
                     callback.onMessageUnliked();
+                } else if (responseCode == 401) {
+                    authService.tokenRejected();
                 } else {
                     callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
                 }
@@ -249,6 +269,8 @@ public class GroupMeDataSource implements DataSource, DataSource.GetUserProfileC
                 if (200 <= responseCode && responseCode < 300) {
                     Profile profile = interactor.getContent();
                     callback.onUserProfileLoaded(profile);
+                } else if (responseCode == 401) {
+                    authService.tokenRejected();
                 } else {
                     callback.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
                 }

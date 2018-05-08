@@ -1,52 +1,24 @@
 package catchat.chats;
 
-import catchat.data.MessageEventBus;
 import catchat.data.entities.chat.Chat;
-import catchat.data.entities.message.Message;
 import catchat.data.source.DataSource;
-
-import java.util.List;
 
 /**
  * Created by andrew on 4/15/18.
  */
-public class GroupChatsPresenter implements
-        ChatsContract.Presenter,
-        MessageEventBus.Listener,
-        DataSource.GetChatsCallback {
-
-    private DataSource dataSource;
-    private ChatsContract.View view;
+public class GroupChatsPresenter extends BaseChatsPresenter {
     private DataSource.GetGroupChatCallback chatCallback;
-    private int lastPageLoaded;
 
-    public GroupChatsPresenter(DataSource dataSource,
-                               ChatsContract.View view,
+    public GroupChatsPresenter(DataSource dataSource, ChatsContract.View view,
                                DataSource.GetGroupChatCallback chatCallback) {
-        this.dataSource = dataSource;
-        this.view = view;
+        super(dataSource, view);
         this.chatCallback = chatCallback;
-        lastPageLoaded = 1;
     }
 
     @Override
     public void start() {
         refreshChats();
         view.setTitle("Group Chats");
-    }
-
-    @Override
-    public void stop() {
-    }
-
-    @Override
-    public void unknownResponseCode(String response) {
-        System.out.println(response);
-    }
-
-    @Override
-    public void onChatsLoaded(List<Chat> chats) {
-        view.showChats(chats);
     }
 
     @Override
@@ -66,10 +38,5 @@ public class GroupChatsPresenter implements
         if (chat != null) {
             dataSource.getGroupChat(chat, chatCallback);
         }
-    }
-
-    @Override
-    public void changed(Message message) {
-        refreshChats();
     }
 }

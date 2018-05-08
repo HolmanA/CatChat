@@ -1,6 +1,5 @@
 package catchat;
 
-import catchat.authentication.AuthenticationManager;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -8,8 +7,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        AuthenticationManager authManager = new AuthenticationManager();
-        authManager.start();
+        ApplicationStage stage = new ApplicationStage();
+        stage.start();
     }
 
     public static void main(String[] args) {

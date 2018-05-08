@@ -1,6 +1,7 @@
 package catchat.chats.view;
 
 import catchat.data.entities.chat.Chat;
+
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.VBox;

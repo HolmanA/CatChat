@@ -2,6 +2,7 @@ package catchat.chats;
 
 import catchat.chats.view.ChatListCell;
 import catchat.data.entities.chat.Chat;
+
 import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
