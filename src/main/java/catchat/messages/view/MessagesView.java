@@ -1,16 +1,17 @@
-package catchat.messages;
+package catchat.messages.view;
 
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
-import catchat.messages.view.MessageListCell;
+import catchat.data.entities.profile.Profile;
+import catchat.messages.MessagesContract;
 
 import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollBar;
@@ -19,8 +20,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 
 import java.util.List;
@@ -28,10 +27,12 @@ import java.util.List;
 /**
  * Created by andrew on 4/16/18.
  */
+// TODO: Figure out a good way of implementing a dropdown menu containing group members
 public class MessagesView extends VBox implements MessagesContract.View {
     private MessagesContract.Presenter presenter;
     private ObservableList<Message> messageList;
-    private Label chatInfo;
+    private Label chatTitle;
+    private ComboBox<Profile> memberList;
     private ListView<Message> messageListView;
     private ScrollBar messageListScrollBar;
     private Button refresh;
@@ -39,18 +40,33 @@ public class MessagesView extends VBox implements MessagesContract.View {
     private Button sendMessage;
 
     public MessagesView() {
-        super(5);
+        super();
+        getStylesheets().add("/messages/css/messages_view.css");
+        getStyleClass().add("container");
+
         messageList = FXCollections.observableArrayList();
-        chatInfo = new Label();
-        chatInfo.setFont(Font.font(null, FontWeight.BOLD, 14));
-        HBox chatInfoBox = new HBox(5);
-        chatInfoBox.getChildren().addAll(chatInfo);
-        chatInfoBox.setAlignment(Pos.CENTER);
+
+        chatTitle = new Label();
+        chatTitle.getStyleClass().add("chat-title");
+
+        refresh = new Button("\uD83D\uDD04");
+        refresh.getStyleClass().add("refresh");
+        refresh.setOnMouseClicked(event -> presenter.refreshMessages());
+
+        memberList = new ComboBox<>();
+        memberList.getStyleClass().add("member-list");
+        memberList.setPromptText("Members");
+        memberList.setEditable(false);
+        memberList.setCellFactory(param -> new MemberListCell());
+        memberList.setOnKeyPressed(event -> {});
+
+        HBox chatTitleContainer = new HBox();
+        chatTitleContainer.getStyleClass().add("chat-title-container");
+        chatTitleContainer.getChildren().addAll(refresh, chatTitle);
 
         messageListView = new ListView<>(messageList);
-        messageListView.setFocusTraversable(false);
-        messageListView.setCellFactory(param ->
-                new MessageListCell(presenter));
+        messageListView.getStyleClass().add("message-list");
+        messageListView.setCellFactory(param -> new MessageListCell(presenter));
 
         input = new TextField();
         input.setOnKeyPressed(event -> {
@@ -58,15 +74,17 @@ public class MessagesView extends VBox implements MessagesContract.View {
                 presenter.sendMessage();
             }
         });
-        refresh = new Button("Refresh");
-        refresh.setOnMouseClicked(event -> presenter.refreshMessages());
-        sendMessage = new Button("Send");
+
+        sendMessage = new Button("▶️️");
+        sendMessage.getStyleClass().add("send");
         sendMessage.setOnMouseClicked(event -> presenter.sendMessage());
-        HBox sendBox = new HBox(2);
-        sendBox.getChildren().addAll(refresh, input, sendMessage);
+
+        HBox sendContainer = new HBox();
+        sendContainer.getStyleClass().add("send-container");
+        sendContainer.getChildren().addAll(input, sendMessage);
         HBox.setHgrow(input, Priority.ALWAYS);
 
-        getChildren().addAll(chatInfoBox, messageListView, sendBox);
+        getChildren().addAll(chatTitleContainer, memberList, messageListView, sendContainer);
         VBox.setVgrow(messageListView, Priority.ALWAYS);
     }
 
@@ -86,7 +104,7 @@ public class MessagesView extends VBox implements MessagesContract.View {
 
     @Override
     public void showNoMessages() {
-        chatInfo.setText("No Messages");
+        chatTitle.setText("No Messages");
     }
 
     @Override
@@ -95,13 +113,31 @@ public class MessagesView extends VBox implements MessagesContract.View {
     }
 
     @Override
+    public void clearMemberList() {
+        memberList.getItems().clear();
+    }
+
+    @Override
     public void showChatDetails(Chat chat) {
-        chatInfo.setText(chat.getName());
+        chatTitle.setText(chat.getName());
+        refresh.setVisible(true);
+        input.setVisible(true);
+        sendMessage.setVisible(true);
     }
 
     @Override
     public void showNoChatSelected() {
-        chatInfo.setText("No Chat Selected");
+        chatTitle.setText("No Chat Selected");
+        memberList.setVisible(false);
+        refresh.setVisible(false);
+        input.setVisible(false);
+        sendMessage.setVisible(false);
+    }
+
+    @Override
+    public void showMembers(List<Profile> members) {
+        memberList.setVisible(true);
+        memberList.getItems().addAll(members);
     }
 
     @Override

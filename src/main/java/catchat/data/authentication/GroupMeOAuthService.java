@@ -1,4 +1,4 @@
-package catchat.data.auth;
+package catchat.data.authentication;
 
 import javax.net.ServerSocketFactory;
 import java.io.ByteArrayOutputStream;
@@ -16,9 +16,9 @@ import java.util.Properties;
  */
 public class GroupMeOAuthService implements OAuthService {
     // Resource paths
-    private static final String HTML_ROOT = "/authentication/web/html/";
+    private static final String HTML_ROOT = "/data/authentication/web/html/";
     private static final String SUCCESS_HTML = HTML_ROOT + "authentication_successful.html";
-    private static final String PROPERTIES_XML = "/authentication/config/auth_properties.xml";
+    private static final String PROPERTIES_XML = "/data/authentication/config/auth_properties.xml";
 
 
     // Property Keys
@@ -126,7 +126,7 @@ public class GroupMeOAuthService implements OAuthService {
     }
 
     /**
-     * Attempts to read an incoming http header containing the auth token from the authentication connection
+     * Attempts to read an incoming http header containing the authentication token from the authentication connection
      * @return String http header for the http request
      */
     private String parseRequestHeader() throws IOException {

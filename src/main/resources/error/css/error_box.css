@@ -1,0 +1,23 @@
+.container { /* VBox */
+    -fx-alignment: center;
+}
+
+.title { /* Text */
+    -fx-font: normal bold 18 null;
+}
+
+.message-text { /* Text */
+    -fx-font: normal normal 14 null;
+}
+
+.prompt { /* Text */
+    -fx-font: normal italic 12 null;
+}
+
+.close { /* Button */
+}
+
+separator {
+    -fx-max-width: 380;
+}
+

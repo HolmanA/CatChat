@@ -1,0 +1,7 @@
+.container { /* ListCell */
+    -fx-focus-traversable: false;
+}
+
+.name { /* Label */
+    -fx-text-alignment: left;
+}

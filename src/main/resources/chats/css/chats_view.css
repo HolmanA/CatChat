@@ -1,0 +1,24 @@
+.container { /* VBox */
+    -fx-alignment: top-center;
+    -fx-spacing: 5;
+    -fx-padding: 8;
+    -fx-focus-traversable: false;
+}
+
+.title { /* Label */
+    -fx-font: normal bold 16 null;
+}
+
+.title-container { /* HBox */
+    -fx-spacing: 2;
+    -fx-alignment: center;
+}
+
+.refresh { /* Button */
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-focus-traversable: false;
+}
+
+.chat-list { /* ListView */
+}

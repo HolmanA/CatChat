@@ -3,17 +3,16 @@ package catchat.messages.view;
 import catchat.data.entities.message.Message;
 import catchat.messages.MessagesContract;
 
-import javafx.geometry.Pos;
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,51 +25,74 @@ public class MessageListCell extends ListCell<Message> {
     private MessagesContract.Presenter presenter;
 
     public MessageListCell(MessagesContract.Presenter presenter) {
+        super();
         this.presenter = presenter;
+        getStylesheets().add("/messages/css/message_list_cell.css");
+        getStyleClass().add("container");
     }
 
     @Override
     protected void updateItem(Message item, boolean empty) {
         super.updateItem(item, empty);
         if (!empty) {
-            Label senderName = new Label(item.getSenderName());
-            senderName.setFont(Font.font(null, FontWeight.BOLD, 12));
+            Node messageComponent = initializeMessageComponent(item);
+            Node likeComponent = initializeLikeComponent(item);
 
-            Label createdAt = new Label(formatTime(item.getCreatedAt()));
-            createdAt.setFont(Font.font(null, FontPosture.ITALIC, 12));
+            HBox innerContainer = new HBox();
+            innerContainer.getStyleClass().add("inner-container");
+            innerContainer.getChildren().addAll(messageComponent, new Separator(Orientation.VERTICAL), likeComponent);
+            HBox.setHgrow(messageComponent, Priority.ALWAYS);
 
-            HBox senderBox = new HBox();
-            senderBox.setSpacing(10);
-            senderBox.setAlignment(Pos.CENTER_LEFT);
-            senderBox.getChildren().addAll(senderName, createdAt);
+            VBox borderContainer = new VBox();
+            borderContainer.getChildren().addAll(new Separator(Orientation.HORIZONTAL), innerContainer);
 
-            Text text = new Text(item.getText());
-            text.setFont(Font.font(12));
-            text.setWrappingWidth(800);
-
-            Button like = new Button("like");
-            like.setOnMouseClicked(event -> presenter.likeMessage(item));
-
-            Button unlike = new Button("unlike");
-            unlike.setOnMouseClicked(event -> presenter.unlikeMessage(item));
-
-            Label likeCount = new Label(Integer.toString(item.getLikeCount()));
-            likeCount.setFont(Font.font(null, FontPosture.ITALIC, 12));
-            likeCount.setTextAlignment(TextAlignment.CENTER);
-
-            HBox likeButtons = new HBox();
-            likeButtons.setSpacing(5);
-            likeButtons.setAlignment(Pos.CENTER_LEFT);
-            likeButtons.getChildren().addAll(like, unlike, likeCount);
-
-            VBox container = new VBox();
-            container.setSpacing(5);
-            container.setAlignment(Pos.CENTER_LEFT);
-            container.getChildren().addAll(senderBox, text, likeButtons);
-            setGraphic(container);
+            setGraphic(borderContainer);
         } else {
             setGraphic(null);
         }
+    }
+
+    private Node initializeMessageComponent(Message item) {
+        Label senderName = new Label(item.getSenderName());
+        senderName.getStyleClass().add("sender-name");
+
+        Label createdAt = new Label(formatTime(item.getCreatedAt()));
+        createdAt.getStyleClass().add("created-at");
+
+        HBox senderContainer = new HBox();
+        senderContainer.getStyleClass().add("sender-container");
+        senderContainer.getChildren().addAll(senderName, createdAt);
+
+        Text messageText = new Text(item.getText());
+        messageText.getStyleClass().add("message-text");
+        messageText.setWrappingWidth(600);
+
+        VBox messageContainer = new VBox();
+        messageContainer.getStyleClass().add("message-container");
+        messageContainer.getChildren().addAll(senderContainer, messageText);
+        return messageContainer;
+    }
+
+    private Node initializeLikeComponent(Message item) {
+        Label likeCount = new Label(Integer.toString(item.getLikeCount()));
+        likeCount.getStyleClass().add("like-count");
+
+        Button like = new Button("\uD83D\uDC4D");
+        like.getStyleClass().add("like");
+        like.setOnMouseClicked(event -> presenter.likeMessage(item));
+
+        Button unlike = new Button("\uD83D\uDC4E");
+        like.getStyleClass().add("unlike");
+        unlike.setOnMouseClicked(event -> presenter.unlikeMessage(item));
+
+        HBox likeButtonContainer = new HBox();
+        likeButtonContainer.getStyleClass().add("like-button-container");
+        likeButtonContainer.getChildren().addAll(like, unlike);
+
+        VBox likeContainer = new VBox();
+        likeContainer.getStyleClass().add("like-container");
+        likeContainer.getChildren().addAll(likeCount, likeButtonContainer);
+        return likeContainer;
     }
 
     private String formatTime(long timeSeconds) {

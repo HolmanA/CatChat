@@ -2,19 +2,19 @@ package catchat;
 
 import catchat.authentication.AuthPresenter;
 import catchat.authentication.AuthView;
-import catchat.chats.ChatsView;
-import catchat.chats.DirectChatsPresenter;
-import catchat.chats.GroupChatsPresenter;
+import catchat.chats.presenter.DirectChatsPresenter;
+import catchat.chats.presenter.GroupChatsPresenter;
+import catchat.chats.view.ChatsView;
 import catchat.data.MessageEventBus;
-import catchat.data.auth.GroupMeOAuthService;
-import catchat.data.auth.OAuthService;
+import catchat.data.authentication.GroupMeOAuthService;
+import catchat.data.authentication.OAuthService;
 import catchat.data.receiver.message.MessageReceiver;
 import catchat.data.source.DataSource;
 import catchat.data.source.GroupMeDataSource;
 import catchat.error.ErrorBox;
 import catchat.messages.MessagesPresenter;
-import catchat.messages.MessagesView;
-import catchat.systemtray.TrayManager;
+import catchat.messages.view.MessagesView;
+import catchat.system.TrayManager;
 
 import javafx.application.Platform;
 import javafx.scene.Scene;

@@ -4,6 +4,7 @@ import catchat.BasePresenter;
 import catchat.BaseView;
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
+import catchat.data.entities.profile.Profile;
 
 import java.util.List;
 
@@ -15,10 +16,12 @@ public interface MessagesContract {
         void showMessages(List<Message> messages);
         void showNoMessages();
         void clearMessages();
+        void clearMemberList();
         void showChatDetails(Chat chat);
         void showNoChatSelected();
         String getMessageText();
         void clearMessageText();
+        void showMembers(List<Profile> members);
     }
 
     interface Presenter extends BasePresenter {

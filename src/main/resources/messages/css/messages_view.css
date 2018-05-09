@@ -1,0 +1,42 @@
+.container { /* VBox */
+    -fx-spacing: 5;
+    -fx-padding: 8;
+    -fx-alignment: center;
+}
+
+.chat-title { /* Label */
+    -fx-font: normal bold 16 null;
+}
+
+.refresh { /* Button */
+    -fx-focus-traversable: false;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+}
+
+.chat-title-container { /* HBox */
+    -fx-spacing: 2;
+    -fx-alignment: center;
+}
+
+.member-list { /* ComboBox */
+    -fx-focus-traversable: false;
+}
+
+.message-list { /* ListView */
+    -fx-focus-traversable: false;
+}
+
+.input { /* TextField */
+    -fx-focus-traversable: true;
+}
+
+.send { /* Button */
+    -fx-focus-traversable: false;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.send-container { /* HBox */
+    -fx-spacing: 2;
+}

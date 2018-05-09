@@ -1,13 +1,10 @@
 package catchat.authentication;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 import java.awt.Desktop;
@@ -23,23 +20,31 @@ public class AuthView extends VBox implements AuthContract.View {
     private Button login;
 
     public AuthView() {
-        super(5);
+        super();
+        getStylesheets().add("/authentication/css/auth_view.css");
+        getStyleClass().add("container");
+
         title = new Label("Cat Chat Login");
-        title.setFont(Font.font(null, FontWeight.BOLD, 18));
+        title.getStyleClass().add("title");
 
         String promptMessage = "By logging into your GroupMe account via the button below, you hereby grant Cat Chat ";
         promptMessage += "the right to access your GroupMe account information for the sole purpose of chatting with ";
         promptMessage += "other cats.";
+
         prompt = new Text(promptMessage);
-        prompt.setFont(Font.font(null, FontWeight.NORMAL, 14));
+        prompt.getStyleClass().add("prompt");
         prompt.setWrappingWidth(350);
 
         login = new Button("Login");
+        login.getStyleClass().add("login");
         login.setOnMouseClicked(event -> presenter.authenticate());
+        login.setOnKeyPressed(event -> {
+            if (event.getCode().equals(KeyCode.ENTER)) {
+                presenter.authenticate();
+            }
+        });
 
         getChildren().setAll(title, new Separator(), prompt, new Separator(), login);
-        setAlignment(Pos.CENTER);
-        setPadding(new Insets(20));
     }
 
     @Override

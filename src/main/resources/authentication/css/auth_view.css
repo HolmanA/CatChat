@@ -1,0 +1,16 @@
+.container { /* VBox */
+    -fx-spacing: 5;
+    -fx-alignment: center;
+    -fx-padding: 20;
+}
+
+.title { /* Label */
+    -fx-font: normal bold 18 null;
+}
+
+.prompt { /* Text */
+    -fx-font: normal normal 14 null;
+}
+
+.login { /* Button */
+}

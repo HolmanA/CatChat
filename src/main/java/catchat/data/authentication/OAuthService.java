@@ -1,4 +1,4 @@
-package catchat.data.auth;
+package catchat.data.authentication;
 
 public interface OAuthService extends Runnable {
 
