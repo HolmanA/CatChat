@@ -4,6 +4,7 @@ import catchat.data.entities.message.Message;
 import catchat.messages.MessagesContract;
 
 import javafx.geometry.Orientation;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -61,6 +62,7 @@ public class MessageListCell extends ListCell<Message> {
         imageView.setFitWidth(70);
         imageView.setFitHeight(70);
         imageView.setCache(true);
+        imageView.setCacheHint(CacheHint.SPEED);
         imageView.setPreserveRatio(true);
         imageView.setSmooth(true);
 
