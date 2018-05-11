@@ -45,7 +45,7 @@ public class ChatsView extends VBox implements ChatsContract.View {
         title = new Label();
         title.getStyleClass().add("title");
 
-        Button refresh = new Button("\uD83D\uDD04");
+        Button refresh = new Button("↻");
         refresh.getStyleClass().add("refresh");
         refresh.setOnMouseClicked(event -> presenter.refreshChats());
 
