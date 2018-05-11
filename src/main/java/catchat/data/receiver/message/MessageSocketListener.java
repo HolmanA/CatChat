@@ -4,6 +4,7 @@ import catchat.data.entities.message.NotificationMessage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.StatusCode;
 import org.eclipse.jetty.websocket.api.WebSocketListener;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
@@ -97,6 +98,14 @@ public class MessageSocketListener implements WebSocketListener {
         System.out.println("Connection Closed: (" + statusCode + ") " + reason);
         this.session = null;
         this.closeLatch.countDown();
+
+        if (statusCode == StatusCode.ABNORMAL) {
+            try {
+                connect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
