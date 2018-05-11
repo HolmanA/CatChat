@@ -48,7 +48,7 @@ public class MessagesView extends VBox implements MessagesContract.View {
         chatTitle = new Label();
         chatTitle.getStyleClass().add("chat-title");
 
-        refresh = new Button("\uD83D\uDD04");
+        refresh = new Button("↻");
         refresh.getStyleClass().add("refresh");
         refresh.setOnMouseClicked(event -> presenter.refreshMessages());
 
@@ -74,7 +74,7 @@ public class MessagesView extends VBox implements MessagesContract.View {
             }
         });
 
-        sendMessage = new Button("▶️️");
+        sendMessage = new Button("➤");
         sendMessage.getStyleClass().add("send");
         sendMessage.setOnMouseClicked(event -> presenter.sendMessage());
 

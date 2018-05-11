@@ -9,9 +9,11 @@
 }
 
 .refresh { /* Button */
+    -fx-font: normal bold 16 null;
     -fx-focus-traversable: false;
     -fx-text-alignment: center;
     -fx-alignment: center;
+    -fx-padding: 0 5 0 5;
 }
 
 .chat-title-container { /* HBox */
@@ -32,9 +34,11 @@
 }
 
 .send { /* Button */
+    -fx-font: normal bold 18 null;
     -fx-focus-traversable: false;
     -fx-alignment: center;
     -fx-text-alignment: center;
+    -fx-padding: 2;
 }
 
 .send-container { /* HBox */

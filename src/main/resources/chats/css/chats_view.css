@@ -15,9 +15,11 @@
 }
 
 .refresh { /* Button */
-    -fx-alignment: center;
-    -fx-text-alignment: center;
+    -fx-font: normal bold 16 null;
     -fx-focus-traversable: false;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-padding: 0 5 0 5;
 }
 
 .chat-list { /* ListView */
