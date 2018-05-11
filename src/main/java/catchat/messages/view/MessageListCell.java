@@ -9,6 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.Separator;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -35,12 +37,13 @@ public class MessageListCell extends ListCell<Message> {
     protected void updateItem(Message item, boolean empty) {
         super.updateItem(item, empty);
         if (!empty) {
+            Node imageComponent = initializeImageComponent(item);
             Node messageComponent = initializeMessageComponent(item);
             Node likeComponent = initializeLikeComponent(item);
 
             HBox innerContainer = new HBox();
             innerContainer.getStyleClass().add("inner-container");
-            innerContainer.getChildren().addAll(messageComponent, new Separator(Orientation.VERTICAL), likeComponent);
+            innerContainer.getChildren().addAll(imageComponent, new Separator(Orientation.VERTICAL), messageComponent, new Separator(Orientation.VERTICAL), likeComponent);
             HBox.setHgrow(messageComponent, Priority.ALWAYS);
 
             VBox borderContainer = new VBox();
@@ -50,6 +53,21 @@ public class MessageListCell extends ListCell<Message> {
         } else {
             setGraphic(null);
         }
+    }
+
+    private Node initializeImageComponent(Message item) {
+        ImageView imageView = new ImageView(new Image(item.getSenderAvatar(), true));
+        imageView.getStyleClass().add("sender-avatar");
+        imageView.setFitWidth(70);
+        imageView.setFitHeight(70);
+        imageView.setCache(true);
+        imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+
+        VBox container = new VBox();
+        container.getStyleClass().add("sender-avatar-container");
+        container.getChildren().add(imageView);
+        return container;
     }
 
     private Node initializeMessageComponent(Message item) {
@@ -65,7 +83,7 @@ public class MessageListCell extends ListCell<Message> {
 
         Text messageText = new Text(item.getText());
         messageText.getStyleClass().add("message-text");
-        messageText.setWrappingWidth(600);
+        messageText.setWrappingWidth(500);
 
         VBox messageContainer = new VBox();
         messageContainer.getStyleClass().add("message-container");

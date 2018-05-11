@@ -13,6 +13,19 @@
     -fx-alignment: center;
 }
 
+.sender-avatar { /* ImageView */
+    -fx-alignment: center;
+    -fx-focus-traversable: false;
+}
+
+.sender-avatar-container { /* VBox */
+    -fx-alignment: center;
+    -fx-max-width: 80;
+    -fx-max-height: 80;
+    -fx-pref-width: 80;
+    -fx-pref-height: 80;
+}
+
 .sender-name { /* Label */
     -fx-font: normal bold 16 null;
 }

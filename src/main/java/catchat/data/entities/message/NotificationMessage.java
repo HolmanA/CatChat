@@ -6,6 +6,6 @@ package catchat.data.entities.message;
  */
 public class NotificationMessage extends Message {
     public NotificationMessage(String text, String senderName) {
-        super("", "", text, senderName, 0, null);
+        super("", "", "", text, senderName, 0, null);
     }
 }

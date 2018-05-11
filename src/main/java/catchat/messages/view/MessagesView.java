@@ -27,7 +27,6 @@ import java.util.List;
 /**
  * Created by andrew on 4/16/18.
  */
-// TODO: Figure out a good way of implementing a dropdown menu containing group members
 public class MessagesView extends VBox implements MessagesContract.View {
     private MessagesContract.Presenter presenter;
     private ObservableList<Message> messageList;
