@@ -1,12 +1,12 @@
 .container { /* ListCell */
-    -fx-padding: 0 15 0 15;
+    -fx-padding: 0 5 0 5;
     -fx-background-color: white;
 }
 
 .inner-container { /* HBox */
-    -fx-spacing: 15;
+    -fx-spacing: 5;
     -fx-alignment: center;
-    -fx-padding: 15 0 15 0;
+    -fx-padding: 5 0 5 0;
 }
 
 .border-container { /* VBox */

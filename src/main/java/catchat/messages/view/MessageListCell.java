@@ -38,14 +38,21 @@ public class MessageListCell extends ListCell<Message> {
     protected void updateItem(Message item, boolean empty) {
         super.updateItem(item, empty);
         if (!empty) {
-            Node imageComponent = initializeImageComponent(item);
             Node messageComponent = initializeMessageComponent(item);
             Node likeComponent = initializeLikeComponent(item);
 
             HBox innerContainer = new HBox();
             innerContainer.getStyleClass().add("inner-container");
-            innerContainer.getChildren().addAll(imageComponent, new Separator(Orientation.VERTICAL), messageComponent, new Separator(Orientation.VERTICAL), likeComponent);
+            innerContainer.getChildren().addAll(messageComponent, new Separator(Orientation.VERTICAL), likeComponent);
             HBox.setHgrow(messageComponent, Priority.ALWAYS);
+
+            try {
+                Node imageComponent = initializeImageComponent(item);
+                innerContainer.getChildren().add(0, imageComponent);
+                innerContainer.getChildren().add(1, new Separator((Orientation.VERTICAL)));
+            } catch (IllegalArgumentException e) {
+                System.err.println(e.getMessage());
+            }
 
             VBox borderContainer = new VBox();
             borderContainer.getChildren().addAll(new Separator(Orientation.HORIZONTAL), innerContainer);
@@ -56,7 +63,7 @@ public class MessageListCell extends ListCell<Message> {
         }
     }
 
-    private Node initializeImageComponent(Message item) {
+    private Node initializeImageComponent(Message item) throws IllegalArgumentException {
         ImageView imageView = new ImageView(new Image(item.getSenderAvatar(), true));
         imageView.getStyleClass().add("sender-avatar");
         imageView.setFitWidth(70);
