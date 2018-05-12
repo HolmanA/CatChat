@@ -18,6 +18,7 @@ import catchat.system.TrayManager;
 
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -45,6 +46,7 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
             }
         }));
         setTitle("Cat Chat");
+        getIcons().add(new Image(getClass().getResourceAsStream("/system/SystemTrayIcon.png")));
     }
 
     public void start() {

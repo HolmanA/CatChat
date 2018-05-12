@@ -20,9 +20,9 @@ public class TrayManager implements MessageEventBus.Listener {
         this.eventBus = eventBus;
         if (SystemTray.isSupported()) {
             SystemTray systemTray = SystemTray.getSystemTray();
-                Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/system/SystemTrayIcon.png"));
-                trayIcon = new TrayIcon(image, "CatChat");
-                trayIcon.setImageAutoSize(true);
+            Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/system/SystemTrayIcon.png"));
+            trayIcon = new TrayIcon(image, "CatChat");
+            trayIcon.setImageAutoSize(true);
             try {
                 systemTray.add(trayIcon);
             } catch (AWTException e) {
