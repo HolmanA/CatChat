@@ -23,7 +23,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 /**
- * Created by andrew on 4/14/18.
+ * Main Stage for the Cat Chat JavaFX Application. Handles receiving authentication signals, dependency injection of
+ * various components, and the general application lifecycle. Begins with executing the authentication component before
+ * executing the main application component.
+ *
+ * @author Andrew Holman
+ * @version 1.0
+ * @since 1.0
  */
 public class ApplicationStage extends Stage implements OAuthService.AuthListener {
     private OAuthService authService;
@@ -32,6 +38,9 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
     private DataMediator dataMediator;
     private MessageReceiver messageReceiver;
 
+    /**
+     * Constructor
+     */
     public ApplicationStage() {
         authService = new GroupMeOAuthService(this);
         dataMediator = new DataMediator();
@@ -54,9 +63,9 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
     }
 
     /**
-     * onSuccess is called upon completion of the OAuthService's authentication routine. Since this method is called on
-     * the authentication thread and not the application main UI thread, we must move execution back to the main UI
-     * thread by calling Platform.runLater().
+     * Starts the main application scene upon completion of the OAuthService's authentication routine. Since this
+     * method is called on authentication thread and not the application main UI thread, we must move execution back to
+     * the main UI thread by calling Platform.runLater().
      */
     @Override
     public void onSuccess() {
@@ -64,6 +73,11 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
         Platform.runLater(() -> initializeMainApplication());
     }
 
+    /**
+     * Displays an error message if something goes wrong in the authentication process. This is either the result of an
+     * error in OAuthService's authentication routine, or a rejected authentication token.
+     * @param message Message describing the nature of the failure
+     */
     @Override
     public void onFailure(String message) {
         messageReceiver.stop();
@@ -73,6 +87,9 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
         setScene(scene);
     }
 
+    /**
+     * Initializes authentication component, injects dependencies, and begins authentication
+     */
     private void authenticate() {
         AuthView authenticationView = new AuthView();
         AuthPresenter authenticationPresenter = new AuthPresenter(authService, authenticationView);
@@ -87,6 +104,10 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
         show();
     }
 
+    /**
+     * Initializes main application components and sets the main application scene, effectively launching the main
+     * application
+     */
     private void initializeMainApplication() {
         System.out.println("Main Application Started");
 
@@ -94,6 +115,7 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
         messageReceiver = new MessageReceiver(authService, dataSource, dataMediator);
         messageReceiver.start();
 
+        //Stop all threads when application window is closed
         setOnCloseRequest(event -> {
             messageReceiver.stop();
             Platform.exit();
@@ -106,6 +128,10 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
         show();
     }
 
+    /**
+     * Initializes Message and Chat components, injects dependencies, and subscribes components to the DataMediator
+     * @return BorderPane containing each of the main Cat Chat components
+     */
     private BorderPane initializeBorderPane() {
         MessagesView messagesView = new MessagesView();
         MessagesPresenter messagesPresenter = new MessagesPresenter(dataSource, messagesView);
