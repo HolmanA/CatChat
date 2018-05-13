@@ -1,5 +1,6 @@
 package catchat.data.entities.chat;
 
+import catchat.data.entities.ChatType;
 import catchat.data.entities.profile.Profile;
 
 import java.util.Map;
@@ -9,6 +10,6 @@ import java.util.Map;
  */
 public class GroupChat extends Chat {
     public GroupChat(String id, String name, String preview, Map<String,Profile> members) {
-        super(id, name, preview, members);
+        super(ChatType.GROUP, id, name, preview, members);
     }
 }

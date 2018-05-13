@@ -11,7 +11,7 @@ import java.net.URL;
 /**
  * Created by andrew on 4/26/18.
  */
-public class SendGroupMessageInteractor extends BaseApiInteractor {
+public class SendGroupMessageInteractor extends BaseApiInteractor<Void> {
     private static final String URL = "https://api.groupme.com/v3/groups/";
 
     public SendGroupMessageInteractor(String authToken, String chatId,
@@ -35,12 +35,12 @@ public class SendGroupMessageInteractor extends BaseApiInteractor {
     }
 
     @Override
-    public Object getContent() {
+    public Void getContent() {
         return null;
     }
 
     @Override
-    protected Object parseContent(JsonNode content) {
+    protected Void parseContent(JsonNode content) {
         return null;
     }
 }
