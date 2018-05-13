@@ -1,9 +1,10 @@
 package catchat.messages;
 
-import catchat.data.MessageEventBus;
-import catchat.data.entities.ChatType;
+import catchat.data.DataMediator;
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
+import catchat.data.entities.profile.Profile;
+import catchat.data.receiver.message.NotificationMessage;
 import catchat.data.source.DataSource;
 
 import java.util.Collections;
@@ -12,27 +13,15 @@ import java.util.List;
 /**
  * Created by andrew on 4/16/18.
  */
-public class MessagesPresenter implements
-        MessagesContract.Presenter,
-        MessageEventBus.Listener,
-        DataSource.GetGroupChatCallback,
-        DataSource.GetDirectChatCallback,
-        DataSource.GetMessagesCallback,
-        DataSource.LikeMessageCallback,
-        DataSource.UnlikeMessageCallback {
-
+public class MessagesPresenter implements MessagesContract.Presenter, DataMediator.Listener {
     private DataSource dataSource;
-    private MessageEventBus eventBus;
     private MessagesContract.View view;
-    private ChatType type;
     private Chat chat;
     private int sentId;
     private Message lastMessage;
 
-    public MessagesPresenter(DataSource dataSource, MessageEventBus eventBus, MessagesContract.View view) {
+    public MessagesPresenter(DataSource dataSource, MessagesContract.View view) {
         this.dataSource = dataSource;
-        this.eventBus = eventBus;
-        this.eventBus.subscribe(this);
         this.view = view;
         sentId = 1;
     }
@@ -43,20 +32,15 @@ public class MessagesPresenter implements
     }
 
     @Override
-    public void unknownResponseCode(String response) {
-        System.err.println(response);
-    }
-
-    @Override
     public void refreshMessages() {
         if (chat != null) {
             view.clearMessages();
-            switch (type) {
+            switch (chat.getType()) {
                 case GROUP:
-                    dataSource.getGroupMessages(chat, null, this);
+                    dataSource.getGroupMessages(chat, null);
                     break;
                 case DIRECT:
-                    dataSource.getDirectMessages(chat, null, this);
+                    dataSource.getDirectMessages(chat, null);
                     break;
                 default:
             }
@@ -66,12 +50,12 @@ public class MessagesPresenter implements
     @Override
     public void loadMoreMessages() {
         if (chat != null && lastMessage != null) {
-            switch (type) {
+            switch (chat.getType()) {
                 case GROUP:
-                    dataSource.getGroupMessages(chat, lastMessage, this);
+                    dataSource.getGroupMessages(chat, lastMessage);
                     break;
                 case DIRECT:
-                    dataSource.getDirectMessages(chat, lastMessage, this);
+                    dataSource.getDirectMessages(chat, lastMessage);
                     break;
                 default:
             }
@@ -82,12 +66,12 @@ public class MessagesPresenter implements
     public void sendMessage() {
         String text;
         if (chat != null && !(text = view.getMessageText()).equals("")) {
-            switch (type) {
+            switch (chat.getType()) {
                 case GROUP:
-                    dataSource.sendGroupMessage(chat, Integer.toString(++sentId), text, eventBus);
+                    dataSource.sendGroupMessage(chat, Integer.toString(++sentId), text);
                     break;
                 case DIRECT:
-                    dataSource.sendDirectMessage(chat, Integer.toString(++sentId), text, eventBus);
+                    dataSource.sendDirectMessage(chat, Integer.toString(++sentId), text);
                     break;
                 default:
             }
@@ -97,12 +81,12 @@ public class MessagesPresenter implements
     @Override
     public void likeMessage(Message message) {
         if (message != null && chat != null) {
-            switch (type) {
+            switch (chat.getType()) {
                 case GROUP:
-                    dataSource.likeGroupMessage(chat, message, this);
+                    dataSource.likeGroupMessage(chat, message);
                     break;
                 case DIRECT:
-                    dataSource.likeDirectMessage(chat, message, this);
+                    dataSource.likeDirectMessage(chat, message);
                     break;
                 default:
             }
@@ -112,16 +96,25 @@ public class MessagesPresenter implements
     @Override
     public void unlikeMessage(Message message) {
         if (message != null && chat != null) {
-            switch (type) {
+            switch (chat.getType()) {
                 case GROUP:
-                    dataSource.unlikeGroupMessage(chat, message, this);
+                    dataSource.unlikeGroupMessage(chat, message);
                     break;
                 case DIRECT:
-                    dataSource.unlikeDirectMessage(chat, message, this);
+                    dataSource.unlikeDirectMessage(chat, message);
                     break;
                 default:
             }
         }
+    }
+
+    @Override
+    public void onChatLoaded(Chat chat) {
+        this.chat = chat;
+        view.clearMemberList();
+        view.showChatDetails(this.chat);
+        view.showMembers(chat.getMembers());
+        refreshMessages();
     }
 
     @Override
@@ -136,6 +129,19 @@ public class MessagesPresenter implements
     }
 
     @Override
+    public void onMessageReceived(NotificationMessage message) {
+        if (message.getChatId().equals(chat.getId())) {
+            refreshMessages();
+        }
+    }
+
+    @Override
+    public void onMessageSent() {
+        view.clearMessageText();
+        refreshMessages();
+    }
+
+    @Override
     public void onMessageLiked() {
         refreshMessages();
     }
@@ -146,28 +152,7 @@ public class MessagesPresenter implements
     }
 
     @Override
-    public void onGroupChatLoaded(Chat chat) {
-        type = ChatType.GROUP;
-        chatLoaded(chat);
-    }
-
+    public void onProfileLoaded(Profile profile) {}
     @Override
-    public void onDirectChatLoaded(Chat chat) {
-        type = ChatType.DIRECT;
-        chatLoaded(chat);
-    }
-
-    private void chatLoaded(Chat chat) {
-        this.chat = chat;
-        view.clearMemberList();
-        view.showChatDetails(this.chat);
-        view.showMembers(chat.getMembers());
-        refreshMessages();
-    }
-
-    @Override
-    public void changed(Message message) {
-        view.clearMessageText();
-        refreshMessages();
-    }
+    public void onChatsLoaded(List<Chat> chats) {}
 }

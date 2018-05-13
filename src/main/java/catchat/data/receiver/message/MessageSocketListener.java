@@ -1,6 +1,6 @@
 package catchat.data.receiver.message;
 
-import catchat.data.entities.message.NotificationMessage;
+import catchat.data.DataMediator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.jetty.websocket.api.Session;
@@ -28,14 +28,14 @@ public class MessageSocketListener implements WebSocketListener {
     private String userId;
     private Session session;
     private ObjectMapper mapper;
-    private MessageReceiver.MessageReceivedCallback callback;
+    private DataMediator dataMediator;
 
-    MessageSocketListener(String authToken, String userId, MessageReceiver.MessageReceivedCallback callback) {
+    MessageSocketListener(String authToken, String userId, DataMediator dataMediator) {
         this.closeLatch = new CountDownLatch(1);
         this.webSocketClient = new WebSocketClient();
         this.authToken = authToken;
         this.userId = userId;
-        this.callback = callback;
+        this.dataMediator = dataMediator;
         mapper = new ObjectMapper();
     }
 
@@ -77,10 +77,11 @@ public class MessageSocketListener implements WebSocketListener {
                     if ((dataNode = responseNode.get("data")) != null
                             && (subjectNode = dataNode.get("subject")) != null) {
 
+                        String chatId = (subjectNode.has("chat_id") ? subjectNode.get("chat_id").asText() : subjectNode.get("group_id").asText());
                         String senderName = subjectNode.get("name").asText();
                         String messageText = subjectNode.get("text").asText();
                         Platform.runLater(() -> {
-                            callback.onMessageReceived(new NotificationMessage(messageText, senderName));
+                            dataMediator.messageReceived(new NotificationMessage(chatId, messageText, senderName));
                         });
                     }
             }

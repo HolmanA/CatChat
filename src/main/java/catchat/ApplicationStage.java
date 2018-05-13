@@ -2,12 +2,12 @@ package catchat;
 
 import catchat.authentication.AuthPresenter;
 import catchat.authentication.AuthView;
-import catchat.chats.presenter.DirectChatsPresenter;
-import catchat.chats.presenter.GroupChatsPresenter;
+import catchat.chats.ChatsPresenter;
 import catchat.chats.view.ChatsView;
-import catchat.data.MessageEventBus;
+import catchat.data.DataMediator;
 import catchat.data.authentication.GroupMeOAuthService;
 import catchat.data.authentication.OAuthService;
+import catchat.data.entities.ChatType;
 import catchat.data.receiver.message.MessageReceiver;
 import catchat.data.source.DataSource;
 import catchat.data.source.GroupMeDataSource;
@@ -29,20 +29,20 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
     private OAuthService authService;
     private TrayManager trayManager;
     private DataSource dataSource;
-    private MessageEventBus messageEventBus;
+    private DataMediator dataMediator;
     private MessageReceiver messageReceiver;
 
     public ApplicationStage() {
         authService = new GroupMeOAuthService(this);
-        messageEventBus = new MessageEventBus();
-        trayManager = new TrayManager(messageEventBus);
+        dataMediator = new DataMediator();
+        trayManager = new TrayManager(dataMediator);
 
         // Show desktop notifications only when CatChat is not the active window
         focusedProperty().addListener(((observable, oldValue, newValue) -> {
             if (newValue) {
-                trayManager.unsubscribeFromEventBus();
+                trayManager.unsubscribeFromDataMediator();
             } else {
-                trayManager.subscribeToEventBus();
+                trayManager.subscribeToDataMediator();
             }
         }));
         setTitle("Cat Chat");
@@ -56,7 +56,7 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
     /**
      * onSuccess is called upon completion of the OAuthService's authentication routine. Since this method is called on
      * the authentication thread and not the application main UI thread, we must move execution back to the main UI
-     * thread.
+     * thread by calling Platform.runLater().
      */
     @Override
     public void onSuccess() {
@@ -90,18 +90,17 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
     private void initializeMainApplication() {
         System.out.println("Main Application Started");
 
-        dataSource = new GroupMeDataSource(authService);
-        messageReceiver = new MessageReceiver(authService, dataSource, messageEventBus);
-        BorderPane pane = initializeBorderPane();
-
-        Thread thread = new Thread(() -> messageReceiver.start());
-        thread.start();
+        dataSource = new GroupMeDataSource(authService, dataMediator);
+        messageReceiver = new MessageReceiver(authService, dataSource, dataMediator);
+        messageReceiver.start();
 
         setOnCloseRequest(event -> {
             messageReceiver.stop();
             Platform.exit();
             System.exit(0);
         });
+
+        BorderPane pane = initializeBorderPane();
         setScene(new Scene(pane));
         setMaximized(true);
         show();
@@ -109,19 +108,20 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
 
     private BorderPane initializeBorderPane() {
         MessagesView messagesView = new MessagesView();
-        MessagesPresenter messagesPresenter = new MessagesPresenter(dataSource, messageEventBus, messagesView);
+        MessagesPresenter messagesPresenter = new MessagesPresenter(dataSource, messagesView);
+        dataMediator.subscribe(messagesPresenter);
         messagesView.setPresenter(messagesPresenter);
         messagesPresenter.start();
 
         ChatsView groupChatsView = new ChatsView();
-        GroupChatsPresenter groupChatsPresenter = new GroupChatsPresenter(dataSource, groupChatsView, messagesPresenter);
-        messageEventBus.subscribe(groupChatsPresenter);
+        ChatsPresenter groupChatsPresenter = new ChatsPresenter(ChatType.GROUP, dataSource, groupChatsView);
+        dataMediator.subscribe(groupChatsPresenter);
         groupChatsView.setPresenter(groupChatsPresenter);
         groupChatsPresenter.start();
 
         ChatsView directChatsView = new ChatsView();
-        DirectChatsPresenter directChatsPresenter = new DirectChatsPresenter(dataSource, directChatsView, messagesPresenter);
-        messageEventBus.subscribe(directChatsPresenter);
+        ChatsPresenter directChatsPresenter = new ChatsPresenter(ChatType.DIRECT, dataSource, directChatsView);
+        dataMediator.subscribe(directChatsPresenter);
         directChatsView.setPresenter(directChatsPresenter);
         directChatsPresenter.start();
 
