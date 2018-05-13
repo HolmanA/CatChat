@@ -15,7 +15,7 @@ import java.util.Properties;
  * authorization.
  *
  * @author Andrew Holman
- * @version %I%, %G%
+ * @version 1.0
  * @since 1.0
  */
 public class GroupMeOAuthService implements OAuthService {
