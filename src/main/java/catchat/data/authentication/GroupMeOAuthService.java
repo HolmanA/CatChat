@@ -69,9 +69,6 @@ public class GroupMeOAuthService implements OAuthService {
         authListener.onFailure("Error: Authentication token rejected by GroupMe API");
     }
 
-    /**
-     * @see Runnable
-     */
     @Override
     public void run() {
         try {
