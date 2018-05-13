@@ -23,9 +23,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 /**
- * Main Stage for the Cat Chat JavaFX Application. Handles receiving authentication signals, dependency injection of
- * various components, and the general application lifecycle. Begins with executing the authentication component before
- * executing the main application component.
+ * ApplicationStage is the Main Stage for the Cat Chat JavaFX Application. Handles receiving authentication signals,
+ * dependency injection of various components, and the general application lifecycle. Begins with executing the
+ * authentication component before executing the main application component.
  *
  * @author Andrew Holman
  * @version 1.0
