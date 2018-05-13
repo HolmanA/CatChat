@@ -13,6 +13,10 @@ import java.util.Properties;
 /**
  * OAuthService capable of obtaining an API token to GroupMe's chats servers through OAuth2.0 Implicit Grant
  * authorization.
+ *
+ * @author Andrew Holman
+ * @version %I%, %G%
+ * @since 1.0
  */
 public class GroupMeOAuthService implements OAuthService {
     // Resource paths
@@ -33,6 +37,11 @@ public class GroupMeOAuthService implements OAuthService {
     private AuthListener authListener;
     private String authToken;
 
+    /**
+     * Constructor
+     * @param authListener Object that will receive method calls depending on the state of the authentication process
+     *                     (Success, Failure, etc).
+     */
     public GroupMeOAuthService(OAuthService.AuthListener authListener) {
         this.authListener = authListener;
         try {
@@ -52,11 +61,17 @@ public class GroupMeOAuthService implements OAuthService {
         return authToken;
     }
 
+    /**
+     * Called by outside classes if the authentication token provided by this class is invalid
+     */
     @Override
     public void tokenRejected() {
         authListener.onFailure("Error: Authentication token rejected by GroupMe API");
     }
 
+    /**
+     * @see Runnable
+     */
     @Override
     public void run() {
         try {
@@ -66,6 +81,10 @@ public class GroupMeOAuthService implements OAuthService {
         }
     }
 
+    /**
+     * Executes the authentication process
+     * @throws Exception If an error occurs during the authentication process
+     */
     private void authenticate() throws Exception {
         initializeCallbackSocket();
         acceptCallbackConnection();
@@ -77,6 +96,7 @@ public class GroupMeOAuthService implements OAuthService {
 
     /**
      * Loads authorization connection properties from a java properties file
+     * @throws Exception If an error occurs while opening or parsing properties file
      */
     private void loadProperties() throws Exception {
         try {
@@ -95,6 +115,10 @@ public class GroupMeOAuthService implements OAuthService {
         }
     }
 
+    /**
+     * Attempts to initialize a server socket on the specified port
+     * @throws IOException If error occurs while creating server socket
+     */
     private void initializeCallbackSocket() throws IOException {
         ServerSocketFactory factory = ServerSocketFactory.getDefault();
         try {
@@ -111,6 +135,7 @@ public class GroupMeOAuthService implements OAuthService {
 
     /**
      * Attempts to accept an incoming connection on the local authorization callback socket
+     * @throws IOException If error occurs while attempting to accept an incoming socket connection
      */
     private void acceptCallbackConnection() throws IOException {
         try {
@@ -128,6 +153,7 @@ public class GroupMeOAuthService implements OAuthService {
     /**
      * Attempts to read an incoming http header containing the authentication token from the authentication connection
      * @return String http header for the http request
+     * @throws IOException If error occurs while attempting to read from socket
      */
     private String parseRequestHeader() throws IOException {
         try {
@@ -155,6 +181,7 @@ public class GroupMeOAuthService implements OAuthService {
      * Searches the provided header for the API access token
      * @param header String http header obtained from the authentication callback connection
      * @return String API authorization token
+     * @throws Exception If unable to locate access token in header
      */
     private String parseTokenFromHeader(String header) throws Exception {
         String tokenLabel = "access_token=";
