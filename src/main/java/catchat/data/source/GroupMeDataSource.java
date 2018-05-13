@@ -16,7 +16,6 @@ import catchat.data.source.groupme.group.GetGroupMessagesInteractor;
 import catchat.data.source.groupme.group.SendGroupMessageInteractor;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by andrew on 4/26/18.
@@ -35,19 +34,8 @@ public class GroupMeDataSource implements DataSource {
     @Override
     public void getGroupChats(int page, int pageSize) {
         try {
-            ApiInteractor<List<Chat>> interactor = new GetGroupChatsInteractor(
-                    authService.getAPIToken(), page, pageSize);
-
-            int responseCode = interactor.getResponseCode();
-            if (200 <= responseCode && responseCode < 300) {
-                List<Chat> chats = interactor.getContent();
-                dataMediator.chatsLoaded(chats);
-            } else if (responseCode == 401) {
-                authService.tokenRejected();
-            } else {
-                dataMediator.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
-            }
-            interactor.disconnect();
+            dataMediator.chatsLoaded(execute(new GetGroupChatsInteractor(
+                    authService.getAPIToken(), page, pageSize)));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,20 +49,9 @@ public class GroupMeDataSource implements DataSource {
     @Override
     public void getGroupMessages(Chat chat, Message lastMessage) {
         try {
-            ApiInteractor<List<Message>> interactor = new GetGroupMessagesInteractor(
+            dataMediator.messagesLoaded(execute(new GetGroupMessagesInteractor(
                     authService.getAPIToken(), chat.getId(),
-                    (lastMessage == null) ? "" : lastMessage.getId(), "", "", 20);
-
-            int responseCode = interactor.getResponseCode();
-            if (200 <= responseCode && responseCode < 300) {
-                List<Message> messages = interactor.getContent();
-                dataMediator.messagesLoaded(messages);
-            } else if (responseCode == 401) {
-                authService.tokenRejected();
-            } else {
-                dataMediator.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
-            }
-            interactor.disconnect();
+                    (lastMessage == null) ? "" : lastMessage.getId(), "", "", 20)));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -83,18 +60,9 @@ public class GroupMeDataSource implements DataSource {
     @Override
     public void sendGroupMessage(Chat chat, String messageId, String text) {
         try {
-            ApiInteractor interactor = new SendGroupMessageInteractor(
-                    authService.getAPIToken(), chat.getId(), BASE_SOURCE_GUID + messageId, text);
-
-            int responseCode = interactor.getResponseCode();
-            if (200 <= responseCode && responseCode < 300) {
-                dataMediator.messageSent();
-            } else if (responseCode == 401) {
-                authService.tokenRejected();
-            } else {
-                dataMediator.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
-            }
-            interactor.disconnect();
+            execute(new SendGroupMessageInteractor(
+                    authService.getAPIToken(), chat.getId(), BASE_SOURCE_GUID + messageId, text));
+            dataMediator.messageSent();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,18 +71,8 @@ public class GroupMeDataSource implements DataSource {
     @Override
     public void likeGroupMessage(Chat chat, Message message) {
         try {
-            ApiInteractor interactor = new LikeMessageInteractor(
-                    authService.getAPIToken(), chat.getId(), message.getId());
-
-            int responseCode = interactor.getResponseCode();
-            if (200 <= responseCode && responseCode < 300) {
-                dataMediator.messageLiked();
-            } else if (responseCode == 401) {
-                authService.tokenRejected();
-            } else {
-                dataMediator.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
-            }
-            interactor.disconnect();
+            execute(new LikeMessageInteractor(authService.getAPIToken(), chat.getId(), message.getId()));
+            dataMediator.messageLiked();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -123,18 +81,8 @@ public class GroupMeDataSource implements DataSource {
     @Override
     public void unlikeGroupMessage(Chat chat, Message message) {
         try {
-            ApiInteractor interactor = new UnlikeMessageInteractor(
-                    authService.getAPIToken(), chat.getId(), message.getId());
-
-            int responseCode = interactor.getResponseCode();
-            if (200 <= responseCode && responseCode < 300) {
-                dataMediator.messageLiked();
-            } else if (responseCode == 401) {
-                authService.tokenRejected();
-            } else {
-                dataMediator.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
-            }
-            interactor.disconnect();
+            execute(new UnlikeMessageInteractor(authService.getAPIToken(), chat.getId(), message.getId()));
+            dataMediator.messageLiked();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -143,20 +91,8 @@ public class GroupMeDataSource implements DataSource {
     @Override
     public void getDirectChats(int page, int pageSize) {
         try {
-            ApiInteractor<List<Chat>> interactor = new GetDirectChatsInteractor(
-                    authService.getAPIToken(), page, pageSize);
-
-            int responseCode = interactor.getResponseCode();
-            if (200 <= responseCode && responseCode < 300) {
-                List<Chat> chats = interactor.getContent();
-                dataMediator.chatsLoaded(chats);
-            } else if (responseCode == 401) {
-                authService.tokenRejected();
-            } else {
-                dataMediator.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
-            }
-            interactor.disconnect();
-        } catch (IOException e) {
+            dataMediator.chatsLoaded(execute(new GetDirectChatsInteractor(authService.getAPIToken(), page, pageSize)));
+        } catch (RuntimeException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -169,21 +105,10 @@ public class GroupMeDataSource implements DataSource {
     @Override
     public void getDirectMessages(Chat chat, Message lastMessage) {
         try {
-            ApiInteractor<List<Message>> interactor = new GetDirectMessagesInteractor(
+            dataMediator.messagesLoaded(execute(new GetDirectMessagesInteractor(
                     authService.getAPIToken(), chat.getId(),
-                    (lastMessage == null) ? "" : lastMessage.getId(), "");
-
-            int responseCode = interactor.getResponseCode();
-            if (200 <= responseCode && responseCode < 300) {
-                List<Message> messages = interactor.getContent();
-                dataMediator.messagesLoaded(messages);
-            } else if (responseCode == 401) {
-                authService.tokenRejected();
-            } else {
-                dataMediator.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
-            }
-            interactor.disconnect();
-        } catch (IOException e) {
+                    (lastMessage == null) ? "" : lastMessage.getId(), "")));
+        } catch (RuntimeException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -191,19 +116,10 @@ public class GroupMeDataSource implements DataSource {
     @Override
     public void sendDirectMessage(Chat chat, String messageId, String text) {
         try {
-            ApiInteractor interactor = new SendDirectMessageInteractor(
-                    authService.getAPIToken(), chat.getId(), BASE_SOURCE_GUID + messageId, text);
-
-            int responseCode = interactor.getResponseCode();
-            if (200 <= responseCode && responseCode < 300) {
-                dataMediator.messageSent();
-            } else if (responseCode == 401) {
-                authService.tokenRejected();
-            } else {
-                dataMediator.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
-            }
-            interactor.disconnect();
-        } catch (IOException e) {
+            execute(new SendDirectMessageInteractor(
+                    authService.getAPIToken(), chat.getId(), BASE_SOURCE_GUID + messageId, text));
+            dataMediator.messageSent();
+        } catch (RuntimeException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -213,23 +129,12 @@ public class GroupMeDataSource implements DataSource {
         if (userProfile == null) {
             getUserProfile();
         }
-
         String id = chat.getId() + "+" + userProfile.getId();
 
         try {
-            ApiInteractor interactor = new LikeMessageInteractor(
-                    authService.getAPIToken(), id, message.getId());
-
-            int responseCode = interactor.getResponseCode();
-            if (200 <= responseCode && responseCode < 300) {
-                dataMediator.messageLiked();
-            } else if (responseCode == 401) {
-                authService.tokenRejected();
-            } else {
-                dataMediator.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
-            }
-            interactor.disconnect();
-        } catch (IOException e) {
+            execute(new LikeMessageInteractor(authService.getAPIToken(), id, message.getId()));
+            dataMediator.messageLiked();
+        } catch (RuntimeException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -239,23 +144,12 @@ public class GroupMeDataSource implements DataSource {
         if (userProfile == null) {
             getUserProfile();
         }
-
         String id = chat.getId() + "+" + userProfile.getId();
 
         try {
-            ApiInteractor interactor = new UnlikeMessageInteractor(
-                    authService.getAPIToken(), id, message.getId());
-
-            int responseCode = interactor.getResponseCode();
-            if (200 <= responseCode && responseCode < 300) {
-                dataMediator.messageUnliked();
-            } else if (responseCode == 401) {
-                authService.tokenRejected();
-            } else {
-                dataMediator.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
-            }
-            interactor.disconnect();
-        } catch (IOException e) {
+            execute(new UnlikeMessageInteractor(authService.getAPIToken(), id, message.getId()));
+            dataMediator.messageUnliked();
+        } catch (RuntimeException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -264,22 +158,26 @@ public class GroupMeDataSource implements DataSource {
     public void getUserProfile() {
         if (userProfile == null) {
             try {
-                ApiInteractor<Profile> interactor = new GetUserProfileInteractor(
-                        authService.getAPIToken());
-
-                int responseCode = interactor.getResponseCode();
-                if (200 <= responseCode && responseCode < 300) {
-                    userProfile = interactor.getContent();
-                } else if (responseCode == 401) {
-                    authService.tokenRejected();
-                } else {
-                    dataMediator.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
-                }
-                interactor.disconnect();
-            } catch (IOException e) {
+                userProfile = execute(new GetUserProfileInteractor(authService.getAPIToken()));
+            } catch (RuntimeException | IOException e) {
                 e.printStackTrace();
             }
         }
         dataMediator.profileLoaded(userProfile);
+    }
+
+    private <T> T execute(ApiInteractor<T> interactor) throws IOException, RuntimeException {
+        int responseCode = interactor.getResponseCode();
+        if (200 <= responseCode && responseCode < 300) {
+            T content = interactor.getContent();
+            interactor.disconnect();
+            return content;
+        } else if (responseCode == 401) {
+            authService.tokenRejected();
+        } else {
+            dataMediator.unknownResponseCode(responseCode + ": " + interactor.getResponseMessage());
+        }
+        interactor.disconnect();
+        throw new RuntimeException();
     }
 }
