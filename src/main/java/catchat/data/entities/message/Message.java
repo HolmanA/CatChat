@@ -4,14 +4,16 @@ import java.util.List;
 
 public abstract class Message {
     private String id;
+    private String senderAvatar;
     private String sourceGUID;
     private String text;
     private String senderName;
     private long createdAt;
     private List<String> likes;
 
-    protected Message(String id, String sourceGUID, String text, String senderName, long createdAt, List<String> likes) {
+    protected Message(String id, String senderAvatar, String sourceGUID, String text, String senderName, long createdAt, List<String> likes) {
         this.id = id;
+        this.senderAvatar = senderAvatar;
         this.sourceGUID = sourceGUID;
         this.text = text;
         this.senderName = senderName;
@@ -21,6 +23,10 @@ public abstract class Message {
 
     public String getId() {
         return id;
+    }
+
+    public String getSenderAvatar() {
+        return senderAvatar;
     }
 
     public String getSourceGUID() {

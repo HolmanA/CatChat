@@ -1,6 +1,6 @@
 package catchat.authentication;
 
-import catchat.data.auth.OAuthService;
+import catchat.data.authentication.OAuthService;
 
 public class AuthPresenter implements AuthContract.Presenter {
     private final OAuthService authService;

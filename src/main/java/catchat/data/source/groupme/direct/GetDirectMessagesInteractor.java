@@ -38,6 +38,7 @@ public class GetDirectMessagesInteractor extends BaseApiInteractor<List<Message>
         if (messages != null && messages.isArray()) {
             for (JsonNode message : messages) {
                 String messageId = message.get("id").asText();
+                String senderAvatar = message.get("avatar_url").asText();
                 String messageGUID = message.get("source_guid").asText();
                 String senderName = message.get("name").asText();
                 long createdAt = message.get("created_at").asLong();
@@ -47,7 +48,7 @@ public class GetDirectMessagesInteractor extends BaseApiInteractor<List<Message>
                 for (JsonNode like : likes) {
                     likeList.add(like.asText());
                 }
-                messageList.add(new DirectMessage(messageId, messageGUID, text, senderName, createdAt, likeList));
+                messageList.add(new DirectMessage(messageId, senderAvatar, messageGUID, text, senderName, createdAt, likeList));
             }
         }
         return messageList;

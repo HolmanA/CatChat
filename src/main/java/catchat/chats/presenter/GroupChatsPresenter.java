@@ -1,5 +1,6 @@
-package catchat.chats;
+package catchat.chats.presenter;
 
+import catchat.chats.ChatsContract;
 import catchat.data.entities.chat.Chat;
 import catchat.data.source.DataSource;
 

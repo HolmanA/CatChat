@@ -1,6 +1,6 @@
 package catchat.authentication;
 
-import catchat.data.auth.OAuthService;
+import catchat.data.authentication.OAuthService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -35,13 +35,5 @@ public class AuthPresenterTest {
         authPresenter.start();
 
         verify(authView).openWebPage(any(String.class));
-    }
-
-    @Test
-    public void stop() {
-        authPresenter = new AuthPresenter(authService, authView);
-        authPresenter.stop();
-
-        verify(authView).closeWebPage();
     }
 }

@@ -1,18 +1,18 @@
-package catchat.chats;
+package catchat.chats.view;
 
-import catchat.chats.view.ChatListCell;
+import catchat.chats.ChatsContract;
 import catchat.data.entities.chat.Chat;
 
 import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -25,26 +25,36 @@ import java.util.List;
 public class ChatsView extends VBox implements ChatsContract.View {
     private ChatsContract.Presenter presenter;
     private ObservableList<Chat> chatList;
+    private Label title;
     private ListView<Chat> chatListView;
     private ScrollBar chatListScrollBar;
-    private Label listTitle;
 
     public ChatsView() {
-        super(5);
+        super();
+        getStylesheets().add("/chats/css/chats_view.css");
+        getStyleClass().add("container");
+
         chatList = FXCollections.observableArrayList();
         chatListView = new ListView<>();
+        chatListView.getStyleClass().add("chat-list");
         chatListView.setItems(chatList);
         chatListView.setCellFactory(param -> new ChatListCell());
         chatListView.setOnMouseClicked(event ->
                 presenter.loadChat(chatListView.getSelectionModel().getSelectedItem()));
 
-        listTitle = new Label();
-        Button refreshButton = new Button("Refresh");
-        refreshButton.setOnMouseClicked(event -> presenter.refreshChats());
+        title = new Label();
+        title.getStyleClass().add("title");
 
-        getChildren().addAll(listTitle, chatListView, refreshButton);
+        Button refresh = new Button("↻");
+        refresh.getStyleClass().add("refresh");
+        refresh.setOnMouseClicked(event -> presenter.refreshChats());
+
+        HBox titleContainer = new HBox();
+        titleContainer.getStyleClass().add("title-container");
+        titleContainer.getChildren().addAll(refresh, title);
+
+        getChildren().addAll(titleContainer, chatListView);
         VBox.setVgrow(chatListView, Priority.ALWAYS);
-        setAlignment(Pos.CENTER);
     }
 
     @Override
@@ -63,7 +73,7 @@ public class ChatsView extends VBox implements ChatsContract.View {
 
     @Override
     public void showNoChats() {
-        listTitle.setText("No Chats");
+        title.setText("No Chats");
     }
 
     @Override
@@ -73,7 +83,7 @@ public class ChatsView extends VBox implements ChatsContract.View {
 
     @Override
     public void setTitle(String text) {
-        listTitle.setText(text);
+        title.setText(text);
     }
 
     private void initializeChatListScrollBar() {

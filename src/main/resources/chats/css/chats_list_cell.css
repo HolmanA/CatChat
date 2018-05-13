@@ -1,0 +1,23 @@
+.container { /* ListCell */
+    -fx-padding: 15;
+    -fx-background-color: white;
+}
+
+.container:pressed {
+    -fx-background-color: #e6e6e6;
+}
+
+.name { /* Label */
+    -fx-font: normal bold 16 null;
+    -fx-text-fill: black;
+}
+
+.preview {  /* Text */
+    -fx-font-size: 14;
+    -fx-wrap-text: true;
+}
+
+.inner-container {  /* VBox */
+    -fx-spacing: 5;
+    -fx-alignment: center-left;
+}

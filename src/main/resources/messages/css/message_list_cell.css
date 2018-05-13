@@ -1,0 +1,73 @@
+.container { /* ListCell */
+    -fx-padding: 0 5 0 5;
+    -fx-background-color: white;
+}
+
+.inner-container { /* HBox */
+    -fx-spacing: 5;
+    -fx-alignment: center;
+    -fx-padding: 5 0 5 0;
+}
+
+.border-container { /* VBox */
+    -fx-alignment: center;
+}
+
+.sender-avatar { /* ImageView */
+    -fx-alignment: center;
+    -fx-focus-traversable: false;
+}
+
+.sender-avatar-container { /* VBox */
+    -fx-alignment: center;
+    -fx-max-width: 80;
+    -fx-max-height: 80;
+    -fx-pref-width: 80;
+    -fx-pref-height: 80;
+}
+
+.sender-name { /* Label */
+    -fx-font: normal bold 16 null;
+}
+
+.created-at { /* Label */
+    -fx-font: normal italic 14 null;
+}
+
+.sender-container { /* HBox */
+    -fx-spacing: 6;
+    -fx-alignment: center-left;
+}
+
+.message-text { /* Text */
+    -fx-font-size: 14;
+}
+
+.message-container { /* VBox */
+    -fx-spacing: 7;
+    -fx-alignment: center-left;
+}
+
+.like-count { /* Label */
+    -fx-font: normal italic 12 null;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+}
+
+.like { /* Button */
+    -fx-focus-traversable: false;
+}
+
+.unlike { /* Button */
+    -fx-focus-traversable: false;
+}
+
+.like-button-container { /* HBox */
+    -fx-spacing: 5;
+    -fx-alignment: center;
+}
+
+.like-container { /* VBox */
+    -fx-spacing: 5;
+    -fx-alignment: center;
+}

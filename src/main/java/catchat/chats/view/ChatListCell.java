@@ -11,17 +11,33 @@ import javafx.scene.text.Text;
  * Created by andrew on 4/16/18.
  */
 public class ChatListCell extends ListCell<Chat> {
+    public ChatListCell() {
+        super();
+        getStylesheets().add("/chats/css/chats_list_cell.css");
+        getStyleClass().add("container");
+    }
+
     @Override
     protected void updateItem(Chat item, boolean empty) {
         super.updateItem(item, empty);
         if (!empty) {
-            VBox box = new VBox();
             Label name = new Label(item.getName());
-            Text preview = new Text(item.getPreview());
+            name.getStyleClass().add("name");
+
+            int snippetLength = 50;
+            String snippet = item.getPreview();
+            snippet = (snippet.length() > snippetLength) ? snippet.substring(0, snippetLength - 3) + "..." : snippet;
+
+            Text preview = new Text(snippet);
+            preview.getStyleClass().add("preview");
             preview.setWrappingWidth(200);
 
-            box.getChildren().addAll(name, preview);
-            setGraphic(box);
+            VBox innerContainer = new VBox();
+            innerContainer.getStyleClass().add("inner-container");
+            innerContainer.getChildren().addAll(name, preview);
+
+
+            setGraphic(innerContainer);
         } else {
             setGraphic(null);
         }

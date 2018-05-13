@@ -159,7 +159,9 @@ public class MessagesPresenter implements
 
     private void chatLoaded(Chat chat) {
         this.chat = chat;
+        view.clearMemberList();
         view.showChatDetails(this.chat);
+        view.showMembers(chat.getMembers());
         refreshMessages();
     }
 

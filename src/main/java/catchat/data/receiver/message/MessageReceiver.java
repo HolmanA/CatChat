@@ -1,6 +1,6 @@
 package catchat.data.receiver.message;
 
-import catchat.data.auth.OAuthService;
+import catchat.data.authentication.OAuthService;
 import catchat.data.entities.message.Message;
 import catchat.data.entities.profile.Profile;
 import catchat.data.source.DataSource;
