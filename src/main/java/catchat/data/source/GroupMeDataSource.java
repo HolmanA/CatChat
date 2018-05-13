@@ -36,7 +36,7 @@ public class GroupMeDataSource implements DataSource {
         try {
             dataMediator.chatsLoaded(execute(new GetGroupChatsInteractor(
                     authService.getAPIToken(), page, pageSize)));
-        } catch (IOException e) {
+        } catch (RuntimeException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -52,7 +52,7 @@ public class GroupMeDataSource implements DataSource {
             dataMediator.messagesLoaded(execute(new GetGroupMessagesInteractor(
                     authService.getAPIToken(), chat.getId(),
                     (lastMessage == null) ? "" : lastMessage.getId(), "", "", 20)));
-        } catch (IOException e) {
+        } catch (RuntimeException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -63,7 +63,7 @@ public class GroupMeDataSource implements DataSource {
             execute(new SendGroupMessageInteractor(
                     authService.getAPIToken(), chat.getId(), BASE_SOURCE_GUID + messageId, text));
             dataMediator.messageSent();
-        } catch (IOException e) {
+        } catch (RuntimeException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -73,7 +73,7 @@ public class GroupMeDataSource implements DataSource {
         try {
             execute(new LikeMessageInteractor(authService.getAPIToken(), chat.getId(), message.getId()));
             dataMediator.messageLiked();
-        } catch (IOException e) {
+        } catch (RuntimeException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -83,7 +83,7 @@ public class GroupMeDataSource implements DataSource {
         try {
             execute(new UnlikeMessageInteractor(authService.getAPIToken(), chat.getId(), message.getId()));
             dataMediator.messageLiked();
-        } catch (IOException e) {
+        } catch (RuntimeException | IOException e) {
             e.printStackTrace();
         }
     }
