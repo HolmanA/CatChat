@@ -1,4 +1,4 @@
-package catchat.messages.view;
+package catchat.ui.messages.view;
 
 import catchat.data.entities.profile.Profile;
 

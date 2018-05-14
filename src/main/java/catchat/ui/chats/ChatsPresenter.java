@@ -1,6 +1,5 @@
-package catchat.chats;
+package catchat.ui.chats;
 
-import catchat.chats.ChatsContract;
 import catchat.data.DataMediator;
 import catchat.data.entities.ChatType;
 import catchat.data.entities.chat.Chat;

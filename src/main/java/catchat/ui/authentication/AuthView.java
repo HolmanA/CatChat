@@ -1,4 +1,4 @@
-package catchat.authentication;
+package catchat.ui.authentication;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

@@ -1,4 +1,4 @@
-package catchat.authentication;
+package catchat.ui.authentication;
 
 import catchat.data.authentication.OAuthService;
 

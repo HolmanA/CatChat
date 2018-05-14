@@ -1,4 +1,4 @@
-package catchat.error;
+package catchat.ui.error;
 
 import javafx.application.Platform;
 import javafx.scene.control.Button;

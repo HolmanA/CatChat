@@ -1,7 +1,7 @@
-package catchat.chats;
+package catchat.ui.chats;
 
-import catchat.BasePresenter;
-import catchat.BaseView;
+import catchat.ui.BasePresenter;
+import catchat.ui.BaseView;
 import catchat.data.entities.chat.Chat;
 
 import java.util.List;

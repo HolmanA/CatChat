@@ -1,11 +1,9 @@
-package catchat.chats.view;
+package catchat.ui.chats.view;
 
-import catchat.chats.ChatsContract;
+import catchat.ui.chats.ChatsContract;
 import catchat.data.entities.chat.Chat;
 
 import javafx.animation.PauseTransition;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -24,7 +22,6 @@ import java.util.List;
  */
 public class ChatsView extends VBox implements ChatsContract.View {
     private ChatsContract.Presenter presenter;
-    private ObservableList<Chat> chatList;
     private Label title;
     private ListView<Chat> chatListView;
     private ScrollBar chatListScrollBar;
@@ -34,10 +31,8 @@ public class ChatsView extends VBox implements ChatsContract.View {
         getStylesheets().add("/chats/css/chats_view.css");
         getStyleClass().add("container");
 
-        chatList = FXCollections.observableArrayList();
         chatListView = new ListView<>();
         chatListView.getStyleClass().add("chat-list");
-        chatListView.setItems(chatList);
         chatListView.setCellFactory(param -> new ChatListCell());
         chatListView.setOnMouseClicked(event ->
                 presenter.loadChat(chatListView.getSelectionModel().getSelectedItem()));
@@ -64,8 +59,8 @@ public class ChatsView extends VBox implements ChatsContract.View {
 
     @Override
     public void showChats(List<Chat> chats) {
-        chatList.addAll(chats);
-        chatListView.scrollTo(chatList.size() - chats.size());
+        chatListView.getItems().addAll(chats);
+        chatListView.scrollTo(chatListView.getItems().size() - chats.size());
         if (chatListScrollBar == null) {
             initializeChatListScrollBar();
         }
@@ -78,7 +73,7 @@ public class ChatsView extends VBox implements ChatsContract.View {
 
     @Override
     public void clearChats() {
-        chatList.clear();
+        chatListView.getItems().clear();
     }
 
     @Override

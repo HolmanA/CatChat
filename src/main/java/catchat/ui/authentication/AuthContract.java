@@ -1,7 +1,7 @@
-package catchat.authentication;
+package catchat.ui.authentication;
 
-import catchat.BasePresenter;
-import catchat.BaseView;
+import catchat.ui.BasePresenter;
+import catchat.ui.BaseView;
 
 /**
  * Created by andrew on 3/25/18.

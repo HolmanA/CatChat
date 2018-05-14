@@ -1,13 +1,11 @@
-package catchat.messages.view;
+package catchat.ui.messages.view;
 
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
 import catchat.data.entities.profile.Profile;
-import catchat.messages.MessagesContract;
+import catchat.ui.messages.MessagesContract;
 
 import javafx.animation.PauseTransition;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -29,7 +27,6 @@ import java.util.List;
  */
 public class MessagesView extends VBox implements MessagesContract.View {
     private MessagesContract.Presenter presenter;
-    private ObservableList<Message> messageList;
     private Label chatTitle;
     private ComboBox<Profile> memberList;
     private ListView<Message> messageListView;
@@ -42,8 +39,6 @@ public class MessagesView extends VBox implements MessagesContract.View {
         super();
         getStylesheets().add("/messages/css/messages_view.css");
         getStyleClass().add("container");
-
-        messageList = FXCollections.observableArrayList();
 
         chatTitle = new Label();
         chatTitle.getStyleClass().add("chat-title");
@@ -63,7 +58,7 @@ public class MessagesView extends VBox implements MessagesContract.View {
         chatTitleContainer.getStyleClass().add("chat-title-container");
         chatTitleContainer.getChildren().addAll(refresh, chatTitle);
 
-        messageListView = new ListView<>(messageList);
+        messageListView = new ListView<>();
         messageListView.getStyleClass().add("message-list");
         messageListView.setCellFactory(param -> new MessageListCell(presenter));
 
@@ -94,7 +89,7 @@ public class MessagesView extends VBox implements MessagesContract.View {
 
     @Override
     public void showMessages(List<Message> messages) {
-        messageList.addAll(0, messages);
+        messageListView.getItems().addAll(0, messages);
         messageListView.scrollTo(messages.size());
         if (messageListScrollBar == null) {
             initializeMessageListScrollBar();
@@ -108,7 +103,7 @@ public class MessagesView extends VBox implements MessagesContract.View {
 
     @Override
     public void clearMessages() {
-        messageList.clear();
+        messageListView.getItems().clear();
     }
 
     @Override

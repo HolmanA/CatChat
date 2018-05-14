@@ -1,4 +1,4 @@
-package catchat.messages;
+package catchat.ui.messages;
 
 import catchat.data.DataMediator;
 import catchat.data.entities.chat.Chat;

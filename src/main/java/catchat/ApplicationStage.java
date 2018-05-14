@@ -1,9 +1,9 @@
 package catchat;
 
-import catchat.authentication.AuthPresenter;
-import catchat.authentication.AuthView;
-import catchat.chats.ChatsPresenter;
-import catchat.chats.view.ChatsView;
+import catchat.ui.authentication.AuthPresenter;
+import catchat.ui.authentication.AuthView;
+import catchat.ui.chats.ChatsPresenter;
+import catchat.ui.chats.view.ChatsView;
 import catchat.data.DataMediator;
 import catchat.data.authentication.GroupMeOAuthService;
 import catchat.data.authentication.OAuthService;
@@ -11,10 +11,10 @@ import catchat.data.entities.ChatType;
 import catchat.data.receiver.message.MessageReceiver;
 import catchat.data.source.DataSource;
 import catchat.data.source.GroupMeDataSource;
-import catchat.error.ErrorBox;
-import catchat.messages.MessagesPresenter;
-import catchat.messages.view.MessagesView;
-import catchat.system.TrayManager;
+import catchat.ui.error.ErrorBox;
+import catchat.ui.messages.MessagesPresenter;
+import catchat.ui.messages.view.MessagesView;
+import catchat.ui.system.TrayManager;
 
 import javafx.application.Platform;
 import javafx.scene.Scene;

@@ -4,6 +4,8 @@ import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
 import catchat.data.entities.profile.Profile;
 import catchat.data.receiver.message.NotificationMessage;
+import catchat.data.source.DataSource;
+import catchat.data.source.GroupMeDataSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,7 @@ public class DataMediator {
         void onMessageUnliked();
         void onProfileLoaded(Profile profile);
     }
-
+    
     private List<Listener> listeners;
 
     public DataMediator() {

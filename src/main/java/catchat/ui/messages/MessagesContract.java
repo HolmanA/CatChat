@@ -1,7 +1,7 @@
-package catchat.messages;
+package catchat.ui.messages;
 
-import catchat.BasePresenter;
-import catchat.BaseView;
+import catchat.ui.BasePresenter;
+import catchat.ui.BaseView;
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
 import catchat.data.entities.profile.Profile;

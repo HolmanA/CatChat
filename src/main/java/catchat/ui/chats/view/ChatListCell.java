@@ -1,4 +1,4 @@
-package catchat.chats.view;
+package catchat.ui.chats.view;
 
 import catchat.data.entities.chat.Chat;
 
