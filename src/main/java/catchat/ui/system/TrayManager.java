@@ -1,9 +1,9 @@
 package catchat.ui.system;
 
-import catchat.data.DataMediator;
+import catchat.data.model.Model;
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
-import catchat.data.entities.profile.Profile;
+import catchat.data.receiver.message.MessageReceiverContract;
 import catchat.data.receiver.message.NotificationMessage;
 
 import java.awt.AWTException;
@@ -17,12 +17,12 @@ import java.util.List;
 /**
  * Created by andrew on 5/4/18.
  */
-public class TrayManager implements DataMediator.Listener {
-    private DataMediator dataMediator;
+public class TrayManager implements MessageReceiverContract.Listener {
+    private MessageReceiverContract.Receiver receiver;
     private TrayIcon trayIcon;
 
-    public TrayManager(DataMediator dataMediator) {
-        this.dataMediator = dataMediator;
+    public TrayManager(MessageReceiverContract.Receiver receiver) {
+        this.receiver = receiver;
         if (SystemTray.isSupported()) {
             SystemTray systemTray = SystemTray.getSystemTray();
             URL resourceUrl = getClass().getResource("/system/SystemTrayIcon.png");
@@ -37,35 +37,20 @@ public class TrayManager implements DataMediator.Listener {
         }
     }
 
-    public void subscribeToDataMediator() {
+    public void subscribeToMessageReceiver() {
         if (SystemTray.isSupported()) {
-            dataMediator.subscribe(this);
+            receiver.subscribe(this);
         }
     }
 
-    public void unsubscribeFromDataMediator() {
-        dataMediator.unsubscribe(this);
+    public void unsubscribeFromMessageReceiver() {
+        receiver.unsubscribe(this);
     }
 
     @Override
-    public void onMessageReceived(NotificationMessage message) {
+    public void messageReceived(NotificationMessage message) {
         if (message != null) {
             trayIcon.displayMessage(message.getSenderName(), message.getMessageText(), TrayIcon.MessageType.INFO);
         }
     }
-
-    @Override
-    public void onChatsLoaded(List<Chat> chats) {}
-    @Override
-    public void onChatLoaded(Chat chat) {}
-    @Override
-    public void onMessagesLoaded(List<Message> messages) {}
-    @Override
-    public void onMessageSent() {}
-    @Override
-    public void onMessageLiked() {}
-    @Override
-    public void onMessageUnliked() {}
-    @Override
-    public void onProfileLoaded(Profile profile) {}
 }

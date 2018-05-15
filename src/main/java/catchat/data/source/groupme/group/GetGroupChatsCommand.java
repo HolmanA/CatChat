@@ -3,8 +3,7 @@ package catchat.data.source.groupme.group;
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.chat.GroupChat;
 import catchat.data.entities.profile.MemberProfile;
-import catchat.data.entities.profile.Profile;
-import catchat.data.source.groupme.BaseApiInteractor;
+import catchat.data.source.ApiCommand;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -18,15 +17,21 @@ import java.util.Map;
 /**
  * Created by andrew on 4/26/18.
  */
-public class GetGroupChatsInteractor extends BaseApiInteractor<List<Chat>> {
+public class GetGroupChatsCommand extends ApiCommand<List<Chat>> {
     private static final String URL = "https://api.groupme.com/v3/groups";
+    private URL url;
 
-    public GetGroupChatsInteractor(String authToken, int page, int pageSize) throws IOException {
+    public GetGroupChatsCommand(Listener<List<Chat>> listener, int page, int pageSize) throws IOException {
+        super(listener);
         String parameters = "?";
         parameters += "page=" + Integer.toString(page);
         parameters += "&per_page=" + Integer.toString(pageSize);
 
-        URL url = new URL(URL + parameters);
+        url = new URL(URL + parameters);
+    }
+
+    @Override
+    public void buildCommand(String authToken) throws IOException {
         connection = (HttpsURLConnection)url.openConnection();
         connection.setRequestMethod("GET");
         connection.setRequestProperty("X-Access-Token", authToken);
@@ -43,7 +48,7 @@ public class GetGroupChatsInteractor extends BaseApiInteractor<List<Chat>> {
                 String preview = node.get("messages").get("preview").get("text").asText();
                 JsonNode members = node.get("members");
 
-                Map<String,Profile> memberMap = new HashMap<>();
+                Map<String,MemberProfile> memberMap = new HashMap<>();
                 if (members.isArray()) {
                     for (JsonNode member : members) {
                         String nickname = member.get("nickname").asText();

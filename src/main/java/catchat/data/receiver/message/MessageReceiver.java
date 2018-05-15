@@ -1,36 +1,35 @@
 package catchat.data.receiver.message;
 
-import catchat.data.DataMediator;
 import catchat.data.authentication.OAuthService;
-import catchat.data.entities.chat.Chat;
-import catchat.data.entities.message.Message;
-import catchat.data.entities.profile.Profile;
-import catchat.data.source.DataSource;
+import catchat.data.model.userprofile.UserProfileContract;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by andrew on 4/29/18.
  */
-public class MessageReceiver implements DataMediator.Listener {
+public class MessageReceiver implements MessageReceiverContract.Receiver, UserProfileContract.Listener {
+    private List<MessageReceiverContract.Listener> listeners;
     private MessageSocketListener webSocket;
-    private DataMediator dataMediator;
     private OAuthService authService;
-    private DataSource dataSource;
+    private UserProfileContract.Model userProfileModel;
 
-    public MessageReceiver(OAuthService authService, DataSource dataSource, DataMediator dataMediator) {
+    public MessageReceiver(OAuthService authService, UserProfileContract.Model userProfileModel) {
         this.authService = authService;
-        this.dataSource = dataSource;
-        this.dataMediator = dataMediator;
-        dataMediator.subscribe(this);
+        this.userProfileModel = userProfileModel;
+        userProfileModel.subscribe(this);
+        listeners = new ArrayList<>();
     }
 
+    @Override
     public void start() {
         System.out.println("Message Receiver Started");
-        dataSource.getUserProfile();
+        userProfileModel.loadUserProfile();
     }
 
+    @Override
     public void stop() {
         try {
             webSocket.awaitClose(500, TimeUnit.MILLISECONDS);
@@ -40,10 +39,10 @@ public class MessageReceiver implements DataMediator.Listener {
     }
 
     @Override
-    public void onProfileLoaded(Profile profile) {
+    public void userProfileChanged() {
         if (webSocket == null) {
             System.out.println("Creating Web Socket");
-            webSocket = new MessageSocketListener(authService.getAPIToken(), profile.getId(), dataMediator);
+            webSocket = new MessageSocketListener(authService.getAPIToken(), userProfileModel.getUserProfile().getId());
             try {
                 webSocket.connect();
                 webSocket.awaitClose(5, TimeUnit.SECONDS);
@@ -54,17 +53,26 @@ public class MessageReceiver implements DataMediator.Listener {
     }
 
     @Override
-    public void onChatsLoaded(List<Chat> chats) {}
+    public void subscribe(MessageReceiverContract.Listener listener) {
+        listeners.add(listener);
+        setWebSocketListeners();
+    }
+
     @Override
-    public void onChatLoaded(Chat chat) {}
+    public void unsubscribe(MessageReceiverContract.Listener listener) {
+        listeners.remove(listener);
+        setWebSocketListeners();
+    }
+
     @Override
-    public void onMessagesLoaded(List<Message> messages) {}
-    @Override
-    public void onMessageReceived(NotificationMessage message) {}
-    @Override
-    public void onMessageSent() {}
-    @Override
-    public void onMessageLiked() {}
-    @Override
-    public void onMessageUnliked() {}
+    public void unsubscribeAll() {
+        listeners.clear();
+        setWebSocketListeners();
+    }
+
+    private void setWebSocketListeners() {
+        if (webSocket != null) {
+            webSocket.setListeners(listeners);
+        }
+    }
 }

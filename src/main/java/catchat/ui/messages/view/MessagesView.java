@@ -2,7 +2,6 @@ package catchat.ui.messages.view;
 
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
-import catchat.data.entities.profile.Profile;
 import catchat.ui.messages.MessagesContract;
 
 import javafx.animation.PauseTransition;
@@ -28,7 +27,7 @@ import java.util.List;
 public class MessagesView extends VBox implements MessagesContract.View {
     private MessagesContract.Presenter presenter;
     private Label chatTitle;
-    private ComboBox<Profile> memberList;
+    //private ComboBox<Profile> memberList;
     private ListView<Message> messageListView;
     private ScrollBar messageListScrollBar;
     private Button refresh;
@@ -45,14 +44,16 @@ public class MessagesView extends VBox implements MessagesContract.View {
 
         refresh = new Button("↻");
         refresh.getStyleClass().add("refresh");
-        refresh.setOnMouseClicked(event -> presenter.refreshMessages());
+        refresh.setOnMouseClicked(event -> presenter.reloadMessages());
 
+        /*
         memberList = new ComboBox<>();
         memberList.getStyleClass().add("member-list");
         memberList.setPromptText("Members");
         memberList.setEditable(false);
         memberList.setCellFactory(param -> new MemberListCell());
         memberList.setOnKeyPressed(event -> {});
+        */
 
         HBox chatTitleContainer = new HBox();
         chatTitleContainer.getStyleClass().add("chat-title-container");
@@ -78,7 +79,7 @@ public class MessagesView extends VBox implements MessagesContract.View {
         sendContainer.getChildren().addAll(input, sendMessage);
         HBox.setHgrow(input, Priority.ALWAYS);
 
-        getChildren().addAll(chatTitleContainer, memberList, messageListView, sendContainer);
+        getChildren().addAll(chatTitleContainer, messageListView, sendContainer);
         VBox.setVgrow(messageListView, Priority.ALWAYS);
     }
 
@@ -88,17 +89,32 @@ public class MessagesView extends VBox implements MessagesContract.View {
     }
 
     @Override
-    public void showMessages(List<Message> messages) {
+    public void showChatPane() {
+        messageListView.setVisible(true);
+        refresh.setVisible(true);
+        input.setVisible(true);
+        sendMessage.setVisible(true);
+    }
+
+    @Override
+    public void hideChatPane() {
+        messageListView.setVisible(false);
+        refresh.setVisible(false);
+        input.setVisible(false);
+        sendMessage.setVisible(false);
+    }
+
+    @Override
+    public void setMessages(List<Message> messages) {
         messageListView.getItems().addAll(0, messages);
-        messageListView.scrollTo(messages.size());
         if (messageListScrollBar == null) {
             initializeMessageListScrollBar();
         }
     }
 
     @Override
-    public void showNoMessages() {
-        chatTitle.setText("No Messages");
+    public int getMessagesSize() {
+        return messageListView.getItems().size();
     }
 
     @Override
@@ -107,10 +123,18 @@ public class MessagesView extends VBox implements MessagesContract.View {
     }
 
     @Override
+    public void scrollMessagesTo(int index) {
+        messageListView.scrollTo(index);
+    }
+
+    /*
+    @Override
     public void clearMemberList() {
         memberList.getItems().clear();
     }
+    */
 
+    /*
     @Override
     public void showChatDetails(Chat chat) {
         chatTitle.setText(chat.getName());
@@ -118,21 +142,15 @@ public class MessagesView extends VBox implements MessagesContract.View {
         input.setVisible(true);
         sendMessage.setVisible(true);
     }
+    */
 
-    @Override
-    public void showNoChatSelected() {
-        chatTitle.setText("No Chat Selected");
-        memberList.setVisible(false);
-        refresh.setVisible(false);
-        input.setVisible(false);
-        sendMessage.setVisible(false);
-    }
-
+    /*
     @Override
     public void showMembers(List<Profile> members) {
         memberList.setVisible(true);
         memberList.getItems().addAll(members);
     }
+    */
 
     @Override
     public String getMessageText() {

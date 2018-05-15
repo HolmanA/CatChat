@@ -1,158 +1,86 @@
 package catchat.ui.messages;
 
-import catchat.data.DataMediator;
-import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
-import catchat.data.entities.profile.Profile;
-import catchat.data.receiver.message.NotificationMessage;
-import catchat.data.source.DataSource;
+import catchat.data.model.ModelContract;
+import catchat.data.model.chat.ChatContract;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by andrew on 4/16/18.
  */
-public class MessagesPresenter implements MessagesContract.Presenter, DataMediator.Listener {
-    private DataSource dataSource;
+public class MessagesPresenter implements MessagesContract.Presenter, ModelContract.Listener, ChatContract.Listener {
+    private ModelContract.Model model;
     private MessagesContract.View view;
-    private Chat chat;
-    private int sentId;
-    private Message lastMessage;
 
-    public MessagesPresenter(DataSource dataSource, MessagesContract.View view) {
-        this.dataSource = dataSource;
+    public MessagesPresenter(ModelContract.Model model, MessagesContract.View view) {
+        this.model = model;
         this.view = view;
-        sentId = 1;
+        model.subscribe(this);
     }
 
     @Override
     public void start() {
-        view.showNoChatSelected();
+        view.hideChatPane();
     }
 
     @Override
-    public void refreshMessages() {
-        if (chat != null) {
-            view.clearMessages();
-            switch (chat.getType()) {
-                case GROUP:
-                    dataSource.getGroupMessages(chat, null);
-                    break;
-                case DIRECT:
-                    dataSource.getDirectMessages(chat, null);
-                    break;
-                default:
-            }
-        }
+    public void reloadMessages() {
+        view.clearMessages();
+        model.getSelectedChatModel().reloadMessages();
     }
 
     @Override
     public void loadMoreMessages() {
-        if (chat != null && lastMessage != null) {
-            switch (chat.getType()) {
-                case GROUP:
-                    dataSource.getGroupMessages(chat, lastMessage);
-                    break;
-                case DIRECT:
-                    dataSource.getDirectMessages(chat, lastMessage);
-                    break;
-                default:
-            }
-        }
+        model.getSelectedChatModel().loadMoreMessages();
     }
 
     @Override
     public void sendMessage() {
         String text;
-        if (chat != null && !(text = view.getMessageText()).equals("")) {
-            switch (chat.getType()) {
-                case GROUP:
-                    dataSource.sendGroupMessage(chat, Integer.toString(++sentId), text);
-                    break;
-                case DIRECT:
-                    dataSource.sendDirectMessage(chat, Integer.toString(++sentId), text);
-                    break;
-                default:
-            }
+        if ((text = view.getMessageText()) != null && !text.equals("")) {
+            view.clearMessages();
+            model.getSelectedChatModel().sendMessage(text);
         }
     }
 
     @Override
     public void likeMessage(Message message) {
-        if (message != null && chat != null) {
-            switch (chat.getType()) {
-                case GROUP:
-                    dataSource.likeGroupMessage(chat, message);
-                    break;
-                case DIRECT:
-                    dataSource.likeDirectMessage(chat, message);
-                    break;
-                default:
-            }
-        }
+        view.clearMessages();
+        model.getSelectedChatModel().likeMessage(message);
     }
 
     @Override
     public void unlikeMessage(Message message) {
-        if (message != null && chat != null) {
-            switch (chat.getType()) {
-                case GROUP:
-                    dataSource.unlikeGroupMessage(chat, message);
-                    break;
-                case DIRECT:
-                    dataSource.unlikeDirectMessage(chat, message);
-                    break;
-                default:
-            }
+        view.clearMessages();
+        model.getSelectedChatModel().unlikeMessage(message);
+    }
+
+    @Override
+    public void selectionChanged() {
+        if (model.getSelectedChatModel() != null) {
+            view.clearMessages();
+            model.getSelectedChatModel().subscribe(this);
+            model.getSelectedChatModel().reloadMessages();
+            view.showChatPane();
         }
     }
 
     @Override
-    public void onChatLoaded(Chat chat) {
-        this.chat = chat;
-        view.clearMemberList();
-        view.showChatDetails(this.chat);
-        view.showMembers(chat.getMembers());
-        refreshMessages();
+    public void chatChanged() {
+        int size = view.getMessagesSize();
+        view.clearMessages();
+        List<Message> reverseList = new ArrayList<>(model.getSelectedChatModel().getMessages());
+        Collections.reverse(reverseList);
+        view.setMessages(reverseList);
+        view.scrollMessagesTo(reverseList.size() - size);
     }
 
     @Override
-    public void onMessagesLoaded(List<Message> messages) {
-        if (messages == null || messages.size() == 0) {
-            view.showNoMessages();
-        } else {
-            Collections.reverse(messages);
-            lastMessage = messages.get(0);
-            view.showMessages(messages);
-        }
-    }
-
-    @Override
-    public void onMessageReceived(NotificationMessage message) {
-        if (message.getChatId().equals(chat.getId())) {
-            refreshMessages();
-        }
-    }
-
-    @Override
-    public void onMessageSent() {
+    public void messageSent() {
         view.clearMessageText();
-        refreshMessages();
+        reloadMessages();
     }
-
-    @Override
-    public void onMessageLiked() {
-        refreshMessages();
-    }
-
-    @Override
-    public void onMessageUnliked() {
-        refreshMessages();
-    }
-
-    @Override
-    public void onProfileLoaded(Profile profile) {}
-    @Override
-    public void onChatsLoaded(List<Chat> chats) {}
 }

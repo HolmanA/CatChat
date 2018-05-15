@@ -3,8 +3,7 @@ package catchat.data.source.groupme.direct;
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.chat.DirectChat;
 import catchat.data.entities.profile.MemberProfile;
-import catchat.data.entities.profile.Profile;
-import catchat.data.source.groupme.BaseApiInteractor;
+import catchat.data.source.ApiCommand;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -18,15 +17,21 @@ import java.util.Map;
 /**
  * Created by andrew on 4/26/18.
  */
-public class GetDirectChatsInteractor extends BaseApiInteractor<List<Chat>> {
+public class GetDirectChatsCommand extends ApiCommand<List<Chat>> {
     private static final String URL = "https://api.groupme.com/v3/chats";
+    private URL url;
 
-    public GetDirectChatsInteractor(String authToken, int page, int pageSize) throws IOException {
+    public GetDirectChatsCommand(Listener<List<Chat>> listener, int page, int pageSize) throws IOException {
+        super(listener);
         String parameters = "?";
         parameters += "page=" + Integer.toString(page);
         parameters += "&per_page=" + Integer.toString(pageSize);
 
-        URL url = new URL(URL + parameters);
+        url = new URL(URL + parameters);
+    }
+
+    @Override
+    public void buildCommand(String authToken) throws IOException {
         connection = (HttpsURLConnection)url.openConnection();
         connection.setRequestMethod("GET");
         connection.setRequestProperty("X-Access-Token", authToken);
@@ -37,7 +42,7 @@ public class GetDirectChatsInteractor extends BaseApiInteractor<List<Chat>> {
         List<Chat> chatList = new ArrayList<>();
         if (content.isArray()) {
             for (JsonNode node : content) {
-                Map<String,Profile> memberMap = new HashMap<>();
+                Map<String,MemberProfile> memberMap = new HashMap<>();
                 String preview = node.get("last_message").get("text").asText();
 
                 JsonNode otherMember = node.get("other_user");

@@ -2,9 +2,7 @@ package catchat.ui.messages;
 
 import catchat.ui.BasePresenter;
 import catchat.ui.BaseView;
-import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
-import catchat.data.entities.profile.Profile;
 
 import java.util.List;
 
@@ -13,19 +11,23 @@ import java.util.List;
  */
 public interface MessagesContract {
     interface View extends BaseView<Presenter> {
-        void showMessages(List<Message> messages);
-        void showNoMessages();
+        void showChatPane();
+        void hideChatPane();
+        void setMessages(List<Message> messages);
+        int getMessagesSize();
         void clearMessages();
-        void clearMemberList();
-        void showChatDetails(Chat chat);
-        void showNoChatSelected();
+        void scrollMessagesTo(int index);
         String getMessageText();
         void clearMessageText();
-        void showMembers(List<Profile> members);
+        //void showNoMessages();
+        //void clearMemberList();
+        //void showChatDetails(Chat chat);
+        //void showNoChatSelected();
+        //void showMembers(List<MemberProfile> members);
     }
 
     interface Presenter extends BasePresenter {
-        void refreshMessages();
+        void reloadMessages();
         void loadMoreMessages();
         void sendMessage();
         void likeMessage(Message message);

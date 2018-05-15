@@ -1,5 +1,7 @@
 package catchat;
 
+import catchat.ui.ApplicationStage;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 

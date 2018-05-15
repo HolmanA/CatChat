@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -23,33 +24,46 @@ import java.util.List;
 public class ChatsView extends VBox implements ChatsContract.View {
     private ChatsContract.Presenter presenter;
     private Label title;
-    private ListView<Chat> chatListView;
-    private ScrollBar chatListScrollBar;
+    private ListView<Chat> groupChatListView;
+    private ListView<Chat> directChatListView;
+    private ScrollBar groupChatListScrollBar;
+    private ScrollBar directChatListScrollBar;
 
     public ChatsView() {
         super();
         getStylesheets().add("/chats/css/chats_view.css");
         getStyleClass().add("container");
 
-        chatListView = new ListView<>();
-        chatListView.getStyleClass().add("chat-list");
-        chatListView.setCellFactory(param -> new ChatListCell());
-        chatListView.setOnMouseClicked(event ->
-                presenter.loadChat(chatListView.getSelectionModel().getSelectedItem()));
-
-        title = new Label();
+        title = new Label("Chats");
         title.getStyleClass().add("title");
 
         Button refresh = new Button("↻");
         refresh.getStyleClass().add("refresh");
-        refresh.setOnMouseClicked(event -> presenter.refreshChats());
+        refresh.setOnMouseClicked(event -> {
+            presenter.reloadGroupChats();
+            presenter.reloadDirectChats();
+        });
 
         HBox titleContainer = new HBox();
         titleContainer.getStyleClass().add("title-container");
         titleContainer.getChildren().addAll(refresh, title);
 
-        getChildren().addAll(titleContainer, chatListView);
-        VBox.setVgrow(chatListView, Priority.ALWAYS);
+        groupChatListView = new ListView<>();
+        groupChatListView.getStyleClass().add("chat-list");
+        groupChatListView.setCellFactory(param -> new ChatListCell());
+        groupChatListView.setOnMouseClicked(event ->
+                presenter.selectChat(groupChatListView.getSelectionModel().getSelectedItem()));
+
+        directChatListView = new ListView<>();
+        directChatListView.getStyleClass().add("chat-list");
+        directChatListView.setCellFactory(param -> new ChatListCell());
+        directChatListView.setOnMouseClicked(event ->
+                presenter.selectChat(directChatListView.getSelectionModel().getSelectedItem()));
+
+        getChildren().addAll(titleContainer, new Separator(Orientation.HORIZONTAL),
+                groupChatListView, new Separator(Orientation.HORIZONTAL), directChatListView);
+        VBox.setVgrow(directChatListView, Priority.ALWAYS);
+        VBox.setVgrow(groupChatListView, Priority.ALWAYS);
     }
 
     @Override
@@ -58,41 +72,84 @@ public class ChatsView extends VBox implements ChatsContract.View {
     }
 
     @Override
-    public void showChats(List<Chat> chats) {
-        chatListView.getItems().addAll(chats);
-        chatListView.scrollTo(chatListView.getItems().size() - chats.size());
-        if (chatListScrollBar == null) {
-            initializeChatListScrollBar();
+    public void setGroupChats(List<Chat> chats) {
+        groupChatListView.getItems().addAll(chats);
+        if (groupChatListScrollBar == null) {
+            initializeGroupChatListScrollBars();
         }
     }
 
     @Override
-    public void showNoChats() {
-        title.setText("No Chats");
+    public void setDirectChats(List<Chat> chats) {
+        directChatListView.getItems().addAll(chats);
+        if (directChatListScrollBar == null) {
+            initializeDirectChatListScrollBars();
+        }
     }
 
     @Override
-    public void clearChats() {
-        chatListView.getItems().clear();
+    public int getGroupChatsSize() {
+        return groupChatListView.getItems().size();
     }
 
     @Override
-    public void setTitle(String text) {
-        title.setText(text);
+    public int getDirectChatsSize() {
+        return directChatListView.getItems().size();
     }
 
-    private void initializeChatListScrollBar() {
-        for (Node node : chatListView.lookupAll(".scroll-bar")) {
+    @Override
+    public void clearGroupChatList() {
+        groupChatListView.getItems().clear();
+    }
+
+    @Override
+    public void clearDirectChatList() {
+        directChatListView.getItems().clear();
+    }
+
+    @Override
+    public void scrollGroupChatsTo(int index) {
+        groupChatListView.scrollTo(index);
+    }
+
+    @Override
+    public void scrollDirectChatsTo(int index) {
+        directChatListView.scrollTo(index);
+    }
+
+    private void initializeGroupChatListScrollBars() {
+        for (Node node : groupChatListView.lookupAll(".scroll-bar")) {
             if (node instanceof ScrollBar) {
                 ScrollBar bar = (ScrollBar)node;
                 if (bar.getOrientation().equals(Orientation.VERTICAL)) {
-                    chatListScrollBar = bar;
-                    chatListScrollBar.valueProperty().addListener(((observable, oldValue, newValue) -> {
+                    groupChatListScrollBar = bar;
+                    groupChatListScrollBar.valueProperty().addListener(((observable, oldValue, newValue) -> {
                         PauseTransition pause = new PauseTransition(Duration.millis(500));
                         pause.setOnFinished(event -> {
                             double position = newValue.doubleValue();
-                            if (position == chatListScrollBar.getMin()) {
-                                presenter.loadMoreChats();
+                            if (position == groupChatListScrollBar.getMin()) {
+                                presenter.loadMoreGroupChats();
+                            }
+                        });
+                        pause.playFromStart();
+                    }));
+                }
+            }
+        }
+    }
+
+    private void initializeDirectChatListScrollBars() {
+        for (Node node : directChatListView.lookupAll(".scroll-bar")) {
+            if (node instanceof ScrollBar) {
+                ScrollBar bar = (ScrollBar)node;
+                if (bar.getOrientation().equals(Orientation.VERTICAL)) {
+                    directChatListScrollBar = bar;
+                    directChatListScrollBar.valueProperty().addListener(((observable, oldValue, newValue) -> {
+                        PauseTransition pause = new PauseTransition(Duration.millis(500));
+                        pause.setOnFinished(event -> {
+                            double position = newValue.doubleValue();
+                            if (position == directChatListScrollBar.getMin()) {
+                                presenter.loadMoreDirectChats();
                             }
                         });
                         pause.playFromStart();

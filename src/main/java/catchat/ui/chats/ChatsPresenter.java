@@ -1,113 +1,77 @@
 package catchat.ui.chats;
 
-import catchat.data.DataMediator;
-import catchat.data.entities.ChatType;
+import catchat.data.model.Model;
 import catchat.data.entities.chat.Chat;
-import catchat.data.entities.message.Message;
-import catchat.data.entities.profile.Profile;
-import catchat.data.receiver.message.NotificationMessage;
-import catchat.data.source.DataSource;
+import catchat.data.model.ModelContract;
+import catchat.data.model.chatlist.ChatListContract;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by andrew on 5/6/18.
  */
-public class ChatsPresenter implements ChatsContract.Presenter, DataMediator.Listener {
-    private ChatType type;
-    private DataSource dataSource;
+public class ChatsPresenter implements ChatsContract.Presenter, ChatListContract.Listener {
+    private ModelContract.Model model;
     private ChatsContract.View view;
-    private int lastPageLoaded;
 
-    public ChatsPresenter(ChatType type, DataSource dataSource, ChatsContract.View view) {
-        this.type = type;
-        this.dataSource = dataSource;
+    public ChatsPresenter(Model model, ChatsContract.View view) {
+        this.model = model;
         this.view = view;
-        lastPageLoaded = 1;
+        model.getGroupChatListModel().subscribe(this);
+        model.getDirectChatListModel().subscribe(this);
     }
 
     @Override
     public void start() {
-        refreshChats();
-        switch (type) {
-            case DIRECT:
-                view.setTitle("Direct Chats");
-                break;
-            case GROUP:
-                view.setTitle("Group Chats");
-                break;
-            default:
-        }
+        model.reloadAll();
     }
 
     @Override
-    public void refreshChats() {
-        view.clearChats();
-        lastPageLoaded = 1;
-        switch (type) {
-            case DIRECT:
-                dataSource.getDirectChats(1, 10);
-                break;
-            case GROUP:
-                dataSource.getGroupChats(1, 10);
-                break;
-            default:
-        }
+    public void reloadGroupChats() {
+        model.getGroupChatListModel().reloadChats();
     }
 
     @Override
-    public void loadMoreChats() {
-        switch (type) {
-            case DIRECT:
-                dataSource.getDirectChats(++lastPageLoaded, 10);
-                break;
-            case GROUP:
-                dataSource.getGroupChats(++lastPageLoaded, 10);
-                break;
-            default:
-        }
+    public void reloadDirectChats() {
+        model.getDirectChatListModel().reloadChats();
     }
 
     @Override
-    public void loadChat(Chat chat) {
+    public void loadMoreGroupChats() {
+        model.getGroupChatListModel().loadMoreChats();
+    }
+
+    @Override
+    public void loadMoreDirectChats() {
+        model.getDirectChatListModel().loadMoreChats();
+    }
+
+    @Override
+    public void selectChat(Chat chat) {
         if (chat != null) {
-            switch (type) {
-                case DIRECT:
-                    dataSource.getDirectChat(chat);
-                    break;
-                case GROUP:
-                    dataSource.getGroupChat(chat);
-                    break;
-                default:
-            }
+            model.selectChat(chat);
         }
     }
 
     @Override
-    public void onChatsLoaded(List<Chat> chats) {
-        if (!chats.isEmpty() && chats.get(0).getType() == type) {
-            view.showChats(chats);
+    public void chatListChanged() {
+        int groupChatsSize = view.getGroupChatsSize();
+        view.clearGroupChatList();
+        List<Chat> groupChats = model.getGroupChatListModel().getChats();
+        if (groupChats == null) {
+            groupChats = new ArrayList<>();
         }
-    }
+        view.setGroupChats(groupChats);
+        view.scrollGroupChatsTo(groupChatsSize);
 
-    @Override
-    public void onMessageReceived(NotificationMessage message) {
-        refreshChats();
+        int directChatsSize = view.getDirectChatsSize();
+        view.clearDirectChatList();
+        List<Chat> directChats = model.getDirectChatListModel().getChats();
+        if (directChats == null) {
+            directChats = new ArrayList<>();
+        }
+        view.setDirectChats(directChats);
+        view.scrollDirectChatsTo(directChatsSize);
     }
-
-    @Override
-    public void onMessageSent() {
-        refreshChats();
-    }
-
-    @Override
-    public void onMessagesLoaded(List<Message> messages) {}
-    @Override
-    public void onChatLoaded(Chat chat) {}
-    @Override
-    public void onMessageLiked() {}
-    @Override
-    public void onMessageUnliked() {}
-    @Override
-    public void onProfileLoaded(Profile profile) {}
 }

@@ -11,15 +11,21 @@ import java.util.List;
  */
 public interface ChatsContract {
     interface View extends BaseView<Presenter> {
-        void showChats(List<Chat> chats);
-        void showNoChats();
-        void clearChats();
-        void setTitle(String text);
+        void setGroupChats(List<Chat> chats);
+        void setDirectChats(List<Chat> chats);
+        int getGroupChatsSize();
+        int getDirectChatsSize();
+        void clearGroupChatList();
+        void clearDirectChatList();
+        void scrollGroupChatsTo(int index);
+        void scrollDirectChatsTo(int index);
     }
 
     interface Presenter extends BasePresenter {
-        void refreshChats();
-        void loadMoreChats();
-        void loadChat(Chat chat);
+        void reloadGroupChats();
+        void reloadDirectChats();
+        void loadMoreGroupChats();
+        void loadMoreDirectChats();
+        void selectChat(Chat chat);
     }
 }

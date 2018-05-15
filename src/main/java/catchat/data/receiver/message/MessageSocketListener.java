@@ -1,6 +1,6 @@
 package catchat.data.receiver.message;
 
-import catchat.data.DataMediator;
+import catchat.data.model.Model;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.jetty.websocket.api.Session;
@@ -13,6 +13,7 @@ import javafx.application.Platform;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -28,14 +29,13 @@ public class MessageSocketListener implements WebSocketListener {
     private String userId;
     private Session session;
     private ObjectMapper mapper;
-    private DataMediator dataMediator;
+    private List<MessageReceiverContract.Listener> listeners;
 
-    MessageSocketListener(String authToken, String userId, DataMediator dataMediator) {
+    MessageSocketListener(String authToken, String userId) {
         this.closeLatch = new CountDownLatch(1);
         this.webSocketClient = new WebSocketClient();
         this.authToken = authToken;
         this.userId = userId;
-        this.dataMediator = dataMediator;
         mapper = new ObjectMapper();
     }
 
@@ -81,7 +81,9 @@ public class MessageSocketListener implements WebSocketListener {
                         String senderName = subjectNode.get("name").asText();
                         String messageText = subjectNode.get("text").asText();
                         Platform.runLater(() -> {
-                            dataMediator.messageReceived(new NotificationMessage(chatId, messageText, senderName));
+                            for (MessageReceiverContract.Listener listener : listeners) {
+                                listener.messageReceived(new NotificationMessage(chatId, messageText, senderName));
+                            }
                         });
                     }
             }
@@ -124,6 +126,10 @@ public class MessageSocketListener implements WebSocketListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void setListeners(List<MessageReceiverContract.Listener> listeners) {
+        this.listeners = listeners;
     }
 
     private void sendHandshake() {

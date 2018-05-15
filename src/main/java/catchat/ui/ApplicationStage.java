@@ -1,16 +1,14 @@
-package catchat;
+package catchat.ui;
 
+import catchat.data.source.ApiInvoker;
 import catchat.ui.authentication.AuthPresenter;
 import catchat.ui.authentication.AuthView;
 import catchat.ui.chats.ChatsPresenter;
 import catchat.ui.chats.view.ChatsView;
-import catchat.data.DataMediator;
+import catchat.data.model.Model;
 import catchat.data.authentication.GroupMeOAuthService;
 import catchat.data.authentication.OAuthService;
-import catchat.data.entities.ChatType;
 import catchat.data.receiver.message.MessageReceiver;
-import catchat.data.source.DataSource;
-import catchat.data.source.GroupMeDataSource;
 import catchat.ui.error.ErrorBox;
 import catchat.ui.messages.MessagesPresenter;
 import catchat.ui.messages.view.MessagesView;
@@ -27,24 +25,14 @@ import javafx.stage.Stage;
  */
 public class ApplicationStage extends Stage implements OAuthService.AuthListener {
     private OAuthService authService;
+    private ApiInvoker invoker;
     private TrayManager trayManager;
-    private DataSource dataSource;
-    private DataMediator dataMediator;
+    private Model model;
     private MessageReceiver messageReceiver;
 
     public ApplicationStage() {
         authService = new GroupMeOAuthService(this);
-        dataMediator = new DataMediator();
-        trayManager = new TrayManager(dataMediator);
 
-        // Show desktop notifications only when CatChat is not the active window
-        focusedProperty().addListener(((observable, oldValue, newValue) -> {
-            if (newValue) {
-                trayManager.unsubscribeFromDataMediator();
-            } else {
-                trayManager.subscribeToDataMediator();
-            }
-        }));
         setTitle("Cat Chat");
         getIcons().add(new Image(getClass().getResourceAsStream("/system/SystemTrayIcon.png")));
     }
@@ -89,11 +77,27 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
 
     private void initializeMainApplication() {
         System.out.println("Main Application Started");
+        invoker = ApiInvoker.getInstance();
+        invoker.setAuthService(authService);
 
-        dataSource = new GroupMeDataSource(authService, dataMediator);
-        messageReceiver = new MessageReceiver(authService, dataSource, dataMediator);
+        model = new Model(invoker);
+
+        messageReceiver = new MessageReceiver(authService, model.getUserProfileModel());
+        messageReceiver.subscribe(model);
+
+        trayManager = new TrayManager(messageReceiver);
+
+        // Show desktop notifications only when CatChat is not the active window
+        focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue) {
+                trayManager.unsubscribeFromMessageReceiver();
+            } else {
+                trayManager.subscribeToMessageReceiver();
+            }
+        }));
+
+
         messageReceiver.start();
-
         setOnCloseRequest(event -> {
             messageReceiver.stop();
             Platform.exit();
@@ -108,23 +112,15 @@ public class ApplicationStage extends Stage implements OAuthService.AuthListener
 
     private BorderPane initializeBorderPane() {
         MessagesView messagesView = new MessagesView();
-        MessagesPresenter messagesPresenter = new MessagesPresenter(dataSource, messagesView);
-        dataMediator.subscribe(messagesPresenter);
+        MessagesPresenter messagesPresenter = new MessagesPresenter(model, messagesView);
         messagesView.setPresenter(messagesPresenter);
         messagesPresenter.start();
 
-        ChatsView groupChatsView = new ChatsView();
-        ChatsPresenter groupChatsPresenter = new ChatsPresenter(ChatType.GROUP, dataSource, groupChatsView);
-        dataMediator.subscribe(groupChatsPresenter);
-        groupChatsView.setPresenter(groupChatsPresenter);
-        groupChatsPresenter.start();
+        ChatsView chatsView = new ChatsView();
+        ChatsPresenter chatsPresenter = new ChatsPresenter(model, chatsView);
+        chatsView.setPresenter(chatsPresenter);
+        chatsPresenter.start();
 
-        ChatsView directChatsView = new ChatsView();
-        ChatsPresenter directChatsPresenter = new ChatsPresenter(ChatType.DIRECT, dataSource, directChatsView);
-        dataMediator.subscribe(directChatsPresenter);
-        directChatsView.setPresenter(directChatsPresenter);
-        directChatsPresenter.start();
-
-        return new BorderPane(messagesView, null, directChatsView, null, groupChatsView);
+        return new BorderPane(messagesView, null, null, null, chatsView);
     }
 }
