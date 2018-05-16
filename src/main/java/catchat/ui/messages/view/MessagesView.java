@@ -88,18 +88,17 @@ public class MessagesView extends VBox implements MessagesContract.View {
 
     @Override
     public void showChatPane() {
-        messageListView.setVisible(true);
-        refresh.setVisible(true);
-        input.setVisible(true);
-        sendMessage.setVisible(true);
+        setVisible(true);
     }
 
     @Override
     public void hideChatPane() {
-        messageListView.setVisible(false);
-        refresh.setVisible(false);
-        input.setVisible(false);
-        sendMessage.setVisible(false);
+        setVisible(false);
+    }
+
+    @Override
+    public boolean chatPainVisible() {
+        return isVisible();
     }
 
     @Override

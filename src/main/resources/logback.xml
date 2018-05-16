@@ -13,10 +13,11 @@
     </root>
 
     <logger name="catchat.data.authentication.GroupMeOAuthService" level="null"/>
-    <logger name="catchat.data.source.groupme" level="off"/>
+    <logger name="catchat.data.source.groupme" level="null"/>
     <logger name="catchat.data.source.groupme.BaseGroupMeApiCommand" level="null"/>
-    <logger name="catchat.data.receiver.message" level="null"/>
-    <logger name="catchat.data.model" level="off"/>
+    <logger name="catchat.data.receiver.message" level="trace"/>
+    <logger name="catchat.data.model" level="null"/>
+    <logger name="catchat.data.model.Model" level="null"/>
 
     <!--<logger name="org.eclipse.jetty" level="INFO"/>-->
 </configuration>

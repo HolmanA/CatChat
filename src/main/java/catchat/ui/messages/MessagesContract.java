@@ -15,6 +15,8 @@ public interface MessagesContract {
 
         void hideChatPane();
 
+        boolean chatPainVisible();
+
         void setMessages(List<Message> messages);
 
         int getMessagesSize();

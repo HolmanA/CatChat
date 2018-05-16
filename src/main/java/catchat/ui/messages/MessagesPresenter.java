@@ -68,6 +68,15 @@ public class MessagesPresenter implements MessagesContract.Presenter, ModelContr
     }
 
     @Override
+    public void sameChatSelected() {
+        if (view.chatPainVisible()) {
+            view.hideChatPane();
+        } else {
+            view.showChatPane();
+        }
+    }
+
+    @Override
     public void chatChanged() {
         int size = view.getMessagesSize();
         view.clearMessages();
