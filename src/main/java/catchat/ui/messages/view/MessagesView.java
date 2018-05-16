@@ -159,6 +159,11 @@ public class MessagesView extends VBox implements MessagesContract.View {
         input.clear();
     }
 
+    @Override
+    public void setChatTitle(String title) {
+        chatTitle.setText(title);
+    }
+
     private void initializeMessageListScrollBar() {
         for (Node node : messageListView.lookupAll(".scroll-bar")) {
             if (node instanceof ScrollBar) {

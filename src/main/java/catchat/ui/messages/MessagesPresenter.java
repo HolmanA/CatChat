@@ -1,5 +1,6 @@
 package catchat.ui.messages;
 
+import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
 import catchat.data.model.ModelContract;
 import catchat.data.model.chat.ChatContract;
@@ -78,12 +79,16 @@ public class MessagesPresenter implements MessagesContract.Presenter, ModelContr
 
     @Override
     public void chatChanged() {
-        int size = view.getMessagesSize();
-        view.clearMessages();
-        List<Message> reverseList = new ArrayList<>(model.getSelectedChatModel().getMessages());
+        ChatContract.Model chatModel = model.getSelectedChatModel();
+        List<Message> reverseList = new ArrayList<>(chatModel.getMessages());
         Collections.reverse(reverseList);
+        Chat chat = chatModel.getChat();
+
+        int prevListSize = view.getMessagesSize();
+        view.clearMessages();
         view.setMessages(reverseList);
-        view.scrollMessagesTo(reverseList.size() - size);
+        view.scrollMessagesTo(reverseList.size() - prevListSize);
+        view.setChatTitle(chat.getName());
     }
 
     @Override

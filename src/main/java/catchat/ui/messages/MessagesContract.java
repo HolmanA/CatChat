@@ -28,6 +28,8 @@ public interface MessagesContract {
         String getMessageText();
 
         void clearMessageText();
+
+        void setChatTitle(String title);
         //void showNoMessages();
         //void clearMemberList();
         //void showChatDetails(Chat chat);
