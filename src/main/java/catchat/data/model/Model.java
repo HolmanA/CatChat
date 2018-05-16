@@ -38,8 +38,10 @@ public class Model implements ModelContract.Model, ChatContract.Listener, Messag
 
     @Override
     public void messageReceived(NotificationMessage message) {
-        if (!message.getSenderId().equals(userProfileModel.getUserProfile().getId())) {
-            if (selectedChatModel != null && message.getId().equals(selectedChatModel.getChat().getId())) {
+        String userProfileId = getUserProfileModel().getUserProfile().getId();
+        if (!userProfileId.equals(message.getSenderId())) {
+            String selectedChatId = (selectedChatModel == null) ? "" : selectedChatModel.getChat().getId();
+            if (selectedChatId.equals(message.getId())) {
                 selectedChatModel.reloadMessages();
             }
             groupChatListModel.reloadChats();
