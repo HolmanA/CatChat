@@ -1,6 +1,5 @@
 package catchat.ui.messages.view;
 
-import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
 import catchat.ui.messages.MessagesContract;
 
@@ -8,7 +7,6 @@ import javafx.animation.PauseTransition;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollBar;
@@ -165,7 +163,7 @@ public class MessagesView extends VBox implements MessagesContract.View {
     private void initializeMessageListScrollBar() {
         for (Node node : messageListView.lookupAll(".scroll-bar")) {
             if (node instanceof ScrollBar) {
-                ScrollBar bar = (ScrollBar)node;
+                ScrollBar bar = (ScrollBar) node;
                 if (bar.getOrientation().equals(Orientation.VERTICAL)) {
                     messageListScrollBar = bar;
                     messageListScrollBar.valueProperty().addListener(((observable, oldValue, newValue) -> {

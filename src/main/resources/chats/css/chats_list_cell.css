@@ -12,12 +12,12 @@
     -fx-text-fill: black;
 }
 
-.preview {  /* Text */
+.preview { /* Text */
     -fx-font-size: 14;
     -fx-wrap-text: true;
 }
 
-.inner-container {  /* VBox */
+.inner-container { /* VBox */
     -fx-spacing: 5;
     -fx-alignment: center-left;
 }

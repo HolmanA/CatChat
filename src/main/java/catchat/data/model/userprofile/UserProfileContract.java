@@ -16,9 +16,13 @@ public interface UserProfileContract {
 
     interface Model {
         void subscribe(Listener listener);
+
         void unsubscribe(Listener listener);
+
         void unsubscribeAll();
+
         void loadUserProfile();
+
         UserProfile getUserProfile();
     }
 }

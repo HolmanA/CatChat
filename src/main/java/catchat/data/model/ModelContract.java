@@ -19,13 +19,21 @@ public interface ModelContract {
 
     interface Model {
         void subscribe(Listener listener);
+
         void unsubscribe(Listener listener);
+
         void unsubscribeAll();
+
         void selectChat(Chat chat);
+
         void reloadAll();
+
         ChatListContract.Model getGroupChatListModel();
+
         ChatListContract.Model getDirectChatListModel();
+
         UserProfileContract.Model getUserProfileModel();
+
         ChatContract.Model getSelectedChatModel();
     }
 }

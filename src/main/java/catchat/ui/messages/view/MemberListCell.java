@@ -14,6 +14,7 @@ public class MemberListCell extends ListCell<MemberProfile> {
         getStylesheets().add("/messages/css/member_list_cell.css");
         getStyleClass().add("container");
     }
+
     @Override
     protected void updateItem(MemberProfile item, boolean empty) {
         if (item != null && !empty) {

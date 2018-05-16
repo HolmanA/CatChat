@@ -18,10 +18,15 @@ public interface ChatListContract {
 
     interface Model {
         void subscribe(Listener listener);
+
         void unsubscribe(Listener listener);
+
         void unsubscribeAll();
+
         void reloadChats();
+
         void loadMoreChats();
+
         List<Chat> getChats();
     }
 }

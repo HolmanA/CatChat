@@ -6,17 +6,23 @@ package catchat.data.receiver.message;
  */
 public class NotificationMessage {
     private String id;
+    private String senderId;
     private String senderName;
     private String messageText;
 
-    NotificationMessage(String id, String senderName, String messageText) {
+    NotificationMessage(String id, String senderId, String senderName, String messageText) {
         this.id = id;
+        this.senderId = senderId;
         this.senderName = senderName;
         this.messageText = messageText;
     }
 
     public String getId() {
         return id;
+    }
+
+    public String getSenderId() {
+        return senderId;
     }
 
     public String getSenderName() {

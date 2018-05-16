@@ -1,7 +1,7 @@
 package catchat.ui.chats;
 
-import catchat.data.model.Model;
 import catchat.data.entities.chat.Chat;
+import catchat.data.model.Model;
 import catchat.data.model.ModelContract;
 import catchat.data.model.chatlist.ChatListContract;
 

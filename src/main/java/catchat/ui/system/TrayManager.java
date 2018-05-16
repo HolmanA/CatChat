@@ -1,8 +1,5 @@
 package catchat.ui.system;
 
-import catchat.data.model.Model;
-import catchat.data.entities.chat.Chat;
-import catchat.data.entities.message.Message;
 import catchat.data.receiver.message.MessageReceiverContract;
 import catchat.data.receiver.message.NotificationMessage;
 
@@ -12,7 +9,6 @@ import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.net.URL;
-import java.util.List;
 
 /**
  * Created by andrew on 5/4/18.

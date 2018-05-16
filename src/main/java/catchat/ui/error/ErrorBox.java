@@ -10,7 +10,7 @@ import javafx.scene.text.Text;
  * Created by andrew on 5/6/18.
  */
 public class ErrorBox extends VBox {
-    public ErrorBox(String message) {
+    public ErrorBox() {
         super();
         getStylesheets().add("/error/css/error_box.css");
         getStyleClass().add("container");
@@ -21,7 +21,7 @@ public class ErrorBox extends VBox {
         Separator separator1 = new Separator();
         Separator separator2 = new Separator();
 
-        Text messageText = new Text(message);
+        Text messageText = new Text();
         getStyleClass().add("message-text");
         messageText.setWrappingWidth(380);
 

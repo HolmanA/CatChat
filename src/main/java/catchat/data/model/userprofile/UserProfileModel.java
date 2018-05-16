@@ -2,7 +2,7 @@ package catchat.data.model.userprofile;
 
 import catchat.data.entities.profile.UserProfile;
 import catchat.data.source.ApiInvoker;
-import catchat.data.source.groupme.GetUserProfileCommand;
+import catchat.data.source.groupme.GetUserProfileApiCommand;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class UserProfileModel implements UserProfileContract.Model {
     @Override
     public void loadUserProfile() {
         try {
-            invoker.execute(new GetUserProfileCommand(result -> {
+            invoker.execute(new GetUserProfileApiCommand(result -> {
                 userProfile = result;
                 for (UserProfileContract.Listener listener : listeners) {
                     listener.userProfileChanged();

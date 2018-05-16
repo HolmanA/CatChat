@@ -1,7 +1,7 @@
 package catchat.ui.chats.view;
 
-import catchat.ui.chats.ChatsContract;
 import catchat.data.entities.chat.Chat;
+import catchat.ui.chats.ChatsContract;
 
 import javafx.animation.PauseTransition;
 import javafx.geometry.Orientation;
@@ -120,7 +120,7 @@ public class ChatsView extends VBox implements ChatsContract.View {
     private void initializeGroupChatListScrollBars() {
         for (Node node : groupChatListView.lookupAll(".scroll-bar")) {
             if (node instanceof ScrollBar) {
-                ScrollBar bar = (ScrollBar)node;
+                ScrollBar bar = (ScrollBar) node;
                 if (bar.getOrientation().equals(Orientation.VERTICAL)) {
                     groupChatListScrollBar = bar;
                     groupChatListScrollBar.valueProperty().addListener(((observable, oldValue, newValue) -> {
@@ -141,7 +141,7 @@ public class ChatsView extends VBox implements ChatsContract.View {
     private void initializeDirectChatListScrollBars() {
         for (Node node : directChatListView.lookupAll(".scroll-bar")) {
             if (node instanceof ScrollBar) {
-                ScrollBar bar = (ScrollBar)node;
+                ScrollBar bar = (ScrollBar) node;
                 if (bar.getOrientation().equals(Orientation.VERTICAL)) {
                     directChatListScrollBar = bar;
                     directChatListScrollBar.valueProperty().addListener(((observable, oldValue, newValue) -> {

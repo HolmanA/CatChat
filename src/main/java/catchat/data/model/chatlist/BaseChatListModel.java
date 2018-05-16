@@ -1,8 +1,8 @@
 package catchat.data.model.chatlist;
 
 import catchat.data.entities.chat.Chat;
-import catchat.data.source.ApiCommand;
 import catchat.data.source.ApiInvoker;
+import catchat.data.source.groupme.BaseGroupMeApiCommand;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -81,5 +81,5 @@ public abstract class BaseChatListModel implements ChatListContract.Model {
         listeners.clear();
     }
 
-    abstract ApiCommand<List<Chat>> getChatsCommand(ApiCommand.Listener<List<Chat>> listener, int page, int pageSize) throws IOException;
+    abstract BaseGroupMeApiCommand<List<Chat>> getChatsCommand(BaseGroupMeApiCommand.Listener<List<Chat>> listener, int page, int pageSize) throws IOException;
 }

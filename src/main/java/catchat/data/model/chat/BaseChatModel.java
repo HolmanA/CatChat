@@ -2,10 +2,12 @@ package catchat.data.model.chat;
 
 import catchat.data.entities.chat.Chat;
 import catchat.data.entities.message.Message;
-import catchat.data.source.ApiCommand;
 import catchat.data.source.ApiInvoker;
-import catchat.data.source.groupme.LikeMessageCommand;
-import catchat.data.source.groupme.UnlikeMessageCommand;
+import catchat.data.source.groupme.BaseGroupMeApiCommand;
+import catchat.data.source.groupme.LikeMessageApiCommand;
+import catchat.data.source.groupme.UnlikeMessageApiCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,12 +21,13 @@ import java.util.List;
  * @since 1.0
  */
 public abstract class BaseChatModel implements ChatContract.Model {
+    private static final Logger log = LoggerFactory.getLogger(BaseChatModel.class);
+    private static int sentMessageId = 1;
     private List<ChatContract.Listener> listeners;
     private ApiInvoker invoker;
     private Chat chat;
     private List<Message> messages;
     private String oldestMessageId;
-    private int sentMessageId;
 
 
     BaseChatModel(ApiInvoker invoker, Chat chat) {
@@ -33,11 +36,12 @@ public abstract class BaseChatModel implements ChatContract.Model {
         listeners = new ArrayList<>();
         messages = new ArrayList<>();
         oldestMessageId = "";
-        sentMessageId = 1;
+        log.debug("Chat model created for chat: {}", chat.getName());
     }
 
     @Override
     public void loadMoreMessages() {
+        log.debug("Loading more messages");
         try {
             invoker.execute(getMessagesCommand(result -> {
                 parseGetMessagesResult(result);
@@ -49,6 +53,7 @@ public abstract class BaseChatModel implements ChatContract.Model {
 
     @Override
     public void reloadMessages() {
+        log.debug("Reloading messages");
         try {
             invoker.execute(getMessagesCommand(result -> {
                 clearMessages();
@@ -61,9 +66,13 @@ public abstract class BaseChatModel implements ChatContract.Model {
 
     @Override
     public void sendMessage(String messageText) {
+        log.debug("Sending message");
         try {
             invoker.execute(sendMessageCommand(result -> {
-                reloadMessages();
+                for (ChatContract.Listener listener : listeners) {
+                    log.trace("Message Sent: {}", listener);
+                    listener.messageSent();
+                }
             }, chat.getId(), Integer.toString(sentMessageId++), messageText));
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,13 +82,15 @@ public abstract class BaseChatModel implements ChatContract.Model {
 
     @Override
     public void clearMessages() {
+        log.debug("Clearing messages");
         messages.clear();
     }
 
     @Override
     public void likeMessage(Message message) {
+        log.debug("Liking message");
         try {
-            invoker.execute(new LikeMessageCommand(result -> {
+            invoker.execute(new LikeMessageApiCommand(result -> {
                 reloadMessages();
             }, chat.getId(), message.getId()));
         } catch (IOException e) {
@@ -89,8 +100,9 @@ public abstract class BaseChatModel implements ChatContract.Model {
 
     @Override
     public void unlikeMessage(Message message) {
+        log.debug("Unliking message");
         try {
-            invoker.execute(new UnlikeMessageCommand(result -> {
+            invoker.execute(new UnlikeMessageApiCommand(result -> {
                 reloadMessages();
             }, chat.getId(), message.getId()));
         } catch (IOException e) {
@@ -110,27 +122,33 @@ public abstract class BaseChatModel implements ChatContract.Model {
 
     @Override
     public void subscribe(ChatContract.Listener listener) {
+        log.debug("Subscribing {}", listener);
         listeners.add(listener);
     }
 
     @Override
     public void unsubscribe(ChatContract.Listener listener) {
+        log.debug("Unsubscribing {}", listener);
         listeners.remove(listener);
     }
 
     @Override
     public void unsubscribeAll() {
+        log.debug("Unsubscribing All");
         listeners.clear();
     }
 
-    abstract ApiCommand<List<Message>> getMessagesCommand(ApiCommand.Listener<List<Message>> listener, String chatId, String beforeId, String sinceId) throws IOException;
-    abstract ApiCommand<Void> sendMessageCommand(ApiCommand.Listener<Void> listener, String chatId, String messageId, String messageText) throws IOException;
+    abstract BaseGroupMeApiCommand<List<Message>> getMessagesCommand(BaseGroupMeApiCommand.Listener<List<Message>> listener, String chatId, String beforeId, String sinceId) throws IOException;
+
+    abstract BaseGroupMeApiCommand<Void> sendMessageCommand(BaseGroupMeApiCommand.Listener<Void> listener, String chatId, String messageId, String messageText) throws IOException;
 
     void parseGetMessagesResult(List<Message> result) {
+        log.debug("Setting messages");
         if (result != null && !result.isEmpty()) {
             messages.addAll(result);
             oldestMessageId = messages.get(messages.size() - 1).getId();
             for (ChatContract.Listener listener : listeners) {
+                log.trace("Chat Changed: {}", listener);
                 listener.chatChanged();
             }
         }

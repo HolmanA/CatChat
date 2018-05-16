@@ -14,9 +14,13 @@ public interface MessageReceiverContract {
 
     interface Receiver {
         void subscribe(Listener listener);
+
         void unsubscribe(Listener listener);
+
         void unsubscribeAll();
+
         void start();
+
         void stop();
     }
 }

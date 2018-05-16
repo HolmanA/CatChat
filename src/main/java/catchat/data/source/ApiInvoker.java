@@ -33,24 +33,24 @@ public class ApiInvoker {
         this.authService = authService;
     }
 
-    public void add(ApiCommand command) {
-        apiCommands.add(command);
+    public void add(ApiCommand apiCommand) {
+        apiCommands.add(apiCommand);
     }
 
     public void execute() {
-        for (ApiCommand command : apiCommands) {
-            execute(command);
+        for (ApiCommand apiCommand : apiCommands) {
+            execute(apiCommand);
         }
         apiCommands.clear();
     }
 
-    public void execute(ApiCommand command) {
+    public void execute(ApiCommand apiCommand) {
         if (authService == null || authService.getAPIToken() == null) {
             throw new RuntimeException("AuthToken not set on ApiInvoker");
         }
         try {
-            command.buildCommand(authService.getAPIToken());
-            command.execute();
+            apiCommand.buildCommand(authService.getAPIToken());
+            apiCommand.execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

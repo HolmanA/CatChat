@@ -41,7 +41,6 @@ public class MessagesPresenter implements MessagesContract.Presenter, ModelContr
     public void sendMessage() {
         String text;
         if ((text = view.getMessageText()) != null && !text.equals("")) {
-            view.clearMessages();
             model.getSelectedChatModel().sendMessage(text);
         }
     }

@@ -12,7 +12,8 @@ public class AuthPresenter implements AuthContract.Presenter {
     }
 
     @Override
-    public void start() {}
+    public void start() {
+    }
 
     @Override
     public void authenticate() {

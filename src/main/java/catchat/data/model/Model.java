@@ -1,5 +1,6 @@
 package catchat.data.model;
 
+import catchat.data.entities.chat.Chat;
 import catchat.data.model.chat.ChatContract;
 import catchat.data.model.chat.DirectChatModel;
 import catchat.data.model.chat.GroupChatModel;
@@ -10,7 +11,6 @@ import catchat.data.model.userprofile.UserProfileContract;
 import catchat.data.model.userprofile.UserProfileModel;
 import catchat.data.receiver.message.MessageReceiverContract;
 import catchat.data.receiver.message.NotificationMessage;
-import catchat.data.entities.chat.Chat;
 import catchat.data.source.ApiInvoker;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by andrew on 4/29/18.
  */
-public class Model implements ModelContract.Model, MessageReceiverContract.Listener {
+public class Model implements ModelContract.Model, ChatContract.Listener, MessageReceiverContract.Listener {
     private List<ModelContract.Listener> listeners;
     private ApiInvoker invoker;
 
@@ -38,11 +38,13 @@ public class Model implements ModelContract.Model, MessageReceiverContract.Liste
 
     @Override
     public void messageReceived(NotificationMessage message) {
-        if (selectedChatModel != null && message.getId().equals(selectedChatModel.getChat().getId())) {
-            selectedChatModel.reloadMessages();
+        if (!message.getSenderId().equals(userProfileModel.getUserProfile().getId())) {
+            if (selectedChatModel != null && message.getId().equals(selectedChatModel.getChat().getId())) {
+                selectedChatModel.reloadMessages();
+            }
+            groupChatListModel.reloadChats();
+            directChatListModel.reloadChats();
         }
-        groupChatListModel.reloadChats();
-        directChatListModel.reloadChats();
     }
 
     @Override
@@ -50,7 +52,7 @@ public class Model implements ModelContract.Model, MessageReceiverContract.Liste
         if (selectedChatModel != null) {
             selectedChatModel.unsubscribeAll();
         }
-        switch(chat.getType()) {
+        switch (chat.getType()) {
             case GROUP:
                 selectedChatModel = new GroupChatModel(invoker, chat);
                 break;
@@ -59,6 +61,7 @@ public class Model implements ModelContract.Model, MessageReceiverContract.Liste
                 break;
             default:
         }
+        selectedChatModel.subscribe(this);
         for (ModelContract.Listener listener : listeners) {
             listener.selectionChanged();
         }
@@ -107,5 +110,15 @@ public class Model implements ModelContract.Model, MessageReceiverContract.Liste
         if (selectedChatModel != null) {
             selectedChatModel.reloadMessages();
         }
+    }
+
+    @Override
+    public void messageSent() {
+        groupChatListModel.reloadChats();
+        directChatListModel.reloadChats();
+    }
+
+    @Override
+    public void chatChanged() {
     }
 }

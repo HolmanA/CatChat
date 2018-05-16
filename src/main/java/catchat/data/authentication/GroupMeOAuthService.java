@@ -1,5 +1,8 @@
 package catchat.data.authentication;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.net.ServerSocketFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,6 +18,8 @@ import java.util.Properties;
  * authorization.
  */
 public class GroupMeOAuthService implements OAuthService {
+    private static final Logger log = LoggerFactory.getLogger(GroupMeOAuthService.class);
+
     // Resource paths
     private static final String HTML_ROOT = "/data/authentication/web/html/";
     private static final String SUCCESS_HTML = HTML_ROOT + "authentication_successful.html";
@@ -54,7 +59,8 @@ public class GroupMeOAuthService implements OAuthService {
 
     @Override
     public void tokenRejected() {
-        authListener.onFailure("Error: Authentication token rejected by GroupMe API");
+        log.error("Authentication token rejected by GroupMe API {}", authToken);
+        authListener.onFailure();
     }
 
     @Override
@@ -67,11 +73,13 @@ public class GroupMeOAuthService implements OAuthService {
     }
 
     private void authenticate() throws Exception {
+        log.info("Authenticating");
         initializeCallbackSocket();
         acceptCallbackConnection();
         String requestHeader = parseRequestHeader();
         sendResponseMessage();
         authToken = parseTokenFromHeader(requestHeader);
+        log.info("Authentication Successful");
         authListener.onSuccess();
     }
 
@@ -79,18 +87,24 @@ public class GroupMeOAuthService implements OAuthService {
      * Loads authorization connection properties from a java properties file
      */
     private void loadProperties() throws Exception {
+        log.debug("Parsing {}", PROPERTIES_XML);
         try {
             Properties props = new Properties();
             InputStream in = getClass().getResourceAsStream(PROPERTIES_XML);
             props.loadFromXML(in);
-            authURL = props.getProperty(PROP_AUTH_URL) + props.getProperty(PROP_CLIENT_ID);
-            callbackPort = Integer.parseInt(props.getProperty(PROP_CALLBACK_PORT));
+            String authURLProp = props.getProperty(PROP_AUTH_URL);
+            String clientIdProp = props.getProperty(PROP_CLIENT_ID);
+            String callbackPortProp = props.getProperty(PROP_CALLBACK_PORT);
+            authURL = authURLProp + clientIdProp;
+            callbackPort = Integer.parseInt(callbackPortProp);
             in.close();
+
+            log.trace("{} = {}", PROP_AUTH_URL, authURLProp);
+            log.trace("{} = {}", PROP_CLIENT_ID, clientIdProp);
+            log.trace("{} = {}", PROP_CALLBACK_PORT, callbackPortProp);
         } catch (Exception e) {
-            String message = "Error: Unable to load authentication properties";
-            message += e.getMessage();
-            authListener.onFailure(message);
-            System.err.println(message);
+            log.error("Unable to load authentication properties");
+            authListener.onFailure();
             throw e;
         }
     }
@@ -99,12 +113,11 @@ public class GroupMeOAuthService implements OAuthService {
         ServerSocketFactory factory = ServerSocketFactory.getDefault();
         try {
             localCallbackSocket = factory.createServerSocket(callbackPort);
-            System.out.println("Server Running on 127.0.0.1:" + callbackPort);
+
+            log.trace("Server running on 127.0.0.1:{}", callbackPort);
         } catch (IOException e) {
-            String message = "Error: Unable to initialize authentication callback server";
-            message += e.getMessage();
-            authListener.onFailure(message);
-            System.err.println(message);
+            log.error("Unable to initialize authentication callback server");
+            authListener.onFailure();
             throw e;
         }
     }
@@ -113,23 +126,27 @@ public class GroupMeOAuthService implements OAuthService {
      * Attempts to accept an incoming connection on the local authorization callback socket
      */
     private void acceptCallbackConnection() throws IOException {
+        log.debug("Listening for incoming connections");
         try {
             remoteAuthSocket = localCallbackSocket.accept();
-            System.out.println("Accepted Connection");
+
+            log.debug("Accepted connection on Server Socket");
+            log.trace("Local Address {}", remoteAuthSocket.getLocalAddress().getHostAddress());
+            log.trace("Remote Address {}", remoteAuthSocket.getInetAddress().getHostAddress());
         } catch (IOException e) {
-            String message = "Error: Unable to accept authentication callback connection";
-            message += e.getMessage();
-            authListener.onFailure(message);
-            System.err.println(message);
+            log.error("Unable to accept authentication callback connection");
+            authListener.onFailure();
             throw e;
         }
     }
 
     /**
      * Attempts to read an incoming http header containing the authentication token from the authentication connection
+     *
      * @return String http header for the http request
      */
     private String parseRequestHeader() throws IOException {
+        log.debug("Parsing HTTP request header");
         try {
             int length;
             byte[] buffer = new byte[1024];
@@ -141,18 +158,19 @@ public class GroupMeOAuthService implements OAuthService {
             }
             String header = baos.toString("UTF-8");
             baos.close();
+
+            log.trace("Header: {}", header);
             return header;
         } catch (IOException e) {
-            String message = "Error: Unable to read authentication callback http header\n";
-            message += e.getMessage();
-            authListener.onFailure(message);
-            System.err.println(message);
+            log.error("Unable to read authentication callback http header");
+            authListener.onFailure();
             throw e;
         }
     }
 
     /**
      * Searches the provided header for the API access token
+     *
      * @param header String http header obtained from the authentication callback connection
      * @return String API authorization token
      */
@@ -164,9 +182,8 @@ public class GroupMeOAuthService implements OAuthService {
             int tokenEndIndex = header.indexOf(' ', tokenStartIndex);
             return header.substring(tokenStartIndex, tokenEndIndex);
         } else {
-            String message = "Error: Unable to locate access token in authentication callback http header\n";
-            authListener.onFailure(message);
-            System.err.println(message);
+            log.error("Unable to locate access token in authentication callback http header");
+            authListener.onFailure();
             throw new Exception("No access token in http header");
         }
     }
@@ -177,15 +194,18 @@ public class GroupMeOAuthService implements OAuthService {
      * instructing the user to close the page will be shown.
      */
     private void sendResponseMessage() {
+        log.debug("Sending response message");
         try {
             InputStream inStream = getClass().getResourceAsStream(SUCCESS_HTML);
             InputStreamReader in = new InputStreamReader(inStream);
             PrintWriter out = new PrintWriter(remoteAuthSocket.getOutputStream());
 
+            String header = "HTTP/1.1 200 OK\r\n";
+            header += "Content-Type: text/html\r\n";
+            header += "\r\n";
+
             // Send http response header
-            out.print("HTTP/1.1 200 OK\r\n");
-            out.print("Content-Type: text/html\r\n");
-            out.print("\r\n");
+            out.print(header);
 
             // Send html file
             int length;
@@ -200,6 +220,7 @@ public class GroupMeOAuthService implements OAuthService {
             remoteAuthSocket.close();
             localCallbackSocket.close();
         } catch (IOException e) {
+            log.error("Unable to send response message");
             e.printStackTrace();
         }
     }
