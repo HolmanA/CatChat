@@ -33,7 +33,6 @@ public class ChatsView extends VBox implements ChatsContract.View {
         super();
         getStylesheets().add("/chats/css/chats_view.css");
         getStyleClass().add("container");
-        log.debug("Style Class set to: {}", getStyleClass());
 
         Label groupChatsTitle = new Label("Group Chats");
         groupChatsTitle.getStyleClass().add("title");
@@ -49,10 +48,6 @@ public class ChatsView extends VBox implements ChatsContract.View {
         groupChatListView = new ListView<>();
         groupChatListView.getStyleClass().add("chat-list");
         groupChatListView.setCellFactory(param -> new ChatListCell(presenter));
-        groupChatListView.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
-            log.trace("Group Chat List Pseudo Class States: {}", groupChatListView.getPseudoClassStates());
-            directChatListView.getSelectionModel().clearSelection();
-        }));
 
         Label directChatsTitle = new Label("Direct Chats");
         directChatsTitle.getStyleClass().add("title");
@@ -68,10 +63,6 @@ public class ChatsView extends VBox implements ChatsContract.View {
         directChatListView = new ListView<>();
         directChatListView.getStyleClass().add("chat-list");
         directChatListView.setCellFactory(param -> new ChatListCell(presenter));
-        directChatListView.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
-            log.trace("Direct Chat List Pseudo Class States: {}", directChatListView.getPseudoClassStates());
-            groupChatListView.getSelectionModel().clearSelection();
-        }));
 
         getChildren().addAll(groupChatsTitleContainer, groupChatListView,
                 directChatsTitleContainer,  directChatListView);
@@ -161,6 +152,18 @@ public class ChatsView extends VBox implements ChatsContract.View {
     @Override
     public boolean directChatsVisible() {
         return directChatListView.isVisible();
+    }
+
+    @Override
+    public void clearGroupChatSelection() {
+        groupChatListView.getSelectionModel().clearSelection();
+        log.debug("Group Chat Selection Cleared");
+    }
+
+    @Override
+    public void clearDirectChatSelection() {
+        directChatListView.getSelectionModel().clearSelection();
+        log.debug("Direct Chat Selection Cleared");
     }
 
     private void initializeGroupChatListScrollBars() {

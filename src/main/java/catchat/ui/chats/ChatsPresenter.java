@@ -81,6 +81,17 @@ public class ChatsPresenter implements ChatsContract.Presenter, ChatListContract
     public void selectChat(Chat chat) {
         if (chat != null) {
             log.debug("Selecting Chat: {}", chat.getName());
+            switch (chat.getType()) {
+                case GROUP:
+                    log.debug("Clearing Direct Chat Selection");
+                    view.clearDirectChatSelection();
+                    break;
+                case DIRECT:
+                    log.debug("Clearing Group Chat Selection");
+                    view.clearGroupChatSelection();
+                    break;
+                default:
+            }
             model.selectChat(chat);
         }
     }

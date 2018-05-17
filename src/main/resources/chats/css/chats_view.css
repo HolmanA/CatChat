@@ -22,9 +22,6 @@
     -fx-padding: 0 5 0 5;
 }
 
-.chat-list { /* ListView */
-}
-
-.chat-list:focused > .cell:selected {
-    -fx-background-color: #e6e6e6;
+.list-view { /* ListView */
+    -fx-focus-traversable: false;
 }

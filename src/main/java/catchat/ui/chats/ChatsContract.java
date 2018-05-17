@@ -38,6 +38,10 @@ public interface ChatsContract {
         void showDirectChats();
 
         boolean directChatsVisible();
+
+        void clearGroupChatSelection();
+
+        void clearDirectChatSelection();
     }
 
     interface Presenter extends BasePresenter {
