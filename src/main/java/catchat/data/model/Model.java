@@ -12,6 +12,7 @@ import catchat.data.model.userprofile.UserProfileModel;
 import catchat.data.receiver.message.MessageReceiverContract;
 import catchat.data.receiver.message.NotificationMessage;
 import catchat.data.source.ApiInvoker;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

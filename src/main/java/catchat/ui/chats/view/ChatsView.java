@@ -2,6 +2,7 @@ package catchat.ui.chats.view;
 
 import catchat.data.entities.chat.Chat;
 import catchat.ui.chats.ChatsContract;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +66,7 @@ public class ChatsView extends VBox implements ChatsContract.View {
         directChatListView.setCellFactory(param -> new ChatListCell(presenter));
 
         getChildren().addAll(groupChatsTitleContainer, groupChatListView,
-                directChatsTitleContainer,  directChatListView);
+                directChatsTitleContainer, directChatListView);
         VBox.setVgrow(directChatListView, Priority.SOMETIMES);
         VBox.setVgrow(groupChatListView, Priority.SOMETIMES);
     }

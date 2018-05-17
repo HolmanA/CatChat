@@ -4,6 +4,7 @@ import catchat.data.entities.chat.Chat;
 import catchat.data.entities.chat.DirectChat;
 import catchat.data.entities.profile.MemberProfile;
 import catchat.data.source.groupme.BaseGroupMeApiCommand;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

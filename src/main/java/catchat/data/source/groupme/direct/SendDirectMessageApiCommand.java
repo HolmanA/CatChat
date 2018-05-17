@@ -1,6 +1,7 @@
 package catchat.data.source.groupme.direct;
 
 import catchat.data.source.groupme.BaseGroupMeApiCommand;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

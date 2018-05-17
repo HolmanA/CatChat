@@ -15,6 +15,7 @@ import catchat.data.model.userprofile.UserProfileContract;
 public interface ModelContract {
     interface Listener {
         void selectionChanged();
+
         void sameChatSelected();
     }
 

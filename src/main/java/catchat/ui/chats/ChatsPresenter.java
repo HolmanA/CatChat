@@ -4,6 +4,7 @@ import catchat.data.entities.chat.Chat;
 import catchat.data.model.Model;
 import catchat.data.model.ModelContract;
 import catchat.data.model.chatlist.ChatListContract;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
