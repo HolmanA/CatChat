@@ -12,12 +12,37 @@
         <appender-ref ref="STDOUT"/>
     </root>
 
-    <logger name="catchat.data.authentication.GroupMeOAuthService" level="null"/>
-    <logger name="catchat.data.source.groupme" level="null"/>
-    <logger name="catchat.data.source.groupme.BaseGroupMeApiCommand" level="null"/>
-    <logger name="catchat.data.receiver.message" level="trace"/>
+    <!-- Data Package -->
+    <logger name="catchat.data" level="null"/>
+
+    <logger name="catchat.data.authentication" level="null"/>
+
+    <logger name="catchat.data.entities" level="null"/> <!-- TODO -->
+
     <logger name="catchat.data.model" level="null"/>
     <logger name="catchat.data.model.Model" level="null"/>
+
+    <logger name="catchat.data.receiver" level="null"/>
+
+    <logger name="catchat.data.source" level="null"/>
+    <logger name="catchat.data.source.groupme.BaseGroupMeApiCommand" level="null"/>
+
+    <!-- UI Package -->
+    <logger name="catchat.ui" level="null"/> <!-- TODO -->
+
+    <logger name="catchat.ui.authentication" level="null"/> <!-- TODO -->
+    <logger name="catchat.ui.authentication.AuthPresenter" level="null"/> <!-- TODO -->
+    <logger name="catchat.ui.authentication.AuthView" level="null"/> <!-- TODO -->
+
+    <logger name="catchat.ui.chats" level="null"/>
+    <logger name="catchat.ui.chats.ChatsPresenter" level="null"/>
+    <logger name="catchat.ui.chats.view" level="trace"/>
+
+    <logger name="catchat.ui.messages" level="null"/> <!-- TODO -->
+    <logger name="catchat.ui.messages.MessagesPresenter" level="null"/> <!-- TODO -->
+    <logger name="catchat.ui.messages.view" level="null"/> <!-- TODO -->
+
+    <logger name="catchat.ui.system" level="null"/> <!-- TODO -->
 
     <!--<logger name="org.eclipse.jetty" level="INFO"/>-->
 </configuration>

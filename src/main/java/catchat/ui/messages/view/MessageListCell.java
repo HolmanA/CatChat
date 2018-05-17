@@ -58,8 +58,10 @@ public class MessageListCell extends ListCell<Message> {
             borderContainer.getChildren().addAll(new Separator(Orientation.HORIZONTAL), innerContainer);
 
             setGraphic(borderContainer);
+            setDisable(false);
         } else {
             setGraphic(null);
+            setDisable(true);
         }
     }
 

@@ -1,10 +1,13 @@
 .container { /* ListCell */
-    -fx-padding: 15;
+}
+
+.cell {
+    -fx-padding: 5;
     -fx-background-color: white;
 }
 
-.container:pressed {
-    -fx-background-color: #e6e6e6;
+.cell:selected {
+    -fx-background-color: #e6e6e6
 }
 
 .name { /* Label */
@@ -18,6 +21,7 @@
 }
 
 .inner-container { /* VBox */
+    -fx-padding: 10;
     -fx-spacing: 5;
     -fx-alignment: center-left;
 }

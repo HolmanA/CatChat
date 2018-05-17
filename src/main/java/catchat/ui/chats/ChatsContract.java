@@ -26,9 +26,25 @@ public interface ChatsContract {
         void scrollGroupChatsTo(int index);
 
         void scrollDirectChatsTo(int index);
+
+        void hideGroupChats();
+
+        void showGroupChats();
+
+        boolean groupChatsVisible();
+
+        void hideDirectChats();
+
+        void showDirectChats();
+
+        boolean directChatsVisible();
     }
 
     interface Presenter extends BasePresenter {
+        void selectGroupChatsTitle();
+
+        void selectDirectChatsTitle();
+
         void reloadGroupChats();
 
         void reloadDirectChats();
