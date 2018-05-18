@@ -1,7 +1,7 @@
 package catchat.data.source.groupme.group;
 
-import catchat.data.entities.message.GroupMessage;
-import catchat.data.entities.message.Message;
+import catchat.data.source.entities.message.GroupMessage;
+import catchat.data.source.entities.message.Message;
 import catchat.data.source.groupme.BaseGroupMeApiCommand;
 
 import com.fasterxml.jackson.databind.JsonNode;

@@ -1,6 +1,6 @@
 package catchat.ui.messages.view;
 
-import catchat.data.entities.message.Message;
+import catchat.data.source.entities.message.Message;
 import catchat.ui.messages.MessagesContract;
 
 import javafx.geometry.Orientation;

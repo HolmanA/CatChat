@@ -1,4 +1,4 @@
-package catchat.data.entities;
+package catchat.data.source.entities;
 
 /**
  * ChatType

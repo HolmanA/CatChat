@@ -1,7 +1,7 @@
-package catchat.data.entities.chat;
+package catchat.data.source.entities.chat;
 
-import catchat.data.entities.ChatType;
-import catchat.data.entities.profile.MemberProfile;
+import catchat.data.source.entities.ChatType;
+import catchat.data.source.entities.profile.MemberProfile;
 
 import java.util.Map;
 

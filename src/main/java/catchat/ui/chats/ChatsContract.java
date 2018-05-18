@@ -1,6 +1,6 @@
 package catchat.ui.chats;
 
-import catchat.data.entities.chat.Chat;
+import catchat.data.source.entities.chat.Chat;
 import catchat.ui.BasePresenter;
 import catchat.ui.BaseView;
 

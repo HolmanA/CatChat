@@ -1,7 +1,7 @@
-package catchat.data.model.chat;
+package catchat.model.chat;
 
-import catchat.data.entities.chat.Chat;
-import catchat.data.entities.message.Message;
+import catchat.data.source.entities.chat.Chat;
+import catchat.data.source.entities.message.Message;
 import catchat.data.source.ApiInvoker;
 import catchat.data.source.groupme.BaseGroupMeApiCommand;
 import catchat.data.source.groupme.LikeMessageApiCommand;

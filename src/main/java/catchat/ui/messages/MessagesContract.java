@@ -1,6 +1,6 @@
 package catchat.ui.messages;
 
-import catchat.data.entities.message.Message;
+import catchat.data.source.entities.message.Message;
 import catchat.ui.BasePresenter;
 import catchat.ui.BaseView;
 

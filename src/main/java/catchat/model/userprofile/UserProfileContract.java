@@ -1,6 +1,6 @@
-package catchat.data.model.userprofile;
+package catchat.model.userprofile;
 
-import catchat.data.entities.profile.UserProfile;
+import catchat.data.source.entities.profile.UserProfile;
 
 /**
  * UserProfileContract

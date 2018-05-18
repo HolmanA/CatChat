@@ -1,6 +1,6 @@
 package catchat.ui.messages.view;
 
-import catchat.data.entities.message.Message;
+import catchat.data.source.entities.message.Message;
 import catchat.ui.messages.MessagesContract;
 
 import javafx.animation.PauseTransition;
@@ -10,11 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollBar;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;

@@ -1,9 +1,9 @@
 package catchat.ui.messages;
 
-import catchat.data.entities.chat.Chat;
-import catchat.data.entities.message.Message;
-import catchat.data.model.ModelContract;
-import catchat.data.model.chat.ChatContract;
+import catchat.data.source.entities.chat.Chat;
+import catchat.data.source.entities.message.Message;
+import catchat.model.ModelContract;
+import catchat.model.chat.ChatContract;
 
 import java.util.ArrayList;
 import java.util.Collections;

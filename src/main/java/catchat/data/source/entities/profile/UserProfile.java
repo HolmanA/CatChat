@@ -1,4 +1,4 @@
-package catchat.data.entities.profile;
+package catchat.data.source.entities.profile;
 
 /**
  * Created by andrew on 4/26/18.

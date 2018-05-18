@@ -1,9 +1,9 @@
-package catchat.data.model;
+package catchat.model;
 
-import catchat.data.entities.chat.Chat;
-import catchat.data.model.chat.ChatContract;
-import catchat.data.model.chatlist.ChatListContract;
-import catchat.data.model.userprofile.UserProfileContract;
+import catchat.data.source.entities.chat.Chat;
+import catchat.model.chat.ChatContract;
+import catchat.model.chatlist.ChatListContract;
+import catchat.model.userprofile.UserProfileContract;
 
 /**
  * ModelContract

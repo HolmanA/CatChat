@@ -1,6 +1,6 @@
-package catchat.data.model.chatlist;
+package catchat.model.chatlist;
 
-import catchat.data.entities.chat.Chat;
+import catchat.data.source.entities.chat.Chat;
 import catchat.data.source.ApiInvoker;
 import catchat.data.source.groupme.BaseGroupMeApiCommand;
 

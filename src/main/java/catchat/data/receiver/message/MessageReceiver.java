@@ -1,7 +1,7 @@
 package catchat.data.receiver.message;
 
 import catchat.data.authentication.OAuthService;
-import catchat.data.model.userprofile.UserProfileContract;
+import catchat.model.userprofile.UserProfileContract;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

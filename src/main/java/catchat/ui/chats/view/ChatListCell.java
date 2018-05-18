@@ -1,6 +1,6 @@
 package catchat.ui.chats.view;
 
-import catchat.data.entities.chat.Chat;
+import catchat.data.source.entities.chat.Chat;
 import catchat.ui.chats.ChatsContract;
 
 import org.slf4j.Logger;

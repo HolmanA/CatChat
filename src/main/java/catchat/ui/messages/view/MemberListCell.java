@@ -1,6 +1,6 @@
 package catchat.ui.messages.view;
 
-import catchat.data.entities.profile.MemberProfile;
+import catchat.data.source.entities.profile.MemberProfile;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;

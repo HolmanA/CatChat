@@ -2,7 +2,7 @@ package catchat.ui;
 
 import catchat.data.authentication.GroupMeOAuthService;
 import catchat.data.authentication.OAuthService;
-import catchat.data.model.Model;
+import catchat.model.Model;
 import catchat.data.receiver.message.MessageReceiver;
 import catchat.data.source.ApiInvoker;
 import catchat.ui.authentication.AuthPresenter;

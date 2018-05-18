@@ -1,4 +1,4 @@
-package catchat.data.entities.message;
+package catchat.data.source.entities.message;
 
 import java.util.List;
 

@@ -1,17 +1,17 @@
-package catchat.data.model;
+package catchat.model;
 
-import catchat.data.entities.chat.Chat;
-import catchat.data.model.chat.ChatContract;
-import catchat.data.model.chat.DirectChatModel;
-import catchat.data.model.chat.GroupChatModel;
-import catchat.data.model.chatlist.ChatListContract;
-import catchat.data.model.chatlist.DirectChatListModel;
-import catchat.data.model.chatlist.GroupChatListModel;
-import catchat.data.model.userprofile.UserProfileContract;
-import catchat.data.model.userprofile.UserProfileModel;
+import catchat.model.chat.ChatContract;
+import catchat.model.chat.DirectChatModel;
+import catchat.model.chat.GroupChatModel;
+import catchat.model.chatlist.ChatListContract;
+import catchat.model.chatlist.DirectChatListModel;
+import catchat.model.chatlist.GroupChatListModel;
+import catchat.model.userprofile.UserProfileContract;
+import catchat.model.userprofile.UserProfileModel;
 import catchat.data.receiver.message.MessageReceiverContract;
 import catchat.data.receiver.message.NotificationMessage;
 import catchat.data.source.ApiInvoker;
+import catchat.data.source.entities.chat.Chat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

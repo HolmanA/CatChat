@@ -1,9 +1,9 @@
 package catchat.ui.chats;
 
-import catchat.data.entities.chat.Chat;
-import catchat.data.model.Model;
-import catchat.data.model.ModelContract;
-import catchat.data.model.chatlist.ChatListContract;
+import catchat.data.source.entities.chat.Chat;
+import catchat.model.Model;
+import catchat.model.ModelContract;
+import catchat.model.chatlist.ChatListContract;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
