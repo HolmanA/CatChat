@@ -7,10 +7,17 @@
 
 .title { /* Label */
     -fx-font: normal bold 16 null;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-padding: 2;
 }
 
 .title-container { /* HBox */
-    -fx-spacing: 2;
+    -fx-alignment: center;
+}
+
+.chat-container { /* VBox */
+    -fx-spacing: 3;
     -fx-alignment: center;
 }
 
@@ -22,5 +29,6 @@
     -fx-padding: 0 5 0 5;
 }
 
-.chat-list { /* ListView */
+.list-view { /* ListView */
+    -fx-focus-traversable: false;
 }
