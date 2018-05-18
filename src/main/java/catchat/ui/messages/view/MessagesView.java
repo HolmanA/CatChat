@@ -10,8 +10,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -62,6 +65,8 @@ public class MessagesView extends VBox implements MessagesContract.View {
         messageListView.setCellFactory(param -> new MessageListCell(presenter));
 
         input = new TextField();
+        input.getStyleClass().add("input");
+        input.setPromptText("New Message");
         input.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.ENTER)) {
                 presenter.sendMessage();
@@ -70,7 +75,10 @@ public class MessagesView extends VBox implements MessagesContract.View {
 
         sendMessage = new Button("➤");
         sendMessage.getStyleClass().add("send");
-        sendMessage.setOnMouseClicked(event -> presenter.sendMessage());
+        sendMessage.setOnMouseClicked(event -> {
+            presenter.sendMessage();
+            input.requestFocus();
+        });
 
         HBox sendContainer = new HBox();
         sendContainer.getStyleClass().add("send-container");
@@ -89,6 +97,7 @@ public class MessagesView extends VBox implements MessagesContract.View {
     @Override
     public void showChatPane() {
         setVisible(true);
+        input.requestFocus();
     }
 
     @Override
@@ -103,6 +112,7 @@ public class MessagesView extends VBox implements MessagesContract.View {
 
     @Override
     public void setMessages(List<Message> messages) {
+        input.requestFocus();
         messageListView.getItems().addAll(0, messages);
         if (messageListScrollBar == null) {
             initializeMessageListScrollBar();

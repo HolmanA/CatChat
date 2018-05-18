@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -25,6 +26,10 @@ import java.util.List;
 public class ChatsView extends VBox implements ChatsContract.View {
     private static final Logger log = LoggerFactory.getLogger(ChatsView.class);
     private ChatsContract.Presenter presenter;
+    private Label groupChatsTitle;
+    private Label directChatsTitle;
+    private VBox groupChatsContainer;
+    private VBox directChatsContainer;
     private ListView<Chat> groupChatListView;
     private ListView<Chat> directChatListView;
     private ScrollBar groupChatListScrollBar;
@@ -35,38 +40,47 @@ public class ChatsView extends VBox implements ChatsContract.View {
         getStylesheets().add("/chats/css/chats_view.css");
         getStyleClass().add("container");
 
-        Label groupChatsTitle = new Label("Group Chats");
+        groupChatsTitle = new Label("\u2BC6 Group Chats");
         groupChatsTitle.getStyleClass().add("title");
 
         HBox groupChatsTitleContainer = new HBox();
         groupChatsTitleContainer.getStyleClass().add("title-container");
-        groupChatsTitleContainer.getChildren().addAll(groupChatsTitle);
-        groupChatsTitleContainer.setOnMouseClicked(event -> {
-            log.debug("Group Chats Title Selected");
-            presenter.selectGroupChatsTitle();
-        });
+        groupChatsTitleContainer.getChildren().add(groupChatsTitle);
 
         groupChatListView = new ListView<>();
         groupChatListView.getStyleClass().add("chat-list");
         groupChatListView.setCellFactory(param -> new ChatListCell(presenter));
 
-        Label directChatsTitle = new Label("Direct Chats");
+        groupChatsContainer = new VBox();
+        groupChatsContainer.getStyleClass().add("chat-container");
+        groupChatsContainer.getChildren().addAll(groupChatsTitleContainer,
+                new Separator(Orientation.HORIZONTAL), groupChatListView);
+        groupChatsContainer.setOnMouseClicked(event -> {
+            log.debug("Group Chats Title Selected");
+            presenter.selectGroupChatsTitle();
+        });
+
+        directChatsTitle = new Label("\u2BC6 Direct Chats");
         directChatsTitle.getStyleClass().add("title");
 
         HBox directChatsTitleContainer = new HBox();
         directChatsTitleContainer.getStyleClass().add("title-container");
-        directChatsTitleContainer.getChildren().addAll(directChatsTitle);
-        directChatsTitleContainer.setOnMouseClicked(event -> {
-            log.debug("Direct Chats Title Selected");
-            presenter.selectDirectChatsTitle();
-        });
+        directChatsTitleContainer.getChildren().add(directChatsTitle);
 
         directChatListView = new ListView<>();
         directChatListView.getStyleClass().add("chat-list");
         directChatListView.setCellFactory(param -> new ChatListCell(presenter));
 
-        getChildren().addAll(groupChatsTitleContainer, groupChatListView,
-                directChatsTitleContainer, directChatListView);
+        directChatsContainer = new VBox();
+        directChatsContainer.getStyleClass().add("chat-container");
+        directChatsContainer.getChildren().addAll(directChatsTitleContainer,
+                new Separator(Orientation.HORIZONTAL), directChatListView);
+        directChatsContainer.setOnMouseClicked(event -> {
+            log.debug("Direct Chats Title Selected");
+            presenter.selectDirectChatsTitle();
+        });
+
+        getChildren().addAll(groupChatsContainer, directChatsContainer);
         VBox.setVgrow(directChatListView, Priority.SOMETIMES);
         VBox.setVgrow(groupChatListView, Priority.SOMETIMES);
     }
@@ -127,32 +141,36 @@ public class ChatsView extends VBox implements ChatsContract.View {
 
     @Override
     public void hideGroupChats() {
-        groupChatListView.setVisible(false);
+        groupChatsContainer.getChildren().remove(groupChatListView);
+        groupChatsTitle.setText("\u2BC8 Group Chats");
     }
 
     @Override
     public void showGroupChats() {
-        groupChatListView.setVisible(true);
+        groupChatsContainer.getChildren().add(groupChatListView);
+        groupChatsTitle.setText("\u2BC6 Group Chats");
     }
 
     @Override
     public boolean groupChatsVisible() {
-        return groupChatListView.isVisible();
+        return groupChatsContainer.getChildren().contains(groupChatListView);
     }
 
     @Override
     public void hideDirectChats() {
-        directChatListView.setVisible(false);
+        directChatsContainer.getChildren().remove(directChatListView);
+        directChatsTitle.setText("\u2BC8 Direct Chats");
     }
 
     @Override
     public void showDirectChats() {
-        directChatListView.setVisible(true);
+        directChatsContainer.getChildren().add(directChatListView);
+        directChatsTitle.setText("\u2BC6 Direct Chats");
     }
 
     @Override
     public boolean directChatsVisible() {
-        return directChatListView.isVisible();
+        return directChatsContainer.getChildren().contains(directChatListView);
     }
 
     @Override

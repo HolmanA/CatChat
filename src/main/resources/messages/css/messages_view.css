@@ -30,8 +30,11 @@
     -fx-focus-traversable: false;
 }
 
-.input { /* TextField */
+.input { /* TextArea */
     -fx-focus-traversable: true;
+    /*-fx-max-height: 100%;*/
+    /*-fx-pref-height: 5%;*/
+    /*-fx-min-height: 5%;*/
 }
 
 .send { /* Button */
